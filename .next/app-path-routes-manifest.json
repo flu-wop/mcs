@@ -1,0 +1,9 @@
+{
+  "/contact/page": "/contact",
+  "/_not-found/page": "/_not-found",
+  "/merch/page": "/merch",
+  "/legacy/page": "/legacy",
+  "/studio/page": "/studio",
+  "/projects/page": "/projects",
+  "/page": "/"
+}

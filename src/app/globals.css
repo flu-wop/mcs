@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts ──────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ─── CSS Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --color-black:    #090909;
+  --color-charcoal: #111111;
+  --color-dark:     #1A1A1A;
+  --color-card:     #1C1C1C;
+  --color-border:   #2A2A2A;
+  --color-gold:     #D4AF77;
+  --color-gold-light: #E8C97A;
+  --color-gold-dark:  #B8935A;
+  --color-cream:    #F5EDD8;
+  --color-mist:     #A89880;
+
+  /* shadcn/ui CSS variables */
+  --background:    var(--color-black);
+  --foreground:    var(--color-cream);
+  --card:          var(--color-card);
+  --card-foreground: var(--color-cream);
+  --popover:       var(--color-dark);
+  --popover-foreground: var(--color-cream);
+  --primary:       var(--color-gold);
+  --primary-foreground: var(--color-black);
+  --secondary:     var(--color-dark);
+  --secondary-foreground: var(--color-cream);
+  --muted:         var(--color-dark);
+  --muted-foreground: var(--color-mist);
+  --accent:        var(--color-dark);
+  --accent-foreground: var(--color-gold);
+  --destructive:   #7f1d1d;
+  --destructive-foreground: var(--color-cream);
+  --border:        var(--color-border);
+  --input:         var(--color-dark);
+  --ring:          var(--color-gold);
+  --radius:        0.5rem;
+
+  /* Font stacks */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'DM Mono', monospace;
+}
+
+/* ─── Base Reset & Typography ───────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--color-border);
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-black);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+
+  /* Heading scale using display font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  /* Gold tint on all inline links */
+  a:not([class]) {
+    color: var(--color-gold);
+    text-underline-offset: 3px;
+    transition: opacity 0.2s ease;
+  }
+  a:not([class]):hover { opacity: 0.75; }
+
+  /* Thin scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-charcoal); }
+  ::-webkit-scrollbar-thumb { background: var(--color-gold-dark); border-radius: 3px; }
+
+  /* Selection highlight */
+  ::selection {
+    background: var(--color-gold-dark);
+    color: var(--color-black);
+  }
+}
+
+/* ─── Utility Classes ───────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Gold gradient text — use on hero/section headlines */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #E8C97A 0%, #D4AF77 40%, #B8935A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Subtle noise grain overlay */
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Gold shimmer bar (loading / decorative) */
+  .gold-shimmer {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      var(--color-gold) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  /* Cinematic vignette for hero sections */
+  .vignette {
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.7);
+  }
+
+  /* Staggered fade-up delays */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-700 { animation-delay: 700ms; }
+
+  /* Card hover lift */
+  .card-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  }
+}
