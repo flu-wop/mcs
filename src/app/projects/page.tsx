@@ -6,7 +6,7 @@
 //   1. Streetbeats        — new landing page (coming soon)
 //   2. Lil Squiggle       — links to lilsquiggle.vercel.app + merch
 //   3. Time of My Life 40th — Dirty Dancing 40th anniversary campaign
-//   4. Do It Again        — Curren$y & Wiz Khalifa studio project
+//   4. Street Beat Documentary — Now Available
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata }  from "next"
@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title:       "Projects",
-  description: "Current and recent projects from Mid City Sound Studios — Streetbeats, Lil Squiggle, Time of My Life 40th, and Do It Again.",
+  description: "Current and recent projects from Mid City Sound Studios — Streetbeats, Lil Squiggle, Street Beat documentary, and the Time of My Life anniversary campaign.",
 }
 
 /* ─── Project data ────────────────────────────────────────────────────────── */
@@ -53,8 +53,8 @@ const PROJECTS = [
   /* ── 2. Lil Squiggle ── */
   {
     id:      "lil-squiggle",
-    tag:     "Live",
-    tagVariant: "default" as const,
+    tag:     "Coming Soon",
+    tagVariant: "secondary" as const,
     icon:    Music,
     title:   "Lil Squiggle",
     subtitle:"#DontDrinkAndDialDecades",
@@ -62,7 +62,7 @@ const PROJECTS = [
     accent:  "#1D9E75",
     body: [
       "#DontDrinkAndDialDecades is a reggae-dub chibi Lego creative campaign centered on the character Lil Squiggle — one call, every era, same regret.",
-      "The campaign spans music, merch, TikTok, and beyond. Collaborators: Donny Markowitz, Gary Uffner, Pat Smith.",
+      "The campaign spans music, merch, TikTok, and beyond. Original track by Pat Smith, produced at Mid City Sound Studios.",
     ],
     features: [
       "Original reggae-dub music",
@@ -81,45 +81,45 @@ const PROJECTS = [
     tag:     "Campaign",
     tagVariant: "outline" as const,
     icon:    Tv,
-    title:   "Time of My Life — 40th",
-    subtitle:"Celebrating the Dirty Dancing Legacy",
+    title:   "Time of My Life — Anniversary",
+    subtitle:"Celebrating an Academy Award-Winning Song",
     color:   "from-[#1a0a0a] to-[#111]",
     accent:  "#D85A30",
     body: [
-      "In 2027, Dirty Dancing marks its 40th anniversary — and the legendary soundtrack deserves a proper celebration. Donny Markowitz was part of the original musical team, and this campaign brings that legacy back into the cultural conversation.",
+      "The Academy Award-winning song \"(I've Had) The Time of My Life\" — produced by Donald Markowitz — remains one of the most iconic film songs ever recorded. This campaign brings that legacy back into the cultural conversation.",
       "Details and release timeline to be announced.",
     ],
     features: [
       "40th anniversary campaign materials",
       "Original recording stories",
-      "Donny's session memoir",
+      "Behind-the-scenes production story",
       "Anniversary edition content",
     ],
     cta:    { label: "Learn More", href: "/contact?ref=toml" },
     ctaAlt: null,
   },
 
-  /* ── 4. Do It Again ── */
+  /* ── 4. Street Beat Documentary ── */
   {
-    id:      "do-it-again",
-    tag:     "Studio",
-    tagVariant: "outline" as const,
+    id:      "streetbeat",
+    tag:     "Now Available",
+    tagVariant: "default" as const,
     icon:    Mic2,
-    title:   "Do It Again",
-    subtitle:"Curren$y & Wiz Khalifa",
+    title:   "Street Beat",
+    subtitle:"Drumming Below Sea Level — Now Available",
     color:   "from-[#0a0a1a] to-[#111]",
     accent:  "#B5D4F4",
     body: [
-      "Tracked live at Mid City Sound Studios, Do It Again brings together two of Hip Hop's most prolific collaborators — Curren$y and Wiz Khalifa — in New Orleans for a project that feels like a homecoming.",
-      "Produced under Donny's supervision with the full Mid City Sound approach: real room, real vibe.",
+      "A documentary film exploring the unique drum sound of New Orleans. Produced by Mid City Sound & Fire on the Bayou, hosted by Doug Belote.",
+      "53 minutes. Now available to watch online.",
     ],
     features: [
-      "Recorded live at Mid City Sound",
-      "Produced by Donny Markowitz",
-      "New Orleans session musicians",
-      "Release TBD",
+      "53-minute documentary film",
+      "New Orleans drumming culture",
+      "Mid City Sound production",
+      "Available to stream now",
     ],
-    cta:    { label: "Stay Tuned", href: "/contact?ref=do-it-again" },
+    cta:    { label: "Watch Now", href: "https://streetbeat.video", external: true },
     ctaAlt: null,
   },
 ]

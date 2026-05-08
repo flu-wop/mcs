@@ -51,8 +51,8 @@ const COLLECTIONS: Record<Collection, { label: string; tagline: string; products
     ],
   },
   streetbeat: {
-    label: "Streetbeat",
-    tagline: "Drumming Below Sea Level — NOLA's rhythm, on your back.",
+    label: "Street Beat",
+    tagline: "Drumming Below Sea Level — Now Available. NOLA's rhythm, on your back.",
     products: [
       { id: "sb-drum-tee",    name: "Drumming Graphic Tee",       desc: "Bold percussion graphic rooted in NOLA street culture. 100% combed ringspun cotton. Unisex fit.", price: 38, tag: "Film Edition", bgColor: "#0a0a0a", accentColor: "#B5D4F4", icon: "🥁", storeSlug: "drum-tee", sizes: ["S","M","L","XL","2XL"], featured: true },
       { id: "sb-longsleeve",  name: "Streetbeat Longsleeve",       desc: "Black longsleeve. Streetbeat doc logo. \"Drumming Below Sea Level\" down the left sleeve.", price: 48, bgColor: "#111111", accentColor: "#B5D4F4", icon: "👕", storeSlug: "sb-longsleeve", sizes: ["S","M","L","XL"] },

@@ -25,13 +25,13 @@ import { Separator }  from "@/components/ui/separator"
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Mid City Sound Studios — a New Orleans recording studio built on Grammy-winning legacy. Book studio time, mixing, mastering, and more.",
+    "Mid City Sound Studios — a New Orleans recording studio built on decades of award-winning legacy. Book studio time, mixing, mastering, and more.",
 }
 
 /* ─── Stat items shown in the bar below the hero ── */
 const STATS = [
   { value: "40+",  label: "Years in Music" },
-  { value: "3",    label: "Oscar Nominations" },
+  { value: "1",    label: "Academy Award\nWinner" },
   { value: "500+", label: "Sessions Recorded" },
   { value: "NOLA", label: "Mid City, New Orleans" },
 ]
@@ -41,7 +41,7 @@ const SERVICES = [
   {
     icon:  Mic2,
     title: "Studio Recording",
-    body:  "World-class tracking room with vintage and modern gear. Isolation booth, full live room, and Donny's legendary ears at the board.",
+    body:  "World-class tracking room with vintage and modern gear. Isolation booth, full live room, and experienced engineers at the board.",
     href:  "/studio",
   },
   {
@@ -53,7 +53,7 @@ const SERVICES = [
   {
     icon:  Award,
     title: "Artist Development",
-    body:  "More than a room — a creative partnership. Donny helps emerging artists find and sharpen their sound.",
+    body:  "More than a room — a creative partnership. Our team helps emerging artists find and sharpen their sound.",
     href:  "/contact",
   },
 ]
@@ -61,12 +61,12 @@ const SERVICES = [
 /* ─── Pull-quote testimonials ── */
 const TESTIMONIALS = [
   {
-    quote:  "Walking into Mid City Sound feels like stepping into music history. Donny's ear is unmatched.",
+    quote:  "Walking into Mid City Sound feels like stepping into music history. The sound is unmatched.",
     author: "— Session artist (placeholder)",
     stars:  5,
   },
   {
-    quote:  "The room has a sound. And Donny knows exactly how to use it. Best studio experience I've had in New Orleans.",
+    quote:  "The room has a sound. And the engineers here know exactly how to use it. Best studio experience I've had in New Orleans.",
     author: "— Producer, New Orleans (placeholder)",
     stars:  5,
   },
@@ -168,12 +168,10 @@ export default function HomePage() {
             </Button>
             <Button size="lg" variant="ghost" asChild>
               <Link
-                href="https://lilsquiggle.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/merch"
                 className="text-mist hover:text-cream"
               >
-                Shop Lil Squiggle
+                Shop Merch
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </Button>
@@ -259,7 +257,7 @@ export default function HomePage() {
                 <Image src="/images/logo/wave-moon.jpg" alt="" fill className="object-contain" sizes="120px" />
               </div>
               <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
-                Donny Markowitz<br />
+                Donald Markowitz<br />
                 <span className="text-[10px] text-mist/20 normal-case tracking-normal">Replace with photo</span>
               </span>
             </div>
@@ -281,13 +279,13 @@ export default function HomePage() {
             <Separator className="w-12 bg-gold/40" />
             <div className="space-y-4 text-mist text-sm leading-relaxed">
               <p>
-                Donny Markowitz began his journey in New York's golden session era — crafting
-                arrangements for artists who would define American music. His path led through
-                Hollywood, three Oscar nominations, and decades of platinum records.
+                Donald Markowitz began his journey in New York's golden session era — crafting
+                arrangements and productions for artists who would define American music. His path
+                led through Hollywood to an Academy Award and a career spanning decades.
               </p>
               <p>
-                Today, Donny channels all of that expertise into Mid City Sound Studios in
-                New Orleans — a space where emerging artists meet living legend.
+                Today, Donald channels all of that expertise into Mid City Sound Studios in
+                New Orleans — a space where emerging artists meet real legacy.
               </p>
             </div>
             <Button variant="outline" asChild>
@@ -335,12 +333,12 @@ export default function HomePage() {
               {
                 title:  "Time of My Life 40th",
                 tag:    "Campaign",
-                desc:   "Celebrating 40 years of the iconic Dirty Dancing soundtrack.",
+                desc:   "Celebrating 40 years of the iconic Time of My Life soundtrack.",
               },
               {
-                title:  "Do It Again",
+                title:  "New Orleans Sessions",
                 tag:    "Studio",
-                desc:   "Curren$y & Wiz Khalifa — tracked live at Mid City Sound.",
+                desc:   "An original Mid City Sound production — tracked live in the room.",
               },
             ].map(({ title, tag, desc }) => (
               <Link
@@ -407,7 +405,7 @@ export default function HomePage() {
           </h2>
           <p className="text-mist mb-10 text-sm max-w-sm mx-auto">
             Studio sessions are available by appointment. Full upfront payment
-            secures your date — subject to Donny & Flu's approval.
+            secures your date — subject to studio manager approval.
           </p>
           <Button size="lg" asChild>
             <Link href="/studio">

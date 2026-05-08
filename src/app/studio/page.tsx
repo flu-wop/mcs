@@ -96,7 +96,7 @@ const RECORDING_RATES = [
     perHour:  8000,
     badge:    "Best Value",
     desc:     "A full day to track, experiment, and finish. Includes a break and a rough mix.",
-    includes: ["Full live room + ISO booth", "Engineer + Donny available", "Rough mix + session files", "Complimentary coffee"],
+    includes: ["Full live room + ISO booth", "Producer available by request", "Rough mix + session files", "Complimentary coffee"],
     popular:  true,
   },
 ]
@@ -115,7 +115,7 @@ const MIXING_RATES = [
     label:    "Full Mix (up to 24 tracks)",
     price:    65000,
     badge:    "Most Popular",
-    desc:     "Hollywood-grade multi-track mix from Donny Markowitz. Submit stems, receive a master.",
+    desc:     "Hollywood-grade multi-track mix from our experienced engineers. Submit stems, receive a master.",
     includes: ["Up to 24 tracks", "3 rounds of revisions", "Stereo + stem delivery", "Delivery in 5–7 days"],
     popular:  true,
   },
@@ -151,12 +151,12 @@ const MIXING_RATES = [
 const TIME_SLOTS = ["10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"]
 
 const TESTIMONIALS = [
-  { quote: "Walking into Mid City Sound feels like stepping into music history. Donny's ear is unmatched.", author: "Session artist, New Orleans" },
-  { quote: "The room has a sound. And Donny knows exactly how to use it. Best studio experience in NOLA.", author: "Producer, Mid City" },
+  { quote: "Walking into Mid City Sound feels like stepping into music history. The sound is unmatched.", author: "Session artist, New Orleans" },
+  { quote: "The room has a sound. And the engineers here know exactly how to use it. Best studio experience in NOLA.", author: "Producer, Mid City" },
   { quote: "We flew in from LA just to track here. Worth every mile.", author: "Recording artist" },
 ]
 
-const LEGACY_CREDITS = ["Dirty Dancing 40th", "Baha Men", "Curren$y & Wiz Khalifa", "Oscar® Nominated Scores"]
+const LEGACY_CREDITS = ["Academy Award — Time of My Life", "Grammy Nominated", "Van Morrison", "Dr. John", "Art Neville", "Taj Mahal"]
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* UTILS                                                                       */
@@ -530,7 +530,7 @@ export default function StudioPage() {
               </h1>
               <p className="text-mist text-base md:text-lg max-w-sm leading-relaxed mb-8 font-light">
                 New Orleans' premier recording experience. Hollywood-grade production
-                from Donny Markowitz — the man behind the music.
+                from our award-winning production team.
               </p>
               <div className="flex flex-wrap gap-4 text-sm">
                 {[
@@ -906,7 +906,7 @@ export default function StudioPage() {
                       id="notes"
                       value={projectNotes}
                       onChange={e => setProjectNotes(e.target.value)}
-                      placeholder="Tell us about your project — genre, number of tracks, special requirements, anything Donny should know before you arrive..."
+                      placeholder="Tell us about your project — genre, number of tracks, special requirements, anything the engineer should know before you arrive..."
                       className="h-32"
                     />
                   </div>

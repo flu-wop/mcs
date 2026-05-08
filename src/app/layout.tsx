@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     template: "%s | Mid City Sound Studios",
   },
   description:
-    "Legendary New Orleans recording studio founded by Donny Markowitz. " +
+    "Award-winning New Orleans recording studio. " +
     "Professional studio time, mixing, mastering, and music production in the heart of Mid City.",
   keywords: [
-    "recording studio", "New Orleans", "Mid City", "Donny Markowitz",
+    "recording studio", "New Orleans", "Mid City", "Donald Markowitz",
     "mixing", "mastering", "music production", "Hip Hop", "Jazz",
   ],
   metadataBase: new URL("https://midcitysound.com"), // ← swap to your real domain

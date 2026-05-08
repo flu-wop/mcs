@@ -14,8 +14,8 @@ import { Badge }          from "@/components/ui/badge"
 import { Separator }      from "@/components/ui/separator"
 
 export const metadata: Metadata = {
-  title:       "Legacy — Donny Markowitz",
-  description: "The five-decade musical journey of Donny Markowitz — from New York session rooms to Oscar nominations to founding Mid City Sound Studios in New Orleans.",
+  title:       "Legacy — Donald Markowitz",
+  description: "The career of Donald Markowitz — Academy Award-winning composer and producer, from New York session rooms to Hollywood to founding Mid City Sound Studios in New Orleans.",
 }
 
 /* ─── Timeline events ─────────────────────────────────────────────────────── */
@@ -25,7 +25,7 @@ const TIMELINE = [
     city:  "New York City",
     icon:  Music,
     title: "New York Session Era",
-    body:  "Donny Markowitz breaks into the New York session circuit, arranging strings and conducting for some of the most sought-after recording projects of the decade. His uncanny ability to bridge jazz sensibility with pop accessibility made him a studio secret weapon.",
+    body:  "Donald Markowitz breaks into the New York session circuit, arranging strings and conducting for some of the most sought-after recording projects of the decade. His uncanny ability to bridge jazz sensibility with pop accessibility made him a studio secret weapon.",
     tags:  ["Session Work", "Arrangements", "NYC"],
   },
   {
@@ -33,7 +33,7 @@ const TIMELINE = [
     city:  "Los Angeles, CA",
     icon:  Film,
     title: "Hollywood Calling",
-    body:  "Donny relocates to Los Angeles and begins scoring for film and television. His lush, orchestral sensibility catches the ear of major studios. He earns multiple credits on platinum soundtracks and begins building the Hollywood relationships that define his career.",
+    body:  "Donald relocates to Los Angeles and begins scoring for film and television. His lush, orchestral sensibility catches the ear of major studios. He earns his Academy Award for Best Original Song — \"(I've Had) The Time of My Life\" — and begins building the Hollywood relationships that define his career.",
     tags:  ["Film Scoring", "Hollywood", "Soundtracks"],
   },
   {
@@ -45,19 +45,19 @@ const TIMELINE = [
     tags:  ["Oscar®", "Nomination", "Original Song"],
   },
   {
-    year:  "2000s",
-    city:  "Los Angeles, CA",
+    year:  "1990s–2000s",
+    city:  "New Orleans & Los Angeles",
     icon:  Star,
-    title: "Platinum Decades",
-    body:  "Through the 2000s, Donny racks up production and co-writing credits on platinum-certified records spanning R&B, Hip Hop, and adult contemporary. Artists seek him out specifically for his ability to elevate a track from good to unforgettable.",
-    tags:  ["Production", "Platinum Records", "Hip Hop"],
+    title: "New Orleans Roots & Major Collaborations",
+    body:  "Donald deepens his New Orleans connections, producing records and collaborating with legends including Van Morrison, Taj Mahal, Art Neville, and Dr. John. He also receives a Grammy nomination for producing Bobby Rush's Decisions, featuring Dr. John — and goes on to produce some of Dr. John's final recordings.",
+    tags:  ["Grammy Nominated", "Van Morrison", "Taj Mahal", "Dr. John", "Art Neville"],
   },
   {
     year:  "2015",
     city:  "New Orleans, LA",
     icon:  MapPin,
     title: "New Orleans & Mid City Sound",
-    body:  "Drawn to New Orleans' unmatched musical DNA, Donny founds Mid City Sound Studios in the heart of Mid City. The studio becomes an immediate home for local legends, touring artists, and the next generation of creators — carrying four decades of craft into every session.",
+    body:  "Drawn to New Orleans' unmatched musical DNA, Donald founds Mid City Sound Studios in the heart of Mid City. The studio becomes an immediate home for local legends, touring artists, and the next generation of creators — carrying decades of award-winning craft into every session.",
     tags:  ["New Orleans", "Studio", "Mid City"],
   },
 ]
@@ -65,7 +65,7 @@ const TIMELINE = [
 /* ─── Gallery placeholder items ─────────────────────────────────────────────── */
 const GALLERY = [
   "At the board, 1992",
-  "Oscar night, 1993",
+  "Academy Award night, 1988",
   "Session in LA, 1998",
   "New York, 1988",
   "Mid City Sound grand opening",
@@ -90,7 +90,7 @@ export default function LegacyPage() {
                 <Image src="/images/logo/wave-moon.jpg" alt="" fill className="object-contain" sizes="100px" />
               </div>
               <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
-                Donny Markowitz<br />
+                Donald Markowitz<br />
                 <span className="text-[10px] text-mist/20 normal-case tracking-normal">Replace with portrait photo</span>
               </span>
             </div>
@@ -102,7 +102,7 @@ export default function LegacyPage() {
           {/* Bio intro */}
           <div className="space-y-6 order-1 md:order-2">
             <Badge variant="outline" className="text-[10px] tracking-widest uppercase">
-              The Legacy of Donny Markowitz
+              The Legacy of Donald Markowitz
             </Badge>
             <h1 className="font-display text-5xl md:text-6xl text-cream leading-tight">
               Five decades
@@ -112,7 +112,7 @@ export default function LegacyPage() {
             <Separator className="w-12 bg-gold/40" />
             <p className="text-mist text-sm leading-relaxed">
               From New York's golden session era to Hollywood's biggest stages — through
-              Oscar nominations and platinum records — Donny Markowitz has spent five
+              An Academy Award, a Grammy nomination, and collaborations with legends — Donald Markowitz has spent five
               decades shaping the sound of American music.
             </p>
             <p className="text-mist text-sm leading-relaxed">
@@ -123,9 +123,9 @@ export default function LegacyPage() {
             {/* Highlight stats */}
             <div className="grid grid-cols-3 gap-4 pt-2">
               {[
-                { val: "3×",   label: "Oscar® Nominations" },
-                { val: "40+",  label: "Years in Music" },
-                { val: "500+", label: "Credits" },
+                { val: "1",    label: "Academy Award\nWinner" },
+                { val: "40+",  label: "Years in\nMusic" },
+                { val: "500+", label: "Career\nCredits" },
               ].map(({ val, label }) => (
                 <div key={label} className="border border-studio-border rounded-sm p-3 text-center">
                   <p className="font-display text-2xl text-gold">{val}</p>
@@ -233,7 +233,7 @@ export default function LegacyPage() {
             &ldquo;Every session is a conversation between where music has been
             and where it needs to go.&rdquo;
           </p>
-          <p className="text-gold mt-6 text-sm">— Donny Markowitz</p>
+          <p className="text-gold mt-6 text-sm">— Donald Markowitz</p>
           <Separator className="w-8 bg-gold/30 mx-auto mt-8 mb-8" />
           <Button asChild>
             <Link href="/studio">
