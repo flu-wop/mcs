@@ -127,6 +127,25 @@ const MIXING_RATES = [
     desc:     "Full stem-based mix for maximum creative control. Ideal for complex productions.",
     includes: ["Unlimited tracks (stem groups)", "3 rounds of revisions", "Full stem + stereo delivery", "Delivery in 7–10 days"],
   },
+  {
+    id:           "mix-atmos",
+    label:        "Dolby Atmos Mix",
+    price:        85000,
+    regularPrice: 59500,
+    badge:        "New",
+    desc:         "Immersive spatial audio mix delivered in Dolby Atmos. Required for Apple Music Spatial Audio and premium streaming placements.",
+    includes:     ["Full Atmos + stereo deliverables", "Apple Music / Tidal spatial ready", "3 rounds of revisions", "Delivery in 7–10 days"],
+  },
+  {
+    id:           "mix-bundle",
+    label:        "Full Mix + Dolby Atmos Bundle",
+    price:        110000,
+    regularPrice: 77000,
+    badge:        "Best Deal",
+    desc:         "Complete stereo + spatial audio package. Everything your release needs in one session.",
+    includes:     ["Full Mix (up to 24 tracks)", "Dolby Atmos mix included", "Stereo + Atmos + stem delivery", "3 rounds of revisions", "Delivery in 10–14 days"],
+    popular:      true,
+  },
 ]
 
 const TIME_SLOTS = ["10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM"]
@@ -548,15 +567,15 @@ export default function StudioPage() {
       <section id="rates" className="py-20 px-6 bg-studio-charcoal border-b border-studio-border/40">
         <div className="mx-auto max-w-6xl">
 
-          {/* Discount banner */}
+          {/* Discount banner — code is word of mouth, just shows there IS a discount */}
           <div className="mb-12 border border-gold/30 bg-gold/5 rounded-sm p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
             <div className="flex items-start gap-3">
               <Tag className="w-5 h-5 text-gold shrink-0 mt-0.5" />
               <div>
-                <p className="text-cream font-medium text-sm">Regular client discount — 30% off all sessions</p>
+                <p className="text-cream font-medium text-sm">Regular client discounts available</p>
                 <p className="text-mist text-xs mt-0.5">
-                  Use code <code className="text-gold font-mono bg-gold/10 px-1.5 py-0.5 rounded text-[11px]">REGULAR30</code> at checkout.
-                  Available to returning clients and referrals.
+                  Returning clients and referrals receive 30% off all sessions.
+                  Enter your discount code at checkout — ask us how to qualify.
                 </p>
               </div>
             </div>
@@ -612,20 +631,61 @@ export default function StudioPage() {
               <Music2 className="w-4 h-4 text-gold/60" />
               <h2 className="font-display text-3xl text-cream">Mixing Services</h2>
             </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {MIXING_RATES.map(rate => (
+            {/* Grid: first 3 standard services, then Atmos + Bundle span full row */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              {MIXING_RATES.slice(0, 3).map(rate => (
                 <div key={rate.id} className={cn(
                   "relative border rounded-sm bg-studio-card p-6 transition-all",
-                  rate.popular
+                  "popular" in rate && rate.popular
                     ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]"
                     : "border-studio-border"
                 )}>
-                  {rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
-                  {rate.badge && !rate.popular && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
-
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
                   <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">Mixing</p>
                   <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
                   <p className="font-display text-3xl text-gold mb-4">{fmt(rate.price)}</p>
+                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
+                  <Separator className="mb-4" />
+                  <ul className="space-y-1.5">
+                    {rate.includes.map(inc => (
+                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />
+                        {inc}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            {/* Atmos + Bundle — wider cards, prominently featured */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              {MIXING_RATES.slice(3).map(rate => (
+                <div key={rate.id} className={cn(
+                  "relative border rounded-sm bg-studio-card p-6 transition-all",
+                  "popular" in rate && rate.popular
+                    ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]"
+                    : "border-studio-border"
+                )}>
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Best Deal</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">
+                    {"id" in rate && rate.id === "mix-atmos" ? "Spatial Audio" : "Bundle"}
+                  </p>
+                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
+                  {/* Price row with regular client discount callout */}
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <p className="font-display text-3xl text-gold">{fmt(rate.price)}</p>
+                    {"regularPrice" in rate && rate.regularPrice && (
+                      <div className="flex items-center gap-1.5">
+                        <Tag className="w-3 h-3 text-gold/50" />
+                        <span className="text-mist text-xs">
+                          <span className="text-gold/80 font-medium">{fmt(rate.regularPrice)}</span>
+                          {" "}with regular client discount
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
                   <Separator className="mb-4" />
                   <ul className="space-y-1.5">
@@ -1119,7 +1179,7 @@ export default function StudioPage() {
             <span className="text-gold-gradient italic">something timeless?</span>
           </h2>
           <p className="text-mist text-sm mb-8">
-            Use code <code className="text-gold font-mono bg-gold/10 px-1.5 py-0.5 rounded text-[11px]">REGULAR30</code> for 30% off as a returning client.
+            Returning clients and referrals receive 30% off. Enter your discount code at checkout.
           </p>
           <Button
             size="lg"
