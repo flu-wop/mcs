@@ -77,7 +77,7 @@ const PROJECTS = [
 
   /* ── 3. Time of My Life 40th ── */
   {
-    id:      "toml",
+    id:      "time-of-my-life",
     tag:     "Campaign",
     tagVariant: "outline" as const,
     icon:    Tv,

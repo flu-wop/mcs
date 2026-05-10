@@ -24,7 +24,7 @@ const FOOTER_LINKS = {
   Projects: [
     { label: "Streetbeats",          href: "/projects#streetbeats" },
     { label: "Lil Squiggle",         href: "https://lilsquiggle.vercel.app", external: true },
-    { label: "Time of My Life 40th", href: "/projects#toml" },
+    { label: "Time of My Life",       href: "/projects#time-of-my-life" },
     { label: "Street Beat",          href: "/projects#streetbeat" },
   ],
 };

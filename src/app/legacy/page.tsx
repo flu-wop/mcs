@@ -44,8 +44,8 @@ const TIMELINE = [
     city:  "Hollywood / Academy Awards",
     icon:  Award,
     title: "Academy Award — Best Original Song",
-    body:  "Donald co-writes \"(I've Had) The Time of My Life\" for the film Dirty Dancing. The song wins the Academy Award for Best Original Song — one of the most iconic film songs ever recorded. It also earns a Golden Globe Award and a Grammy Award, cementing Donald's place among the most celebrated songwriters of his generation.",
-    tags:  ["Academy Award", "Oscar®", "Golden Globe", "Grammy", "Dirty Dancing", "Time of My Life"],
+    body:  "Donald co-writes \"(I've Had) The Time of My Life\" for the film Dirty Dancing alongside Franke Previte and John DeNicola. The song wins the Academy Award for Best Original Song and the Golden Globe Award for Best Original Song — cementing Donald's place among the most celebrated songwriters of his generation. The song also won a Grammy Award for Best Pop Performance, awarded to performers Bill Medley and Jennifer Warnes.",
+    tags:  ["Academy Award", "Oscar®", "Golden Globe", "Dirty Dancing", "Time of My Life", "Co-Writer"],
   },
   {
     year:  "Post-Oscar",
@@ -147,8 +147,8 @@ export default function LegacyPage() {
               Donald Markowitz is a New York-born, New Orleans-based composer, producer, and
               songwriter. He is best known as the co-writer of{" "}
               <em>&ldquo;(I&apos;ve Had) The Time of My Life&rdquo;</em> from{" "}
-              <em>Dirty Dancing</em> — which won the Academy Award, Golden Globe, and Grammy
-              Award for Best Original Song.
+              <em>Dirty Dancing</em> — which won the Academy Award for Best Original Song
+              and the Golden Globe Award for Best Original Song.
             </p>
             <p className="text-mist text-sm leading-relaxed">
               A Grammy-nominated producer, Donald has collaborated with Van Morrison, Taj Mahal,
@@ -184,8 +184,7 @@ export default function LegacyPage() {
             {[
               "Academy Award — Best Original Song",
               "Golden Globe — Best Original Song",
-              "Grammy Award — Time of My Life",
-              "Grammy Nominated — Best Blues Album",
+              "Grammy Nominated — Best Blues Album (Bobby Rush · Decisions)",
               "Van Morrison",
               "Taj Mahal",
               "Dr. John",

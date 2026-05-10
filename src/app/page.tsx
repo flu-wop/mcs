@@ -47,7 +47,7 @@ const SERVICES = [
   {
     icon:  Headphones,
     title: "Mixing & Mastering",
-    body:  "Hollywood-grade mixing from the man who shaped platinum records. Your vision, refined to its fullest potential.",
+    body:  "Hollywood-grade mixing from an Academy Award-winning production team. Your vision, refined to its fullest potential.",
     href:  "/studio#services",
   },
   {
@@ -327,7 +327,7 @@ export default function HomePage() {
               },
               {
                 title:  "Lil Squiggle",
-                tag:    "Live",
+                tag:    "Coming Soon",
                 desc:   "#DontDrinkAndDialDecades — reggae-dub chibi Lego campaign.",
               },
               {
