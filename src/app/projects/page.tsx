@@ -3,7 +3,7 @@
 // PROJECTS PAGE  (route: /projects)
 //
 // Projects:
-//   1. Streetbeats        — new landing page (coming soon)
+
 //   2. Lil Squiggle       — links to lilsquiggle.vercel.app + merch
 //   3. Time of My Life 40th — Dirty Dancing 40th anniversary campaign
 //   4. Street Beat Documentary — Now Available
@@ -12,7 +12,7 @@
 import type { Metadata }  from "next"
 import Link               from "next/link"
 import {
-  Music, Headphones, ExternalLink,
+  Music, ExternalLink,
   ArrowRight, Mic2, ShoppingBag, Tv,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
@@ -21,36 +21,12 @@ import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title:       "Projects",
-  description: "Current and recent projects from Mid City Sound Studios — Streetbeats, Lil Squiggle, Street Beat documentary, and the Time of My Life anniversary campaign.",
+  description: "Current and active projects from Mid City Sound Studios — Lil Squiggle, the Time of My Life anniversary campaign, and the Street Beat documentary.",
 }
 
 /* ─── Project data ────────────────────────────────────────────────────────── */
 const PROJECTS = [
-  /* ── 1. Streetbeats ── */
-  {
-    id:      "streetbeats",
-    tag:     "Coming Soon",
-    tagVariant: "secondary" as const,
-    icon:    Headphones,
-    title:   "Streetbeats",
-    subtitle:"A New Orleans Beatmaking Platform",
-    color:   "from-[#1a1a0a] to-[#111]",
-    accent:  "#D4AF77",
-    body: [
-      "Streetbeats is the next creative frontier from Mid City Sound — a platform rooted in New Orleans street culture, designed for producers, beatmakers, and listeners who live and breathe the city's sonic identity.",
-      "Launching soon. Get on the list.",
-    ],
-    features: [
-      "Beat licensing & distribution",
-      "New Orleans producer spotlight",
-      "Sample packs rooted in NOLA culture",
-      "Collaboration tools",
-    ],
-    cta:      { label: "Get Notified", href: "/contact?ref=streetbeats" },
-    ctaAlt:   null,
-  },
-
-  /* ── 2. Lil Squiggle ── */
+  /* ── 1. Lil Squiggle ── */
   {
     id:      "lil-squiggle",
     tag:     "Coming Soon",
@@ -75,7 +51,7 @@ const PROJECTS = [
     handles: ["@lilsquigglemon (TikTok, YouTube, X)", "@lil.squiggle (Instagram)"],
   },
 
-  /* ── 3. Time of My Life 40th ── */
+  /* ── 2. Time of My Life — Anniversary ── */
   {
     id:      "time-of-my-life",
     tag:     "Campaign",
@@ -99,7 +75,7 @@ const PROJECTS = [
     ctaAlt: null,
   },
 
-  /* ── 4. Street Beat Documentary ── */
+  /* ── 3. Street Beat Documentary ── */
   {
     id:      "streetbeat",
     tag:     "Now Available",

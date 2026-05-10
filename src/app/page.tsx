@@ -321,11 +321,6 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                title:  "Streetbeats",
-                tag:    "Coming Soon",
-                desc:   "A new beatmaking platform rooted in New Orleans street culture.",
-              },
-              {
                 title:  "Lil Squiggle",
                 tag:    "Coming Soon",
                 desc:   "#DontDrinkAndDialDecades — reggae-dub chibi Lego campaign.",
