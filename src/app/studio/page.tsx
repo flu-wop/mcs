@@ -401,7 +401,7 @@ export default function StudioPage() {
       setDiscountError(null)
     } else {
       setDiscountApplied(null)
-      setDiscountError("Invalid code. Try REGULAR30 for 30% off.")
+      setDiscountError("Code not recognised. Reach out to us if you're a regular client.")
     }
   }
 
@@ -913,19 +913,19 @@ export default function StudioPage() {
 
                   {/* Discount code */}
                   <div className="space-y-2">
-                    <Label>Discount Code</Label>
+                    <Label>Discount Code (for regulars)</Label>
                     <div className="flex gap-2 max-w-sm">
                       <Input
                         value={discountCode}
                         onChange={e => { setDiscountCode(e.target.value); setDiscountError(null); setDiscountApplied(null) }}
-                        placeholder="e.g. REGULAR30"
+                        placeholder="Enter your regular client code"
                         className="font-mono uppercase"
                         onKeyDown={e => e.key === "Enter" && applyCode()}
                       />
                       <Button variant="outline" onClick={applyCode} className="shrink-0">Apply</Button>
                     </div>
                     {discountApplied !== null && (
-                      <p className="text-rasta-green text-xs flex items-center gap-1.5 mt-1" style={{ color: "#1D9E75" }}>
+                      <p className="text-xs flex items-center gap-1.5 mt-1" style={{ color: "#1D9E75" }}>
                         <Check className="w-3.5 h-3.5" />
                         {Math.round(discountApplied * 100)}% discount applied!
                       </p>
@@ -934,6 +934,11 @@ export default function StudioPage() {
                       <p className="text-red-400 text-xs flex items-center gap-1.5 mt-1">
                         <AlertCircle className="w-3.5 h-3.5" />
                         {discountError}
+                      </p>
+                    )}
+                    {!discountApplied && !discountError && (
+                      <p className="text-mist/50 text-[11px] mt-1.5">
+                        Regular clients receive 30% off. Reach out to us for your personal code.
                       </p>
                     )}
                   </div>

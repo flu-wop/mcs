@@ -25,7 +25,7 @@ const FOOTER_LINKS = {
     { label: "Streetbeats",          href: "/projects#streetbeats" },
     { label: "Lil Squiggle",         href: "https://lilsquiggle.vercel.app", external: true },
     { label: "Time of My Life 40th", href: "/projects#toml" },
-    { label: "Do It Again",          href: "/projects#do-it-again" },
+    { label: "Street Beat",          href: "/projects#streetbeat" },
   ],
 };
 
@@ -61,7 +61,7 @@ export function Footer() {
           </Link>
 
           <p className="text-mist text-sm leading-relaxed max-w-xs">
-            A New Orleans recording studio built on decades of Grammy-winning
+            A New Orleans recording studio built on decades of award-winning
             expertise. Where legacy meets craft.
           </p>
 
@@ -120,7 +120,7 @@ export function Footer() {
             © {new Date().getFullYear()} Mid City Sound Studios · New Orleans, LA
           </p>
           <p className="text-mist/40 text-xs">
-            A Donny Markowitz & Flu Production
+            A Mid City Sound Production
           </p>
         </div>
       </div>

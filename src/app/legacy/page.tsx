@@ -41,7 +41,7 @@ const TIMELINE = [
     city:  "Academy Awards",
     icon:  Award,
     title: "First Oscar Nomination",
-    body:  "Donny receives his first Academy Award nomination for Best Original Song. The ceremony is a milestone — his name appears among the industry's most celebrated composers. Two additional nominations follow in subsequent years.",
+    body:  "Donald receives the Academy Award for Best Original Song for \"(I've Had) The Time of My Life\" from the Dirty Dancing soundtrack. The song becomes one of the most iconic film songs in history and remains a defining moment of his career.",
     tags:  ["Oscar®", "Nomination", "Original Song"],
   },
   {
@@ -112,8 +112,7 @@ export default function LegacyPage() {
             <Separator className="w-12 bg-gold/40" />
             <p className="text-mist text-sm leading-relaxed">
               From New York's golden session era to Hollywood's biggest stages — through
-              An Academy Award, a Grammy nomination, and collaborations with legends — Donald Markowitz has spent five
-              decades shaping the sound of American music.
+              Academy Award winner, Grammy-nominated producer, and collaborator to legends — Donald Markowitz has spent five decades shaping the sound of American music.
             </p>
             <p className="text-mist text-sm leading-relaxed">
               Today he brings all of that to New Orleans, where Mid City Sound Studios
