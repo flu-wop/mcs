@@ -26,7 +26,31 @@ export const metadata: Metadata = {
 
 /* ─── Project data ────────────────────────────────────────────────────────── */
 const PROJECTS = [
-  /* ── 1. Lil Squiggle ── */
+  /* ── 1. Street Beat Documentary — first as requested ── */
+  {
+    id:      "streetbeat",
+    tag:     "Now Available",
+    tagVariant: "default" as const,
+    icon:    Mic2,
+    title:   "Street Beat",
+    subtitle:"Drumming Below Sea Level — Now Available",
+    color:   "from-[#0a0a1a] to-[#111]",
+    accent:  "#B5D4F4",
+    body: [
+      "A documentary film exploring the unique drum sound of New Orleans. Produced by Mid City Sound & Fire on the Bayou, hosted by Doug Belote.",
+      "53 minutes. Now available to watch online.",
+    ],
+    features: [
+      "53-minute documentary film",
+      "New Orleans drumming culture",
+      "Mid City Sound production",
+      "Available to stream now",
+    ],
+    cta:    { label: "Watch Now", href: "https://streetbeat.video", external: true },
+    ctaAlt: null,
+  },
+
+  /* ── 2. Lil Squiggle ── */
   {
     id:      "lil-squiggle",
     tag:     "Coming Soon",
@@ -51,7 +75,7 @@ const PROJECTS = [
     handles: ["@lilsquigglemon (TikTok, YouTube, X)", "@lil.squiggle (Instagram)"],
   },
 
-  /* ── 2. Time of My Life — Anniversary ── */
+  /* ── 3. Time of My Life — Anniversary ── */
   {
     id:      "time-of-my-life",
     tag:     "Campaign",
@@ -62,40 +86,16 @@ const PROJECTS = [
     color:   "from-[#1a0a0a] to-[#111]",
     accent:  "#D85A30",
     body: [
-      "The Academy Award-winning song \"(I've Had) The Time of My Life\" — produced by Donald Markowitz — remains one of the most iconic film songs ever recorded. This campaign brings that legacy back into the cultural conversation.",
+      "The Academy Award-winning song \"(I've Had) The Time of My Life\" — co-written by Donald Markowitz — remains one of the most iconic film songs ever recorded. This campaign brings that legacy back into the cultural conversation.",
       "Details and release timeline to be announced.",
     ],
     features: [
-      "40th anniversary campaign materials",
+      "Anniversary campaign materials",
       "Original recording stories",
       "Behind-the-scenes production story",
       "Anniversary edition content",
     ],
     cta:    { label: "Learn More", href: "/contact?ref=toml" },
-    ctaAlt: null,
-  },
-
-  /* ── 3. Street Beat Documentary ── */
-  {
-    id:      "streetbeat",
-    tag:     "Now Available",
-    tagVariant: "default" as const,
-    icon:    Mic2,
-    title:   "Street Beat",
-    subtitle:"Drumming Below Sea Level — Now Available",
-    color:   "from-[#0a0a1a] to-[#111]",
-    accent:  "#B5D4F4",
-    body: [
-      "A documentary film exploring the unique drum sound of New Orleans. Produced by Mid City Sound & Fire on the Bayou, hosted by Doug Belote.",
-      "53 minutes. Now available to watch online.",
-    ],
-    features: [
-      "53-minute documentary film",
-      "New Orleans drumming culture",
-      "Mid City Sound production",
-      "Available to stream now",
-    ],
-    cta:    { label: "Watch Now", href: "https://streetbeat.video", external: true },
     ctaAlt: null,
   },
 ]
