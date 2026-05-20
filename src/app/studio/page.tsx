@@ -862,7 +862,7 @@ export default function StudioPage() {
             <div><p className="text-[10px] tracking-widest uppercase text-gold/60 mb-2">Late Cancel</p><p className="text-cream text-sm font-medium mb-1">Under 48 hours</p><p className="text-mist text-xs leading-relaxed">50% studio credit toward your next session.</p></div>
             <div><p className="text-[10px] tracking-widest uppercase text-gold/60 mb-2">No Show</p><p className="text-cream text-sm font-medium mb-1">Day-of cancellation</p><p className="text-mist text-xs leading-relaxed">Non-refundable. Contact us to reschedule.</p></div>
           </div>
-          <p className="text-mist/40 text-[11px] text-center mt-4">Questions? Email us at midcitysound@gmail.com</p>
+          <p className="text-mist/40 text-[11px] text-center mt-4">Questions? Email us at midcitysound1@gmail.com</p>
         </div>
       </section>
 

@@ -1,11 +1,3 @@
-// src/components/layout/Navbar.tsx
-// ─────────────────────────────────────────────────────────────────────────────
-// LOGO USAGE IN NAVBAR:
-//   Desktop: primary.jpg  (crescent + waveform + "MID CITY SOUND") — horizontal lockup
-//   Mobile drawer: stacked-bridge.jpg (bridge + MCS + MID CITY SOUND) — stacked lockup
-//   Fallback text wordmark stays visible on tiny screens as backup
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client";
 
 import Link            from "next/link";
@@ -18,6 +10,7 @@ const NAV_LINKS = [
   { label: "Home",     href: "/" },
   { label: "Studio",   href: "/studio" },
   { label: "Legacy",   href: "/legacy" },
+  { label: "Groove",   href: "/groove" },
   { label: "Projects", href: "/projects" },
   { label: "Merch",    href: "/merch" },
   { label: "Contact",  href: "/contact" },
@@ -31,31 +24,22 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-studio-border/60 bg-studio-black/95 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-16">
 
-        {/* ── Logo: primary.jpg — crescent+waveform horizontal lockup ── */}
-        <Link
-          href="/"
-          className="flex items-center shrink-0 group"
-          onClick={() => setOpen(false)}
-        >
-          {/*
-            primary.jpg has a dark charcoal bg — blends into nav bg-studio-black/95.
-            Width/height ratio of primary.jpg is roughly 3.5:1 (wide landscape).
-            At h-9 (36px) the logo renders cleanly at desktop nav scale.
-          */}
-          <div className="relative h-9 w-[126px]">
+        {/* ── Logo: mcs2-logo.png — transparent RGBA moon/wave lockup ── */}
+        <Link href="/" className="flex items-center shrink-0 group" onClick={() => setOpen(false)}>
+          <div className="relative h-9 w-[140px]">
             <Image
-              src="/images/logo/primary.jpg"
+              src="/images/logo/mcs2-logo.png"
               alt="Mid City Sound Studios"
               fill
               className="object-contain object-left"
               priority
-              sizes="126px"
+              sizes="140px"
             />
           </div>
         </Link>
 
-        {/* ── Desktop Nav Links ── */}
-        <nav className="hidden md:flex items-center gap-7">
+        {/* ── Desktop Nav ── */}
+        <nav className="hidden md:flex items-center gap-6">
           {NAV_LINKS.map(({ label, href }) => {
             const isActive = pathname === href;
             return (
@@ -63,7 +47,7 @@ export function Navbar() {
                 key={href}
                 href={href}
                 className={[
-                  "relative text-[13px] font-sans font-medium tracking-wide transition-colors",
+                  "relative text-[12px] font-sans font-medium tracking-wide transition-colors duration-200",
                   "after:absolute after:bottom-[-3px] after:left-0 after:h-px after:bg-gold",
                   "after:transition-all after:duration-300",
                   isActive
@@ -77,7 +61,7 @@ export function Navbar() {
           })}
           <Link
             href="/studio"
-            className="ml-2 px-4 py-1.5 text-[11px] font-medium tracking-widest uppercase border border-gold text-gold hover:bg-gold hover:text-studio-black transition-all duration-200 rounded-sm"
+            className="ml-1 px-4 py-1.5 text-[11px] font-medium tracking-widest uppercase border border-gold text-gold hover:bg-gold hover:text-studio-black transition-all duration-200 rounded-sm"
           >
             Book Now
           </Link>
@@ -96,23 +80,18 @@ export function Navbar() {
       {/* ── Mobile Drawer ── */}
       {open && (
         <div className="md:hidden border-t border-studio-border bg-studio-black">
-          {/*
-            Mobile drawer uses stacked-bridge.jpg — the tall stacked lockup
-            with the bridge icon above MCS + MID CITY SOUND wordmark.
-            It fills nicely as a brand header inside the drawer.
-          */}
           <div className="px-6 pt-5 pb-4 border-b border-studio-border/40">
-            <div className="relative w-[200px] h-[100px]">
+            <div className="relative w-[220px] h-[72px]">
               <Image
-                src="/images/logo/stacked-bridge.jpg"
+                src="/images/logo/mcs2-logo.png"
                 alt="Mid City Sound Studios"
                 fill
                 className="object-contain object-left"
-                sizes="200px"
+                sizes="220px"
               />
             </div>
+            <p className="text-[10px] tracking-[0.2em] uppercase text-mist/50 mt-2">New Orleans, Louisiana</p>
           </div>
-
           <nav className="flex flex-col px-6 pb-5 gap-1 pt-2">
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href;

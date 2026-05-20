@@ -130,7 +130,7 @@ export default function HomePage() {
           >
             <div className="relative w-[300px] sm:w-[400px] md:w-[480px] h-[210px] sm:h-[280px] md:h-[336px]">
               <Image
-                src="/images/logo/stacked-bridge.jpg"
+                src="/images/logo/mcs3-logo.png"
                 alt="Mid City Sound Studios"
                 fill
                 className="object-contain"
@@ -254,7 +254,7 @@ export default function HomePage() {
           <div className="relative aspect-[4/5] bg-studio-dark border border-studio-border rounded-sm overflow-hidden">
             <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/30 gap-4 px-8">
               <div className="relative w-[120px] h-[74px] opacity-20">
-                <Image src="/images/logo/wave-moon.jpg" alt="" fill className="object-contain" sizes="120px" />
+                <Image src="/images/logo/mcs2-logo.png" alt="" fill className="object-contain" sizes="120px" />
               </div>
               <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
                 Donald Markowitz<br />
@@ -272,7 +272,7 @@ export default function HomePage() {
               The Legacy
             </Badge>
             <h2 className="font-display text-4xl md:text-5xl text-cream leading-tight">
-              Five decades of
+              40+ Years of
               <br />
               <em className="text-gold-gradient not-italic">timeless craft</em>
             </h2>

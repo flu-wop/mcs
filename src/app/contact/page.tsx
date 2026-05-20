@@ -58,7 +58,7 @@ export default function ContactPage() {
         const resend = new Resend(process.env.RESEND_API_KEY)
         await resend.emails.send({
           from: "noreply@midcitysound.com",
-          to:   "midcitysound@gmail.com",
+          to:   "midcitysound1@gmail.com",
           subject: `New inquiry: ${form.inquiry}`,
           html: `<p>From: ${form.name} (${form.email})</p><p>${form.message}</p>`,
         })
@@ -103,17 +103,17 @@ export default function ContactPage() {
                 {
                   icon: MapPin,
                   label: "Studio Location",
-                  value: "Mid City, New Orleans, Louisiana", // ← swap real address
+                  value: "530 S Norman C Francis Pkwy\nNew Orleans, Louisiana",
                 },
                 {
                   icon: Mail,
                   label: "General Inquiries",
-                  value: "midcitysound@gmail.com", // ← swap real email
+                  value: "midcitysound1@gmail.com", // ← swap real email
                 },
                 {
                   icon: Phone,
                   label: "Phone",
-                  value: "+1 (504) 000-0000", // ← swap real phone
+                  value: "+1 (504) 483-1553", // ← swap real phone
                 },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-start gap-3">

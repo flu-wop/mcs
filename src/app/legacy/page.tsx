@@ -119,7 +119,7 @@ export default function LegacyPage() {
           <div className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden order-2 md:order-1">
             <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/30 gap-4 px-8">
               <div className="relative w-[100px] h-[62px] opacity-20">
-                <Image src="/images/logo/wave-moon.jpg" alt="" fill className="object-contain" sizes="100px" />
+                <Image src="/images/logo/mcs2-logo.png" alt="" fill className="object-contain" sizes="100px" />
               </div>
               <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
                 Donald Markowitz<br />
@@ -136,7 +136,7 @@ export default function LegacyPage() {
               The Legacy of Donald Markowitz
             </Badge>
             <h1 className="font-display text-5xl md:text-6xl text-cream leading-tight">
-              Five decades
+              Four Decades
               <br />
               <span className="text-gold-gradient italic">of award-winning craft</span>
             </h1>
