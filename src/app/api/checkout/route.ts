@@ -8,7 +8,7 @@ import Stripe from 'stripe'
 import type { CartItem } from '@/lib/cart'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia',
+  apiVersion: '2026-04-22.dahlia',
 })
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.vercel.app'
