@@ -2,8 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Add your image domains here when using external images
-    remotePatterns: [],
+    remotePatterns: [
+      { hostname: "files.cdn.printful.com" },
+      { hostname: "developers.printful.com" },
+    ],
   },
 };
 

@@ -1,12 +1,12 @@
 // src/app/layout.tsx
 // Root layout — wraps every page with the nav, footer, and global styles.
-// Swap the metadata fields to match your real SEO info.
 
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar }  from "@/components/layout/Navbar";
-import { Footer }  from "@/components/layout/Footer";
-import { Toaster } from "@/components/ui/toaster";
+import { Navbar }   from "@/components/layout/Navbar";
+import { Footer }   from "@/components/layout/Footer";
+import { Toaster }  from "@/components/ui/toaster";
+import CartProvider from "@/components/merch/CartProvider";
 
 /* ─── SEO Metadata ──────────────────────────────────────────────────────────── */
 export const metadata: Metadata = {
@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     "recording studio", "New Orleans", "Mid City", "Donald Markowitz",
     "mixing", "mastering", "music production", "Hip Hop", "Jazz",
   ],
-  metadataBase: new URL("https://midcitysound.com"), // ← swap to your real domain
+  metadataBase: new URL("https://midcitysound.com"),
   icons: {
-    icon:    "/favicon.png",
-    apple:   "/favicon.png",
+    icon:  "/favicon.png",
+    apple: "/favicon.png",
   },
   openGraph: {
     type:        "website",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     description: "Timeless music. Modern studio. Built on legacy.",
     images: [
       {
-        url:    "/images/og-image.jpg", // ← swap with real OG image
+        url:    "/images/og-image.jpg",
         width:  1200,
         height: 630,
         alt:    "Mid City Sound Studios, New Orleans",
@@ -66,19 +66,14 @@ export default function RootLayout({
         If you move to next/font, remove the @import and configure here instead.
       */}
       <body className="bg-studio-black text-cream antialiased">
-        {/* Sticky top navigation bar */}
-        <Navbar />
-
-        {/* Page content — each page/layout fills this */}
-        <main className="min-h-screen">
-          {children}
-        </main>
-
-        {/* Site-wide footer */}
-        <Footer />
-
-        {/* Toast notification portal (for booking confirmations, etc.) */}
-        <Toaster />
+        <CartProvider>
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+          <Toaster />
+        </CartProvider>
       </body>
     </html>
   );
