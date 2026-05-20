@@ -213,7 +213,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
               onClick={() => void checkout()}
               disabled={isCheckingOut}
               className={[
-                'w-full py-3.5 text-[11px] tracking-[0.18em] uppercase font-['DM_Sans']',
+                'w-full py-3.5 text-[11px] tracking-[0.18em] uppercase font-[DM_Sans]',
                 'border border-[#D4AF77] text-[#D4AF77]',
                 'transition-all duration-200',
                 isCheckingOut
