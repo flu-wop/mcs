@@ -87,7 +87,7 @@ async function fulfillOrder(session: Stripe.Checkout.Session) {
   }
 
   // Build Printful recipient from Stripe shipping address
-  const shipping = session.shipping_details
+  const shipping = (session as any).shipping_details
   const customer = session.customer_details
 
   if (!shipping?.address || !customer) {
