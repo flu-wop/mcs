@@ -1,12 +1,10 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  turbopack: {},
   images: {
-    remotePatterns: [
-      { hostname: "files.cdn.printful.com" },
-      { hostname: "developers.printful.com" },
-    ],
+    formats: ["image/avif", "image/webp"],
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
