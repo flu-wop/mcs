@@ -1,12 +1,14 @@
-// src/app/groove/page.tsx — Groove of the Day
-// Drop an audio file at /public/audio/groove.mp3 to activate.
+// src/app/groove/page.tsx — Groove of the Week
+// Audio files:
+//   /public/audio/groove-preview.mp3  — 30-second clip (always plays free)
+//   /public/audio/groove-full.mp3     — full track (unlocked after purchase)
 
 import type { Metadata } from "next"
 import { GroovePlayer } from "@/components/ui/GroovePlayer"
 
 export const metadata: Metadata = {
-  title: "Groove of the Day | Mid City Sound Studios",
-  description: "A daily groove from the Mid City Sound Studios vault — produced by Donald Markowitz in New Orleans.",
+  title: "Groove of the Week | Mid City Sound Studios",
+  description: "A weekly groove from the Mid City Sound Studios vault — produced by Donald Markowitz in New Orleans. Stream the 30-second preview free, or download the full track for $0.99.",
 }
 
 export default function GroovePage() {

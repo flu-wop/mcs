@@ -17,10 +17,11 @@
 
 import { useState, useMemo, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Mic2, Headphones, Music2, Clock, DollarSign,
   ArrowLeft, ArrowRight, CheckCircle2, CreditCard,
-  Apple, Star, Shield, Tag, Calendar, ChevronLeft,
+  Apple, Shield, Tag, Calendar, ChevronLeft,
   ChevronRight, AlertCircle, Check, Guitar, Drum,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
@@ -98,12 +99,6 @@ const MIXING_RATES = [
 ]
 
 const TIME_SLOTS = ["10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM","6:00 PM"]
-
-const TESTIMONIALS = [
-  { quote: "Walking into Mid City Sound feels like stepping into music history. The sound is unmatched.", author: "Session artist, New Orleans" },
-  { quote: "The room has a sound. And the engineers here know exactly how to use it. Best studio experience in NOLA.", author: "Producer, Mid City" },
-  { quote: "We flew in from LA just to track here. Worth every mile.", author: "Recording artist" },
-]
 
 const LEGACY_CREDITS = ["Academy Award — Time of My Life", "Grammy Nominated", "Van Morrison", "Dr. John", "Art Neville", "Taj Mahal"]
 
@@ -238,6 +233,7 @@ function StepIndicator({ step }: { step: number }) {
 export default function StudioPage() {
   const [step,            setStep]            = useState(1)
   const [sessionType,     setSessionType]     = useState<"recording"|"mixing"|"both"|null>(null)
+  const [room,            setRoom]            = useState<"A"|"B"|null>(null)
   const [rateId,          setRateId]          = useState<string|null>(null)
   const [date,            setDate]            = useState<Date|null>(null)
   const [timeSlot,        setTimeSlot]        = useState<string|null>(null)
@@ -276,7 +272,7 @@ export default function StudioPage() {
   }
 
   const canProceed = useMemo(() => {
-    if (step===1) return sessionType!==null && rateId!==null
+    if (step===1) return sessionType!==null && rateId!==null && room!==null
     if (step===2) return date!==null && timeSlot!==null
     if (step===3) return form.name.trim()!=="" && form.email.trim()!==""
     return true
@@ -314,10 +310,18 @@ export default function StudioPage() {
       {/* 1. HERO                                                              */}
       {/* ════════════════════════════════════════════════════════════════════ */}
       <section className="relative py-24 px-6 overflow-hidden border-b border-studio-border/40">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#050505] via-[#0d0c0a] to-[#111008]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_30%,rgba(212,175,119,0.08),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_60%_at_15%_80%,rgba(212,175,119,0.04),transparent)]" />
-        <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E")` }} />
+        {/* B Room background photo */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/b-room.jpg"
+            alt="Mid City Sound — Studio B"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-studio-black/75" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_30%,rgba(212,175,119,0.06),transparent)]" />
+        </div>
 
         {/* Legacy credits strip */}
         <div className="absolute top-0 left-0 right-0 border-b border-studio-border/30 py-2 px-6 bg-studio-charcoal/60 backdrop-blur-sm">
@@ -326,40 +330,25 @@ export default function StudioPage() {
           </div>
         </div>
 
-        <div className="relative mx-auto max-w-6xl mt-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-px bg-gold/60" />
-                <span className="text-[11px] tracking-[0.25em] uppercase text-gold/80 font-sans">Mid City Sound Studios · New Orleans</span>
-              </div>
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-cream leading-[0.92] mb-5">
-                Book the<br /><span className="text-gold-gradient italic">Studio</span>
-              </h1>
-              <p className="text-mist text-base md:text-lg max-w-sm leading-relaxed mb-8 font-light">
-                New Orleans' premier recording experience. Award-winning production in the heart of Mid City.
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                {[
-                  { icon: Clock,        text: "Sessions from $100/hr" },
-                  { icon: Mic2,         text: "Studio A + Studio B" },
-                  { icon: CheckCircle2, text: "24-hr approval" },
-                ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="flex items-center gap-2 text-mist"><Icon className="w-4 h-4 text-gold/60" /><span className="text-xs">{text}</span></div>
-                ))}
-              </div>
-            </div>
-
-            {/* Studio photo placeholder */}
-            <div className="relative aspect-[4/3] border border-studio-border rounded-sm overflow-hidden bg-studio-dark hidden md:block">
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/20 gap-3">
-                <Mic2 className="w-16 h-16" />
-                <p className="text-xs tracking-widest uppercase">Studio Interior</p>
-                <p className="text-[10px] text-mist/15">Add photo: /public/images/studio-interior.jpg</p>
-              </div>
-              <div className="absolute top-4 left-4 w-8 h-8 border-t border-l border-gold/30" />
-              <div className="absolute bottom-4 right-4 w-8 h-8 border-b border-r border-gold/30" />
-            </div>
+        <div className="relative mx-auto max-w-4xl mt-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-px bg-gold/60" />
+            <span className="text-[11px] tracking-[0.25em] uppercase text-gold/80 font-sans">Mid City Sound Studios · New Orleans</span>
+          </div>
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-cream leading-[0.92] mb-5">
+            Book the<br /><span className="text-gold-gradient italic">Studio</span>
+          </h1>
+          <p className="text-mist text-base md:text-lg max-w-sm leading-relaxed mb-8 font-light">
+            New Orleans' premier recording experience. Award-winning production in the heart of Mid City.
+          </p>
+          <div className="flex flex-wrap gap-4 text-sm">
+            {[
+              { icon: Clock,        text: "Sessions from $100/hr" },
+              { icon: Mic2,         text: "Studio A + Studio B" },
+              { icon: CheckCircle2, text: "24-hr approval" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-2 text-mist"><Icon className="w-4 h-4 text-gold/60" /><span className="text-xs">{text}</span></div>
+            ))}
           </div>
         </div>
       </section>
@@ -594,6 +583,7 @@ export default function StudioPage() {
               <p className="text-gold text-sm font-medium">Payment confirmed · Pending studio approval</p>
               <div className="border border-studio-border rounded-sm p-6 max-w-sm mx-auto text-left space-y-2 text-sm">
                 <p><span className="text-mist">Session:</span> <span className="text-cream">{selectedRate?.label}</span></p>
+                <p><span className="text-mist">Room:</span> <span className="text-cream">Studio {room}</span></p>
                 <p><span className="text-mist">Date:</span> <span className="text-cream">{date?.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</span></p>
                 <p><span className="text-mist">Time:</span> <span className="text-cream">{timeSlot}</span></p>
                 <p><span className="text-mist">Total:</span> <span className="font-display text-lg text-gold">{fmt(finalPrice)}</span></p>
@@ -626,7 +616,7 @@ export default function StudioPage() {
                 <StepIndicator step={step} />
               </div>
 
-              {/* ── STEP 1: Session Type + Package ── */}
+              {/* ── STEP 1: Session Type + Room + Package ── */}
               {step===1 && (
                 <div className="space-y-8">
                   <div>
@@ -652,6 +642,34 @@ export default function StudioPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Room selection */}
+                  <div>
+                    <h3 className="font-display text-2xl text-cream mb-4">Which room?</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {([
+                        { id: "A" as const, label: "Studio A", sub: "Control / Vocal Room", desc: "Dedicated vocal booth, Neumann U87, UA Apollo, Donald's guitar collection." },
+                        { id: "B" as const, label: "Studio B", sub: "Live Room",            desc: "Full drum kit, upright piano, bass & guitar amps — all professionally miked." },
+                      ]).map(({ id, label, sub, desc }) => (
+                        <button key={id} onClick={() => setRoom(id)}
+                          className={cn("flex items-start gap-3 p-4 border rounded-sm text-left transition-all",
+                            room===id ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40"
+                          )}>
+                          <div className={cn("w-8 h-8 rounded-sm border flex items-center justify-center shrink-0 mt-0.5",
+                            room===id ? "border-gold bg-gold/10" : "border-studio-border"
+                          )}>
+                            {id==="A" ? <Mic2 className="w-4 h-4 text-gold/70" /> : <Drum className="w-4 h-4 text-gold/70" />}
+                          </div>
+                          <div>
+                            <p className="text-cream text-sm font-medium">{label}</p>
+                            <p className="text-gold/60 text-[10px] tracking-wide uppercase mb-1">{sub}</p>
+                            <p className="text-mist text-[11px] leading-relaxed">{desc}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {sessionType && (
                     <div>
                       <h3 className="font-display text-2xl text-cream mb-4">Choose a package</h3>
@@ -756,6 +774,7 @@ export default function StudioPage() {
                     </div>
                     <div className="p-6 space-y-3 text-sm">
                       <div className="flex justify-between"><span className="text-mist">Session</span><span className="text-cream">{selectedRate?.label}</span></div>
+                      <div className="flex justify-between"><span className="text-mist">Room</span><span className="text-cream">Studio {room}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Date</span><span className="text-cream">{date?.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Time</span><span className="text-cream">{timeSlot}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Client</span><span className="text-cream">{form.name}</span></div>
@@ -820,35 +839,6 @@ export default function StudioPage() {
               )}
             </>
           )}
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 5. TESTIMONIALS                                                      */}
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 px-6 border-b border-studio-border/40 bg-studio-black">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">The Studio's Work</Badge>
-            <h2 className="font-display text-3xl text-cream mb-6">Featured on</h2>
-            <div className="flex flex-wrap justify-center gap-4 mb-12">
-              {LEGACY_CREDITS.map(credit => (
-                <div key={credit} className="px-5 py-2.5 border border-studio-border bg-studio-card rounded-sm">
-                  <p className="text-cream text-sm font-sans">{credit}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <Separator className="mb-12" />
-          <div className="grid md:grid-cols-3 gap-5">
-            {TESTIMONIALS.map(({ quote, author }) => (
-              <div key={author} className="p-6 border border-studio-border bg-studio-card rounded-sm">
-                <div className="flex gap-0.5 mb-4">{[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-gold text-gold" />)}</div>
-                <p className="text-cream/80 text-sm italic leading-relaxed mb-4">&ldquo;{quote}&rdquo;</p>
-                <p className="text-mist text-xs">— {author}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

@@ -10,7 +10,7 @@
 
 import { useState }   from "react"
 import {
-  Mail, MapPin, Phone, CheckCircle2, Music,
+  Mail, MapPin, Phone, CheckCircle2,
   Instagram, Twitter, Youtube,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
@@ -18,6 +18,7 @@ import { Badge }     from "@/components/ui/badge"
 import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { Textarea }  from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
 
 /* ─── Inquiry types ────────────────────────────────────────────────────────── */
 const INQUIRY_TYPES = [
@@ -128,37 +129,46 @@ export default function ContactPage() {
               ))}
             </div>
 
-            {/* Social links */}
+            {/* Social icons */}
             <div className="space-y-3">
               <p className="text-[10px] uppercase tracking-widest text-mist">Socials</p>
-              {[
-                { icon: Instagram, label: "@midcitysound",    href: "https://instagram.com" },
-                { icon: Twitter,   label: "@midcitysound",    href: "https://twitter.com" },
-                { icon: Youtube,   label: "Mid City Sound",   href: "https://youtube.com" },
-              ].map(({ icon: Icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 text-mist hover:text-gold transition-colors group"
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm">{label}</span>
-                </a>
-              ))}
+              <div className="flex items-center gap-4">
+                {[
+                  { icon: Instagram, href: "https://instagram.com/midcitysound", label: "Instagram" },
+                  { icon: Twitter,   href: "https://twitter.com/midcitysound",   label: "X / Twitter" },
+                  { icon: Youtube,   href: "https://youtube.com",                label: "YouTube" },
+                ].map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="w-9 h-9 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold/40 transition-all"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
             </div>
 
-            {/* Lil Squiggle contact */}
-            <div className="border border-studio-border/60 rounded-sm p-4 space-y-2">
-              <div className="flex items-center gap-2">
-                <Music className="w-3.5 h-3.5 text-gold/60" />
-                <p className="text-[10px] uppercase tracking-widest text-mist">
-                  Lil Squiggle
-                </p>
-              </div>
-              <p className="text-cream text-sm">lilsquigglemon@gmail.com</p>
-              <p className="text-mist text-xs">For merch, collab, and campaign inquiries</p>
+            <Separator className="bg-studio-border/40" />
+
+            {/* Team */}
+            <div className="space-y-4">
+              <p className="text-[10px] uppercase tracking-widest text-mist">The Team</p>
+              {[
+                { name: "Donald Markowitz", role: "Founder" },
+                { name: "Flu",              role: "Studio Manager / Head of Production" },
+                { name: "Knox Ketchum",     role: "Sound Engineer" },
+                { name: "E.T. Deaux",       role: "Sound Engineer / Producer" },
+                { name: "Richie Mayfield",  role: "Studio Musician / Intern" },
+              ].map(({ name, role }) => (
+                <div key={name} className="flex flex-col">
+                  <p className="text-cream text-sm font-medium">{name}</p>
+                  <p className="text-mist text-[11px]">{role}</p>
+                </div>
+              ))}
             </div>
           </div>
 

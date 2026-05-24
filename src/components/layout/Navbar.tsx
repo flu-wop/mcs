@@ -1,7 +1,6 @@
 "use client";
 
 import Link            from "next/link";
-import Image           from "next/image";
 import { usePathname } from "next/navigation";
 import { useState }    from "react";
 import { Menu, X }     from "lucide-react";
@@ -24,18 +23,15 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-studio-border/60 bg-studio-black/95 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-6 flex items-center justify-between h-16">
 
-        {/* ── Logo: mcs2-logo.png — transparent RGBA moon/wave lockup ── */}
-        <Link href="/" className="flex items-center shrink-0 group" onClick={() => setOpen(false)}>
-          <div className="relative h-9 w-[140px]">
-            <Image
-              src="/images/logo/mcs2-logo.png"
-              alt="Mid City Sound Studios"
-              fill
-              className="object-contain object-left"
-              priority
-              sizes="140px"
-            />
-          </div>
+        {/* ── Logo: text only ── */}
+        <Link
+          href="/"
+          onClick={() => setOpen(false)}
+          className="shrink-0 group"
+        >
+          <span className="font-display text-2xl tracking-wide text-cream group-hover:text-gold transition-colors duration-200">
+            Mid City Sound
+          </span>
         </Link>
 
         {/* ── Desktop Nav ── */}
@@ -81,15 +77,7 @@ export function Navbar() {
       {open && (
         <div className="md:hidden border-t border-studio-border bg-studio-black">
           <div className="px-6 pt-5 pb-4 border-b border-studio-border/40">
-            <div className="relative w-[220px] h-[72px]">
-              <Image
-                src="/images/logo/mcs2-logo.png"
-                alt="Mid City Sound Studios"
-                fill
-                className="object-contain object-left"
-                sizes="220px"
-              />
-            </div>
+            <span className="font-display text-2xl text-cream">Mid City Sound</span>
             <p className="text-[10px] tracking-[0.2em] uppercase text-mist/50 mt-2">New Orleans, Louisiana</p>
           </div>
           <nav className="flex flex-col px-6 pb-5 gap-1 pt-2">

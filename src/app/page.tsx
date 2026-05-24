@@ -2,13 +2,13 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // HOME PAGE  (route: /)
 // Sections:
-//   1. Hero          — full-screen background + overlay text + CTAs
-//   2. Stats bar     — quick credibility numbers
-//   3. Services       — three-column teaser cards
-//   4. Legacy teaser — Donny intro + link to /legacy
-//   5. Projects teaser — grid preview
-//   6. Testimonials  — pull-quotes from artists
-//   7. CTA band      — final booking call-to-action
+//   1. Hero
+//   2. Stats bar
+//   3. Services
+//   4. Legacy teaser
+//   5. Projects teaser
+//   6. Gumbeaux Juice
+//   7. CTA band
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Metadata } from "next"
@@ -16,7 +16,7 @@ import Link              from "next/link"
 import Image             from "next/image"
 import {
   Mic2, Headphones, Award, Calendar,
-  ArrowRight, Star, ChevronDown,
+  ArrowRight, ChevronDown,
 } from "lucide-react"
 import { Button }     from "@/components/ui/button"
 import { Badge }      from "@/components/ui/badge"
@@ -28,15 +28,12 @@ export const metadata: Metadata = {
     "Mid City Sound Studios — a New Orleans recording studio built on decades of award-winning legacy. Book studio time, mixing, mastering, and more.",
 }
 
-/* ─── Stat items shown in the bar below the hero ── */
 const STATS = [
   { value: "40+",  label: "Years in Music" },
   { value: "1",    label: "Academy Award\nWinner" },
-  { value: "500+", label: "Sessions Recorded" },
   { value: "NOLA", label: "Mid City, New Orleans" },
 ]
 
-/* ─── Services teaser data ── */
 const SERVICES = [
   {
     icon:  Mic2,
@@ -58,58 +55,64 @@ const SERVICES = [
   },
 ]
 
-/* ─── Pull-quote testimonials ── */
-const TESTIMONIALS = [
+const PROJECT_CARDS = [
   {
-    quote:  "Walking into Mid City Sound feels like stepping into music history. The sound is unmatched.",
-    author: "— Session artist (placeholder)",
-    stars:  5,
+    title:    "Street Beat",
+    tag:      "Now Available",
+    desc:     "Drumming Below Sea Level — a documentary on the New Orleans percussion tradition.",
+    image:    "/images/streetbeat-poster.png",
+    href:     "https://streetbeat.video",
+    external: true,
+    contain:  false,
   },
   {
-    quote:  "The room has a sound. And the engineers here know exactly how to use it. Best studio experience I've had in New Orleans.",
-    author: "— Producer, New Orleans (placeholder)",
-    stars:  5,
+    title:    "Lil Squiggle",
+    tag:      "Coming Soon",
+    desc:     "#DontDrinkAndDialDecades — reggae-dub chibi Lego campaign.",
+    image:    "/images/lil-squiggle-character.png",
+    href:     "https://lilsquiggle.vercel.app",
+    external: true,
+    contain:  true,
   },
   {
-    quote:  "We flew in from LA just to track here. Worth every mile.",
-    author: "— Recording artist (placeholder)",
-    stars:  5,
+    title:    "Time of My Life — 40th",
+    tag:      "Campaign",
+    desc:     "Celebrating 40 years of the iconic Academy Award-winning song.",
+    image:    "/images/dirty-dancing-poster.jpg",
+    href:     "/projects#time-of-my-life",
+    external: false,
+    contain:  false,
   },
 ]
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+// 4 images: gumbeaux1.jpg, gumbeaux2.jpg, + 2 placeholders
+const GUMBEAUX_PHOTOS = [
+  { file: "gumbeaux1.jpg", alt: "Gumbeaux Juice at French Quarter Fest" },
+  { file: "gumbeaux2.jpg", alt: "Gumbeaux Juice stage" },
+  { file: null, alt: "Coming soon" },
+  { file: null, alt: "Coming soon" },
+]
+
 export default function HomePage() {
   return (
     <>
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* 1. HERO SECTION                                                    */}
+      {/* 1. HERO                                                            */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-
-        {/*
-          ── Hero background ──
-          Swap the gradient below with a real full-bleed studio photo:
-            <Image src="/images/hero-studio.jpg" fill objectFit="cover" priority alt="..." />
-          Then add a dark overlay div on top (z-10).
-          For now we use a rich dark gradient that reads beautifully.
-        */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#090909] via-[#111111] to-[#1a160d]" />
-
-        {/* Decorative gold glow — replace with photo after adding hero image */}
+        {/* Studio interior hero photo */}
+        <Image
+          src="/images/studio-interior.jpg"
+          alt="Mid City Sound Studios interior"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        {/* Dark overlay so text stays legible */}
+        <div className="absolute inset-0 bg-studio-black/70" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_80%,rgba(212,175,119,0.07),transparent)]" />
 
-        {/* Subtle noise grain overlay */}
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E\")",
-          }}
-        />
-
-        {/* ── Hero content ── */}
         <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-          {/* Eyebrow badge */}
           <div
             className="inline-flex items-center gap-2 px-3 py-1 border border-gold/30 rounded-sm mb-10"
             style={{ animation: "fade-up 0.6s ease-out 0.2s both" }}
@@ -120,10 +123,6 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* Full logo lockup — stacked-bridge.jpg (bridge + MCS + MID CITY SOUND)
-              This is the premium hero statement version.
-              Pure black bg matches the hero gradient perfectly.
-              Swap with transparent PNG for zero-edge version when ready. */}
           <div
             className="flex justify-center mb-6"
             style={{ animation: "fade-up 0.7s ease-out 0.3s both" }}
@@ -140,7 +139,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Tagline */}
           <p
             className="text-mist text-base sm:text-lg md:text-xl max-w-xl mx-auto mb-10 font-light leading-relaxed"
             style={{ animation: "fade-up 0.7s ease-out 0.5s both" }}
@@ -150,7 +148,6 @@ export default function HomePage() {
             <em className="not-italic text-cream/70">Built on legacy.</em>
           </p>
 
-          {/* CTA Buttons */}
           <div
             className="flex flex-col sm:flex-row gap-3 justify-center"
             style={{ animation: "fade-up 0.7s ease-out 0.65s both" }}
@@ -162,15 +159,10 @@ export default function HomePage() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/projects">
-                Explore Projects
-              </Link>
+              <Link href="/projects">Explore Projects</Link>
             </Button>
             <Button size="lg" variant="ghost" asChild>
-              <Link
-                href="/merch"
-                className="text-mist hover:text-cream"
-              >
+              <Link href="/merch" className="text-mist hover:text-cream">
                 Shop Merch
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -178,7 +170,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-mist/40 flex flex-col items-center gap-1 animate-bounce">
           <span className="text-[10px] tracking-widest uppercase">Scroll</span>
           <ChevronDown className="w-4 h-4" />
@@ -188,15 +179,15 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* 2. STATS BAR                                                       */}
       {/* ══════════════════════════════════════════════════════════════════ */}
-      <section className="border-y border-studio-border bg-studio-charcoal py-8">
-        <div className="mx-auto max-w-5xl px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section className="py-10 px-6 border-y border-studio-border bg-studio-charcoal">
+        <div className="mx-auto max-w-4xl">
+          <div className="grid grid-cols-3 divide-x divide-studio-border">
             {STATS.map(({ value, label }) => (
-              <div key={label} className="text-center">
-                <p className="font-display text-3xl md:text-4xl text-gold-gradient">
-                  {value}
+              <div key={label} className="px-6 text-center first:pl-0 last:pr-0">
+                <p className="font-display text-3xl text-gold mb-1">{value}</p>
+                <p className="text-mist text-[11px] uppercase tracking-widest whitespace-pre-line leading-tight">
+                  {label}
                 </p>
-                <p className="text-mist text-xs mt-1 tracking-wide uppercase">{label}</p>
               </div>
             ))}
           </div>
@@ -204,32 +195,24 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* 3. SERVICES TEASER                                                 */}
+      {/* 3. SERVICES                                                        */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       <section className="py-24 px-6">
         <div className="mx-auto max-w-6xl">
-          {/* Section heading */}
-          <div className="text-center mb-14">
-            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">
-              Studio Services
+          <div className="mb-12">
+            <Badge variant="outline" className="mb-3 text-[10px] tracking-widest uppercase">
+              What We Do
             </Badge>
-            <h2 className="font-display text-4xl md:text-5xl text-cream mb-4">
-              Everything your sound needs
-            </h2>
-            <p className="text-mist max-w-sm mx-auto text-sm">
-              From raw tracking to final master — a full creative home in the heart of New Orleans.
-            </p>
+            <h2 className="font-display text-4xl text-cream">Studio services</h2>
           </div>
-
-          {/* Service cards */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-5">
             {SERVICES.map(({ icon: Icon, title, body, href }) => (
               <Link
                 key={title}
                 href={href}
-                className="group block p-7 border border-studio-border bg-studio-card rounded-sm hover:border-gold/50 transition-all card-lift"
+                className="group p-7 border border-studio-border bg-studio-card rounded-sm hover:border-gold/40 transition-all card-lift block"
               >
-                <div className="w-10 h-10 border border-studio-border rounded-sm flex items-center justify-center mb-5 group-hover:border-gold/50 transition-colors">
+                <div className="w-10 h-10 border border-studio-border rounded-sm flex items-center justify-center mb-5 group-hover:border-gold/40 transition-colors">
                   <Icon className="w-5 h-5 text-gold/70 group-hover:text-gold transition-colors" />
                 </div>
                 <h3 className="font-display text-xl text-cream mb-2">{title}</h3>
@@ -245,28 +228,24 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* 4. LEGACY TEASER — Donny intro                                     */}
+      {/* 4. LEGACY TEASER                                                   */}
       {/* ══════════════════════════════════════════════════════════════════ */}
       <section className="py-24 px-6 bg-studio-charcoal border-y border-studio-border">
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-14 items-center">
 
-          {/* Photo placeholder — swap with Donny's real photo */}
+          {/* young-donny-guitar photo */}
           <div className="relative aspect-[4/5] bg-studio-dark border border-studio-border rounded-sm overflow-hidden">
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/30 gap-4 px-8">
-              <div className="relative w-[120px] h-[74px] opacity-20">
-                <Image src="/images/logo/mcs2-logo.png" alt="" fill className="object-contain" sizes="120px" />
-              </div>
-              <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
-                Donald Markowitz<br />
-                <span className="text-[10px] text-mist/20 normal-case tracking-normal">Replace with photo</span>
-              </span>
-            </div>
-            {/* Gold corner accent */}
+            <Image
+              src="/images/young-donny-guitar.jpg"
+              alt="Donald Markowitz — early years"
+              fill
+              className="object-cover object-top"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
             <div className="absolute top-4 left-4 w-8 h-8 border-t border-l border-gold/50" />
             <div className="absolute bottom-4 right-4 w-8 h-8 border-b border-r border-gold/50" />
           </div>
 
-          {/* Text content */}
           <div className="space-y-6">
             <Badge variant="outline" className="text-[10px] tracking-widest uppercase">
               The Legacy
@@ -317,38 +296,34 @@ export default function HomePage() {
             </Button>
           </div>
 
-          {/* Project cards — mirrors the full /projects page */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                title:  "Lil Squiggle",
-                tag:    "Coming Soon",
-                desc:   "#DontDrinkAndDialDecades — reggae-dub chibi Lego campaign.",
-              },
-              {
-                title:  "Time of My Life 40th",
-                tag:    "Campaign",
-                desc:   "Celebrating 40 years of the iconic Time of My Life soundtrack.",
-              },
-              {
-                title:  "New Orleans Sessions",
-                tag:    "Studio",
-                desc:   "An original Mid City Sound production — tracked live in the room.",
-              },
-            ].map(({ title, tag, desc }) => (
+          <div className="grid sm:grid-cols-3 gap-5">
+            {PROJECT_CARDS.map(({ title, tag, desc, image, href, external, contain }) => (
               <Link
                 key={title}
-                href="/projects"
-                className="group p-5 border border-studio-border bg-studio-card rounded-sm hover:border-gold/40 transition-all card-lift block"
+                href={href}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noopener noreferrer" : undefined}
+                className="group border border-studio-border bg-studio-card rounded-sm hover:border-gold/40 transition-all card-lift overflow-hidden block"
               >
-                <Badge
-                  variant={tag === "Live" ? "default" : "secondary"}
-                  className="mb-4 text-[10px]"
-                >
-                  {tag}
-                </Badge>
-                <h3 className="font-display text-lg text-cream mb-1.5">{title}</h3>
-                <p className="text-mist text-xs leading-relaxed">{desc}</p>
+                <div className={`relative aspect-[3/4] overflow-hidden ${contain ? "bg-transparent" : "bg-studio-dark"}`}>
+                  <Image
+                    src={image}
+                    alt={title}
+                    fill
+                    className={`transition-transform duration-700 group-hover:scale-105 ${contain ? "object-contain p-4" : "object-cover"}`}
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                  />
+                </div>
+                <div className="p-5">
+                  <Badge
+                    variant={tag === "Now Available" ? "default" : "secondary"}
+                    className="mb-3 text-[10px]"
+                  >
+                    {tag}
+                  </Badge>
+                  <h3 className="font-display text-lg text-cream mb-1.5">{title}</h3>
+                  <p className="text-mist text-xs leading-relaxed">{desc}</p>
+                </div>
               </Link>
             ))}
           </div>
@@ -356,31 +331,43 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════ */}
-      {/* 6. TESTIMONIALS                                                    */}
+      {/* 6. GUMBEAUX JUICE                                                  */}
       {/* ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 px-6 border-t border-studio-border bg-studio-charcoal">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center mb-12">
+      <section className="py-28 px-6 bg-studio-charcoal border-t border-studio-border">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14">
             <Badge variant="outline" className="mb-3 text-[10px] tracking-widest uppercase">
-              Artist Voices
+              French Quarter Fest
             </Badge>
-            <h2 className="font-display text-4xl text-cream">What artists say</h2>
+            <h2 className="font-display text-4xl text-cream">
+              Gumbeaux Juice
+            </h2>
+            <p className="text-mist text-sm mt-3 max-w-md leading-relaxed">
+              Our annual stage at French Quarter Festival — where New Orleans comes alive every spring.
+            </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map(({ quote, author, stars }) => (
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {GUMBEAUX_PHOTOS.map(({ file, alt }, i) => (
               <div
-                key={author}
-                className="p-6 border border-studio-border bg-studio-card rounded-sm"
+                key={i}
+                className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden group"
               >
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: stars }).map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-gold text-gold" />
-                  ))}
-                </div>
-                <p className="text-cream/80 text-sm italic leading-relaxed mb-4">
-                  &ldquo;{quote}&rdquo;
-                </p>
-                <p className="text-mist text-xs">{author}</p>
+                {file ? (
+                  <Image
+                    src={`/images/${file}`}
+                    alt={alt}
+                    fill
+                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-[10px] tracking-widest uppercase text-mist/30">
+                      Coming Soon
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -390,7 +377,7 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════════════════════════ */}
       {/* 7. FINAL CTA BAND                                                  */}
       {/* ══════════════════════════════════════════════════════════════════ */}
-      <section className="py-24 px-6 relative overflow-hidden">
+      <section className="py-24 px-6 relative overflow-hidden border-t border-studio-border">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(212,175,119,0.06),transparent)]" />
         <div className="relative mx-auto max-w-2xl text-center">
           <h2 className="font-display text-5xl md:text-6xl text-cream mb-5">

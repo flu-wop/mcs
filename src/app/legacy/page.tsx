@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "The career of Donald Markowitz — Academy Award-winning co-writer of '(I've Had) The Time of My Life' from Dirty Dancing, Grammy-nominated producer, and founder of Mid City Sound Studios in New Orleans.",
 }
 
-/* ─── Verified timeline — all facts sourced from IMDB + donaldmarkowitz.com ── */
+/* ─── Verified timeline ── */
 const TIMELINE = [
   {
     year:  "New York",
@@ -45,7 +45,7 @@ const TIMELINE = [
     icon:  Award,
     title: "Academy Award — Best Original Song",
     body:  "Donald co-writes \"(I've Had) The Time of My Life\" for the film Dirty Dancing alongside Franke Previte and John DeNicola. The song wins the Academy Award for Best Original Song and the Golden Globe Award for Best Original Song — cementing Donald's place among the most celebrated songwriters of his generation. The song also won a Grammy Award for Best Pop Performance, awarded to performers Bill Medley and Jennifer Warnes.",
-    tags:  ["Academy Award", "Oscar®", "Golden Globe", "Dirty Dancing", "Time of My Life", "Co-Writer"],
+    tags:  ["Academy Award", "Oscar", "Golden Globe", "Dirty Dancing", "Time of My Life", "Co-Writer"],
   },
   {
     year:  "Post-Oscar",
@@ -94,14 +94,14 @@ const TIMELINE = [
   },
 ]
 
-/* ─── Gallery captions ────────────────────────────────────────────────────── */
+/* ─── Photo archive — real images ── */
 const GALLERY = [
-  "Performing in New York",
-  "Oscar night — Academy Awards",
-  "Recording session, Los Angeles",
-  "At the board, New Orleans",
-  "Mid City Sound Studios",
-  "With artists, New Orleans",
+  { file: "dr-john-bobby-rush.jpg",   alt: "Dr. John and Bobby Rush" },
+  { file: "art-neville.jpg",          alt: "Art Neville" },
+  { file: "img_5376.jpg",             alt: "Donald Markowitz" },
+  { file: "middle-finger.jpg",        alt: "On stage" },
+  { file: "misha-brass-bands.JPG",    alt: "Misha brass bands" },
+  { file: "donny-carol.jpg",          alt: "Donny and Carol" },
 ]
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -115,17 +115,15 @@ export default function LegacyPage() {
 
         <div className="relative mx-auto max-w-5xl grid md:grid-cols-2 gap-14 items-center">
 
-          {/* Photo placeholder */}
+          {/* young-donny-guitar photo */}
           <div className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden order-2 md:order-1">
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/30 gap-4 px-8">
-              <div className="relative w-[100px] h-[62px] opacity-20">
-                <Image src="/images/logo/mcs2-logo.png" alt="" fill className="object-contain" sizes="100px" />
-              </div>
-              <span className="text-xs tracking-widest uppercase text-center leading-relaxed">
-                Donald Markowitz<br />
-                <span className="text-[10px] text-mist/20 normal-case tracking-normal">Replace with portrait photo</span>
-              </span>
-            </div>
+            <Image
+              src="/images/young-donny-guitar.jpg"
+              alt="Donald Markowitz — early years"
+              fill
+              className="object-cover object-top"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
             <div className="absolute top-4 left-4 w-10 h-10 border-t-2 border-l-2 border-gold/40" />
             <div className="absolute bottom-4 right-4 w-10 h-10 border-b-2 border-r-2 border-gold/40" />
           </div>
@@ -142,7 +140,6 @@ export default function LegacyPage() {
             </h1>
             <Separator className="w-12 bg-gold/40" />
 
-            {/* Accurate bio — sourced from IMDB and donaldmarkowitz.com */}
             <p className="text-mist text-sm leading-relaxed">
               Donald Markowitz is a New York-born, New Orleans-based composer, producer, and
               songwriter. He is best known as the co-writer of{" "}
@@ -160,7 +157,7 @@ export default function LegacyPage() {
             {/* Verified highlight stats */}
             <div className="grid grid-cols-3 gap-4 pt-2">
               {[
-                { val: "Oscar®",  label: "Academy Award\nWinner" },
+                { val: "Oscar",   label: "Academy Award\nWinner" },
                 { val: "Grammy",  label: "Nominated\nProducer" },
                 { val: "40+",     label: "Years in\nMusic" },
               ].map(({ val, label }) => (
@@ -261,7 +258,7 @@ export default function LegacyPage() {
         </div>
       </section>
 
-      {/* ── Photo gallery ── */}
+      {/* ── Photo archive ── */}
       <section className="py-24 px-6 bg-studio-charcoal border-t border-studio-border">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
@@ -269,27 +266,21 @@ export default function LegacyPage() {
               Photo Archive
             </Badge>
             <h2 className="font-display text-4xl text-cream">Through the decades</h2>
-            <p className="text-mist text-xs mt-2">
-              Replace placeholders with real photos in{" "}
-              <code className="text-gold/70">public/images/</code>
-            </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {GALLERY.map((caption, i) => (
+            {GALLERY.map(({ file, alt }) => (
               <div
-                key={i}
+                key={file}
                 className="relative aspect-square bg-studio-dark border border-studio-border rounded-sm overflow-hidden group"
               >
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-mist/20 gap-2 p-4 text-center">
-                  <Music className="w-8 h-8" />
-                  <span className="text-[10px] leading-snug">{caption}</span>
-                </div>
-                <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/5 transition-colors flex items-end">
-                  <p className="w-full text-[11px] text-mist/70 p-3 bg-studio-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {caption}
-                  </p>
-                </div>
+                <Image
+                  src={`/images/${file}`}
+                  alt={alt}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 640px) 50vw, 33vw"
+                />
               </div>
             ))}
           </div>

@@ -11,6 +11,7 @@
 
 import type { Metadata }  from "next"
 import Link               from "next/link"
+import Image              from "next/image"
 import {
   Music, ExternalLink,
   ArrowRight, Mic2, ShoppingBag, Tv,
@@ -36,6 +37,7 @@ const PROJECTS = [
     subtitle:"Drumming Below Sea Level — Now Available",
     color:   "from-[#0a0a1a] to-[#111]",
     accent:  "#B5D4F4",
+    image:   "/images/streetbeat-poster.png",
     body: [
       "A documentary film exploring the unique drum sound of New Orleans. Produced by Mid City Sound & Fire on the Bayou, hosted by Doug Belote.",
       "53 minutes. Now available to watch online.",
@@ -60,6 +62,7 @@ const PROJECTS = [
     subtitle:"#DontDrinkAndDialDecades",
     color:   "from-[#0a1a10] to-[#111]",
     accent:  "#1D9E75",
+    image:   "/images/lil-squiggle-character.png",
     body: [
       "#DontDrinkAndDialDecades is a reggae-dub chibi Lego creative campaign centered on the character Lil Squiggle — one call, every era, same regret.",
       "The campaign spans music, merch, TikTok, and beyond. Original track by Pat Smith, produced at Mid City Sound Studios.",
@@ -85,6 +88,7 @@ const PROJECTS = [
     subtitle:"Celebrating an Academy Award-Winning Song",
     color:   "from-[#1a0a0a] to-[#111]",
     accent:  "#D85A30",
+    image:   "/images/dirty-dancing-poster.jpg",
     body: [
       "The Academy Award-winning song \"(I've Had) The Time of My Life\" — co-written by Donald Markowitz — remains one of the most iconic film songs ever recorded. This campaign brings that legacy back into the cultural conversation.",
       "Details and release timeline to be announced.",
@@ -106,20 +110,38 @@ export default function ProjectsPage() {
     <div className="pt-16 min-h-screen bg-studio-black">
 
       {/* ── Page header ── */}
-      <section className="py-20 px-6 bg-studio-charcoal border-b border-studio-border">
-        <div className="mx-auto max-w-5xl">
-          <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">
-            Active Projects
-          </Badge>
-          <h1 className="font-display text-5xl md:text-6xl text-cream mb-4">
-            What we're
-            <br />
-            <span className="text-gold-gradient italic">building</span>
-          </h1>
-          <p className="text-mist text-sm max-w-md leading-relaxed">
-            From street-level campaigns to Hollywood anniversary projects — Mid City Sound
-            is always creating. Here's what's in the works.
-          </p>
+      <section className="py-20 px-6 bg-studio-charcoal border-b border-studio-border overflow-hidden">
+        <div className="mx-auto max-w-5xl grid md:grid-cols-2 gap-0 items-center">
+
+          {/* Left: text */}
+          <div className="relative z-10 py-4">
+            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">
+              Active Projects
+            </Badge>
+            <h1 className="font-display text-5xl md:text-6xl text-cream mb-4">
+              What we're
+              <br />
+              <span className="text-gold-gradient italic">building</span>
+            </h1>
+            <p className="text-mist text-sm max-w-md leading-relaxed">
+              From street-level campaigns to Hollywood anniversary projects — Mid City Sound
+              is always creating. Here's what's in the works.
+            </p>
+          </div>
+
+          {/* Right: Donny photo fading left toward awards */}
+          <div className="relative h-[340px] hidden md:block">
+            <Image
+              src="/images/donny-hero.jpg"
+              alt="Donald Markowitz"
+              fill
+              className="object-cover object-center"
+              sizes="50vw"
+              priority
+            />
+            {/* Fade from left (awards side) to transparent on the right */}
+            <div className="absolute inset-0 bg-gradient-to-r from-studio-charcoal via-studio-charcoal/40 to-transparent" />
+          </div>
         </div>
       </section>
 
@@ -128,7 +150,7 @@ export default function ProjectsPage() {
         <div className="mx-auto max-w-5xl space-y-10">
           {PROJECTS.map(({
             id, tag, tagVariant, icon: Icon, title, subtitle,
-            color, accent, body, features, cta, ctaAlt,
+            color, accent, image, body, features, cta, ctaAlt,
             handles,
           }) => (
             <div
@@ -136,9 +158,20 @@ export default function ProjectsPage() {
               id={id}
               className={`rounded-sm border border-studio-border overflow-hidden bg-gradient-to-br ${color}`}
             >
-              <div className="p-8 md:p-10 grid md:grid-cols-[1fr_280px] gap-8">
+              <div className="p-8 md:p-10 grid md:grid-cols-[220px_1fr] gap-8 items-start">
 
-                {/* ── Left: content ── */}
+                {/* ── Left: poster image ── */}
+                <div className="relative aspect-[2/3] rounded-sm overflow-hidden border self-start hidden md:block" style={{ borderColor: `${accent}25` }}>
+                  <Image
+                    src={image}
+                    alt={title}
+                    fill
+                    className={id === "lil-squiggle" ? "object-contain p-2" : "object-cover object-top"}
+                    sizes="220px"
+                  />
+                </div>
+
+                {/* ── Right: content ── */}
                 <div className="space-y-5">
                   <div className="flex items-center gap-3 flex-wrap">
                     <Badge variant={tagVariant} className="text-[10px] tracking-wider">
@@ -165,7 +198,6 @@ export default function ProjectsPage() {
                     <p key={i} className="text-mist text-sm leading-relaxed">{para}</p>
                   ))}
 
-                  {/* Social handles for Lil Squiggle */}
                   {handles && (
                     <div className="space-y-1">
                       {handles.map((h) => (
@@ -176,7 +208,6 @@ export default function ProjectsPage() {
                     </div>
                   )}
 
-                  {/* CTAs */}
                   <div className="flex gap-3 flex-wrap pt-2">
                     <Button
                       variant="outline"
@@ -209,27 +240,6 @@ export default function ProjectsPage() {
                       </Button>
                     )}
                   </div>
-                </div>
-
-                {/* ── Right: features list ── */}
-                <div className="border border-studio-border/60 rounded-sm p-5 space-y-3 self-start">
-                  <p
-                    className="text-[10px] tracking-[0.15em] uppercase font-medium"
-                    style={{ color: `${accent}80` }}
-                  >
-                    Highlights
-                  </p>
-                  <ul className="space-y-2.5">
-                    {features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-xs text-mist">
-                        <div
-                          className="w-1.5 h-1.5 rounded-full mt-1 shrink-0"
-                          style={{ backgroundColor: `${accent}70` }}
-                        />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
             </div>

@@ -1,92 +1,172 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
-import { Play, Pause, Volume2, VolumeX, Music } from "lucide-react"
+// src/components/ui/GroovePlayer.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Groove of the Week player
+//   • Free: 30-second preview (groove-preview.mp3)
+//   • $0.99: download full track (groove-full.mp3) via Stripe
+//
+// To activate:
+//   1. Drop /public/audio/groove-preview.mp3  (30s clip)
+//   2. Drop /public/audio/groove-full.mp3     (full track)
+//   3. Wire up /app/api/groove-checkout/route.ts (Stripe, $0.99)
+// ─────────────────────────────────────────────────────────────────────────────
 
-const GROOVE_TRACK = "/audio/groove.mp3"
-const GROOVE_MONTH = new Date().toLocaleString("en-US", { month: "long", year: "numeric" }).toUpperCase()
+import { useRef, useState, useEffect } from "react"
+import {
+  Play, Pause, Download, Lock,
+  ShieldCheck, CreditCard, Music2,
+} from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 export function GroovePlayer() {
-  const audioRef              = useRef<HTMLAudioElement | null>(null)
+  const audioRef              = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
-  const [muted,   setMuted]   = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [duration, setDuration] = useState(0)
+  const [current, setCurrent] = useState(0)
+  const [loading, setLoading] = useState(false)
 
+  // Sync time display
   useEffect(() => {
-    const audio = new Audio(GROOVE_TRACK)
-    audio.preload = "metadata"
-    audioRef.current = audio
-    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration))
-    audio.addEventListener("ended", () => { setPlaying(false); setProgress(0) })
-    audio.addEventListener("timeupdate", () => setProgress(audio.currentTime))
-    return () => { audio.pause(); audio.src = "" }
+    const el = audioRef.current
+    if (!el) return
+    const tick = () => setCurrent(el.currentTime)
+    el.addEventListener("timeupdate", tick)
+    el.addEventListener("ended", () => { setPlaying(false); setCurrent(0) })
+    return () => { el.removeEventListener("timeupdate", tick) }
   }, [])
 
   function togglePlay() {
-    const a = audioRef.current; if (!a) return
-    if (a.paused) { a.play(); setPlaying(true) }
-    else          { a.pause(); setPlaying(false) }
+    const el = audioRef.current
+    if (!el) return
+    if (playing) { el.pause(); setPlaying(false) }
+    else         { el.play();  setPlaying(true)  }
   }
-  function toggleMute() {
-    const a = audioRef.current; if (!a) return
-    a.muted = !a.muted; setMuted(a.muted)
-  }
-  function seek(e: React.ChangeEvent<HTMLInputElement>) {
-    const a = audioRef.current; if (!a) return
-    a.currentTime = Number(e.target.value); setProgress(Number(e.target.value))
-  }
+
   function fmt(s: number) {
-    if (!s || isNaN(s)) return "0:00"
-    return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,"0")}`
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    return `${m}:${sec.toString().padStart(2, "0")}`
+  }
+
+  const PREVIEW_DURATION = 30
+  const progress = Math.min((current / PREVIEW_DURATION) * 100, 100)
+
+  async function handlePurchase() {
+    setLoading(true)
+    // ── STRIPE: wire up when ready ────────────────────────────────────────
+    // const res = await fetch("/api/groove-checkout", { method: "POST" })
+    // const { url } = await res.json()
+    // window.location.href = url
+    // ─────────────────────────────────────────────────────────────────────
+    setLoading(false)
+    alert("Stripe checkout coming soon — $0.99 download not yet enabled.")
   }
 
   return (
-    <div className="w-full max-w-lg border border-gold/25 rounded-sm overflow-hidden" style={{ boxShadow: "0 0 60px rgba(212,175,119,0.08)" }}>
+    <div className="w-full max-w-md space-y-6">
 
       {/* Header */}
-      <div className="bg-studio-charcoal px-8 pt-10 pb-8 flex flex-col items-center gap-4 border-b border-studio-border/40">
-        <div className="w-20 h-20 border border-gold/30 rounded-full flex items-center justify-center bg-studio-black/60">
-          <Music className="w-8 h-8 text-gold/50" />
-        </div>
-        <div className="text-center">
-          <p className="font-display text-2xl text-cream">Groove of the Day</p>
-          <p className="text-mist text-sm mt-1">Donald Markowitz</p>
-          <p className="text-mist/40 italic text-xs mt-1">From the Mid City Sound Studios vault.</p>
-          <p className="text-gold/50 text-[10px] tracking-widest uppercase mt-3">{GROOVE_MONTH}</p>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="p-6 bg-studio-dark space-y-5">
-        <div className="flex items-center gap-3 text-xs text-mist/50">
-          <span className="w-8 text-right">{fmt(progress)}</span>
-          <input
-            type="range" min={0} max={duration || 100} value={progress}
-            onChange={seek}
-            className="flex-1 accent-gold h-1 cursor-pointer"
-          />
-          <span className="w-8">{fmt(duration)}</span>
-        </div>
-        <div className="flex items-center justify-center gap-6">
-          <button onClick={toggleMute} className="text-mist hover:text-gold transition-colors">
-            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-          <button
-            onClick={togglePlay}
-            className="w-16 h-16 bg-gold text-studio-black rounded-full flex items-center justify-center hover:bg-gold/90 active:scale-95 transition-all duration-200"
-          >
-            {playing ? <Pause className="w-7 h-7" /> : <Play className="w-7 h-7 ml-0.5" />}
-          </button>
-          <div className="w-5" />
-        </div>
-      </div>
-
-      <div className="px-6 py-4 border-t border-studio-border/30 bg-studio-black text-center">
-        <p className="text-mist/30 text-[10px]">
-          To update: swap the file in <code className="text-gold/40">/public/audio/groove.mp3</code>
+      <div className="text-center space-y-2">
+        <Badge variant="outline" className="text-[10px] tracking-widest uppercase">
+          Groove of the Week
+        </Badge>
+        <h1 className="font-display text-4xl text-cream">
+          This Week's Groove
+        </h1>
+        <p className="text-mist text-xs">
+          Mid City Sound Studios · New Orleans
         </p>
       </div>
+
+      {/* Player card */}
+      <div
+        className="border border-studio-border rounded-sm overflow-hidden"
+        style={{ boxShadow: "0 0 40px rgba(212,175,119,0.05)" }}
+      >
+        {/* Waveform / visual */}
+        <div className="bg-studio-dark px-6 py-8 flex flex-col items-center gap-4 border-b border-studio-border">
+          <div
+            className={`w-20 h-20 rounded-full border-2 flex items-center justify-center transition-all duration-300 cursor-pointer ${
+              playing
+                ? "border-gold bg-gold/10 scale-105"
+                : "border-studio-border hover:border-gold/60 bg-studio-black"
+            }`}
+            onClick={togglePlay}
+          >
+            {playing
+              ? <Pause className="w-8 h-8 text-gold" />
+              : <Play  className="w-8 h-8 text-gold ml-1" />
+            }
+          </div>
+
+          {/* Progress bar */}
+          <div className="w-full space-y-1.5">
+            <div className="h-1 bg-studio-border rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gold transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-mist/50">
+              <span>{fmt(current)}</span>
+              <span className="flex items-center gap-1">
+                <Music2 className="w-3 h-3" />
+                30s preview
+              </span>
+              <span>{fmt(PREVIEW_DURATION)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Paywall */}
+        <div className="p-6 space-y-5 bg-studio-card">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 border border-gold/30 rounded-sm flex items-center justify-center shrink-0">
+              <Lock className="w-4 h-4 text-gold/60" />
+            </div>
+            <div>
+              <p className="text-cream text-sm font-medium">Download the Full Track</p>
+              <p className="text-mist text-xs mt-0.5">
+                High-quality MP3 — yours to keep forever.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handlePurchase}
+            disabled={loading}
+            className="w-full h-12 bg-gold text-studio-black text-[13px] font-bold tracking-widest uppercase rounded-sm hover:bg-gold-light transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 active:scale-[0.98]"
+          >
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-studio-black/30 border-t-studio-black rounded-full animate-spin" />
+                Processing…
+              </span>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                Download for $0.99
+              </>
+            )}
+          </button>
+
+          <div className="flex justify-center gap-5 text-mist/40 text-[11px]">
+            {[
+              { icon: ShieldCheck, text: "Secure" },
+              { icon: CreditCard,  text: "Stripe" },
+              { icon: Download,    text: "Instant download" },
+            ].map(({ icon: Icon, text }) => (
+              <div key={text} className="flex items-center gap-1">
+                <Icon className="w-3 h-3" />{text}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden audio element — preview only */}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio ref={audioRef} src="/audio/groove-preview.mp3" preload="metadata" />
     </div>
   )
 }
