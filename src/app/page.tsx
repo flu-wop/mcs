@@ -16,7 +16,7 @@ import Link              from "next/link"
 import Image             from "next/image"
 import {
   Mic2, Headphones, Award, Calendar,
-  ArrowRight, ChevronDown,
+  ArrowRight, ChevronDown, ExternalLink,
 } from "lucide-react"
 import { Button }     from "@/components/ui/button"
 import { Badge }      from "@/components/ui/badge"
@@ -339,9 +339,20 @@ export default function HomePage() {
             <Badge variant="outline" className="mb-3 text-[10px] tracking-widest uppercase">
               French Quarter Fest
             </Badge>
-            <h2 className="font-display text-4xl text-cream">
-              Gumbeaux Juice
-            </h2>
+            <div className="flex items-end justify-between flex-wrap gap-4">
+              <h2 className="font-display text-4xl text-cream">
+                Gumbeaux Juice
+              </h2>
+              <a
+                href="https://gumbeauxjuice.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-gold/70 hover:text-gold text-xs transition-colors"
+              >
+                gumbeauxjuice.com
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
             <p className="text-mist text-sm mt-3 max-w-md leading-relaxed">
               Our annual stage at French Quarter Festival — where New Orleans comes alive every spring.
             </p>

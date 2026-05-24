@@ -159,7 +159,7 @@ export default function ContactPage() {
               <p className="text-[10px] uppercase tracking-widest text-mist">The Team</p>
               {[
                 { name: "Donald Markowitz", role: "Founder",                          href: "/legacy" },
-                { name: "Flu",              role: "Studio Manager / Head of Production", href: "/bio/flu" },
+                { name: "Flu",              role: "Studio Manager / Head of Production", href: "/book/flu" },
                 { name: "Irvin Mayfield",   role: "Musician",                         href: "/bio/irvin-mayfield" },
                 { name: "Knox Ketchum",     role: "Sound Engineer",                   href: "/book/knox" },
                 { name: "E.T. Deaux",       role: "Sound Engineer / Producer",        href: "/book/et" },
