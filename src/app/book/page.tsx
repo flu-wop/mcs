@@ -394,7 +394,7 @@ export default function BookPage() {
                                              group-hover:text-[#C9A96E] transition-colors duration-300">
                                 {svc.name}
                               </p>
-                              {svc.desc && (
+                              {"desc" in svc && svc.desc && (
                                 <p className="text-xs font-sans text-[#8C8680] mt-1.5 leading-relaxed">
                                   {svc.desc}
                                 </p>
