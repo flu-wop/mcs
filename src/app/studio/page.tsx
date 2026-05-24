@@ -233,7 +233,7 @@ function StepIndicator({ step }: { step: number }) {
 export default function StudioPage() {
   const [step,            setStep]            = useState(1)
   const [sessionType,     setSessionType]     = useState<"recording"|"mixing"|"both"|null>(null)
-  const [room,            setRoom]            = useState<"A"|"B"|null>(null)
+  const [room,            setRoom]            = useState<"A"|"B"|"C"|null>(null)
   const [rateId,          setRateId]          = useState<string|null>(null)
   const [date,            setDate]            = useState<Date|null>(null)
   const [timeSlot,        setTimeSlot]        = useState<string|null>(null)
@@ -344,7 +344,7 @@ export default function StudioPage() {
           <div className="flex flex-wrap gap-4 text-sm">
             {[
               { icon: Clock,        text: "Sessions from $100/hr" },
-              { icon: Mic2,         text: "Studio A + Studio B" },
+              { icon: Mic2,         text: "Studio A + Studio B + Studio C" },
               { icon: CheckCircle2, text: "24-hr approval" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2 text-mist"><Icon className="w-4 h-4 text-gold/60" /><span className="text-xs">{text}</span></div>
@@ -360,13 +360,13 @@ export default function StudioPage() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">The Rooms</Badge>
-            <h2 className="font-display text-4xl md:text-5xl text-cream">Two rooms. One sound.</h2>
+            <h2 className="font-display text-4xl md:text-5xl text-cream">Three rooms. One sound.</h2>
             <p className="text-mist text-sm mt-3 max-w-md mx-auto">
-              Mid City Sound features two purpose-built recording environments — each with professional gear and its own character.
+              Mid City Sound features three purpose-built environments — each with professional gear and its own character.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
 
             {/* Studio A */}
             <div className="border border-gold/20 bg-studio-card rounded-sm overflow-hidden">
@@ -424,6 +424,36 @@ export default function StudioPage() {
                     "Shure digital vocal microphone",
                     "Tascam mixer → Universal Audio Apollo (4 inputs)",
                     "MIDI controller",
+                  ].map(item => (
+                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Studio C — Irvin Mayfield's Office */}
+            <div className="border border-studio-border bg-studio-card rounded-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
+                <div className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center">
+                  <Music2 className="w-4 h-4 text-gold/60" />
+                </div>
+                <div>
+                  <p className="text-cream font-medium text-sm">Studio C</p>
+                  <p className="text-[10px] tracking-widest uppercase text-mist/60">Irvin Mayfield's Office</p>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-mist text-sm leading-relaxed">
+                  Studio C is the private office and creative space of Grammy Award-winning trumpeter and New Orleans cultural ambassador Irvin Mayfield. Available for select sessions and collaborations by arrangement.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "Private creative office",
+                    "Irvin Mayfield's personal workspace",
+                    "Available by arrangement",
+                    "Ideal for small ensemble work",
                   ].map(item => (
                     <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
                       <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
@@ -650,6 +680,7 @@ export default function StudioPage() {
                       {([
                         { id: "A" as const, label: "Studio A", sub: "Control / Vocal Room", desc: "Dedicated vocal booth, Neumann U87, UA Apollo, Donald's guitar collection." },
                         { id: "B" as const, label: "Studio B", sub: "Live Room",            desc: "Full drum kit, upright piano, bass & guitar amps — all professionally miked." },
+                        { id: "C" as const, label: "Studio C", sub: "Irvin Mayfield's Office", desc: "Private creative space. Available for select sessions by arrangement." },
                       ]).map(({ id, label, sub, desc }) => (
                         <button key={id} onClick={() => setRoom(id)}
                           className={cn("flex items-start gap-3 p-4 border rounded-sm text-left transition-all",

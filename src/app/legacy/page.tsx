@@ -98,7 +98,7 @@ const TIMELINE = [
 const GALLERY = [
   { file: "dr-john-bobby-rush.jpg",   alt: "Dr. John and Bobby Rush" },
   { file: "art-neville.jpg",          alt: "Art Neville" },
-  { file: "img_5376.jpg",             alt: "Donald Markowitz" },
+  { file: "IMG_5376.JPG",             alt: "Donald Markowitz" },
   { file: "middle-finger.jpg",        alt: "On stage" },
   { file: "misha-brass-bands.JPG",    alt: "Misha brass bands" },
   { file: "donny-carol.jpg",          alt: "Donny and Carol" },
@@ -118,7 +118,7 @@ export default function LegacyPage() {
           {/* young-donny-guitar photo */}
           <div className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden order-2 md:order-1">
             <Image
-              src="/images/young-donny-guitar.jpg"
+              src="/images/young-donny-guitar.JPG"
               alt="Donald Markowitz — early years"
               fill
               className="object-cover object-top"

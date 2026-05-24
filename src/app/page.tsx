@@ -85,12 +85,12 @@ const PROJECT_CARDS = [
   },
 ]
 
-// 4 images: gumbeaux1.jpg, gumbeaux2.jpg, + 2 placeholders
 const GUMBEAUX_PHOTOS = [
-  { file: "gumbeaux1.jpg", alt: "Gumbeaux Juice at French Quarter Fest" },
-  { file: "gumbeaux2.jpg", alt: "Gumbeaux Juice stage" },
-  { file: null, alt: "Coming soon" },
-  { file: null, alt: "Coming soon" },
+  { file: "gumbeaux1.jpg", alt: "Gumbeaux Juice at French Quarter Fest — FreshXReckless" },
+  { file: "gumbeaux2.jpg", alt: "Gumbeaux Juice — Fifth Anniversary" },
+  { file: "gumbeaux3.jpg", alt: "Gumbeaux Juice — 348 Brazy, Sleazy EZ" },
+  { file: "gumbeaux4.jpg", alt: "Gumbeaux Juice — Kenneth Brother, KR3WCIAL" },
+  { file: "gumbeaux5.jpg", alt: "Gumbeaux Juice — 504ICYGRL, The Adoni" },
 ]
 
 export default function HomePage() {
@@ -236,7 +236,7 @@ export default function HomePage() {
           {/* young-donny-guitar photo */}
           <div className="relative aspect-[4/5] bg-studio-dark border border-studio-border rounded-sm overflow-hidden">
             <Image
-              src="/images/young-donny-guitar.jpg"
+              src="/images/young-donny-guitar.JPG"
               alt="Donald Markowitz — early years"
               fill
               className="object-cover object-top"
@@ -347,27 +347,19 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             {GUMBEAUX_PHOTOS.map(({ file, alt }, i) => (
               <div
                 key={i}
                 className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden group"
               >
-                {file ? (
-                  <Image
-                    src={`/images/${file}`}
-                    alt={alt}
-                    fill
-                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 50vw, 25vw"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[10px] tracking-widest uppercase text-mist/30">
-                      Coming Soon
-                    </span>
-                  </div>
-                )}
+                <Image
+                  src={`/images/${file}`}
+                  alt={alt}
+                  fill
+                  className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 640px) 50vw, 20vw"
+                />
               </div>
             ))}
           </div>

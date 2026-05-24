@@ -158,14 +158,23 @@ export default function ContactPage() {
             <div className="space-y-4">
               <p className="text-[10px] uppercase tracking-widest text-mist">The Team</p>
               {[
-                { name: "Donald Markowitz", role: "Founder" },
-                { name: "Flu",              role: "Studio Manager / Head of Production" },
-                { name: "Knox Ketchum",     role: "Sound Engineer" },
-                { name: "E.T. Deaux",       role: "Sound Engineer / Producer" },
-                { name: "Richie Mayfield",  role: "Studio Musician / Intern" },
-              ].map(({ name, role }) => (
+                { name: "Donald Markowitz", role: "Founder",                          href: "/legacy" },
+                { name: "Flu",              role: "Studio Manager / Head of Production", href: "/bio/flu" },
+                { name: "Irvin Mayfield",   role: "Musician",                         href: "/bio/irvin-mayfield" },
+                { name: "Knox Ketchum",     role: "Sound Engineer",                   href: "/book/knox" },
+                { name: "E.T. Deaux",       role: "Sound Engineer / Producer",        href: "/book/et" },
+                { name: "Jesse",            role: "Studio Engineer",                  href: "/book/jesse" },
+                { name: "Rodja",            role: "Studio Engineer",                  href: "/book/rodja" },
+                { name: "Richie Mayfield",  role: "Studio Musician / Intern",         href: null },
+              ].map(({ name, role, href }) => (
                 <div key={name} className="flex flex-col">
-                  <p className="text-cream text-sm font-medium">{name}</p>
+                  {href ? (
+                    <a href={href} className="text-cream text-sm font-medium hover:text-gold transition-colors">
+                      {name}
+                    </a>
+                  ) : (
+                    <p className="text-cream text-sm font-medium">{name}</p>
+                  )}
                   <p className="text-mist text-[11px]">{role}</p>
                 </div>
               ))}
@@ -260,7 +269,6 @@ export default function ContactPage() {
 
               <p className="text-mist/50 text-[11px]">
                 We respond to all messages within 1–2 business days.
-                For urgent studio matters, call us directly.
               </p>
             </div>
           )}
