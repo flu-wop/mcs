@@ -19,6 +19,12 @@ import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { cn }        from "@/lib/utils"
 
+/* ─── Discount codes ── */
+const DISCOUNT_CODES: Record<string, number> = {
+  REGULAR30: 0.30,
+  STUDIO10:  0.10,
+}
+
 /* ─── Types ── */
 export interface EngineerConfig {
   name:       string           // e.g. "Knox Ketchum"
@@ -50,8 +56,25 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
   const [clientInfo,setClientInfo]= useState({ name:"", email:"", notes:"" })
   const [loading,   setLoading]   = useState(false)
   const [success,   setSuccess]   = useState(false)
+  const [discountCode,    setDiscountCode]    = useState("")
+  const [discountApplied, setDiscountApplied] = useState<number|null>(null)
+  const [discountError,   setDiscountError]   = useState<string|null>(null)
 
   const selectedRate = config.rates.find(r => r.id === rateId)
+  const basePrice    = selectedRate?.price ?? 0
+  const discountAmt  = discountApplied ? Math.round(basePrice * discountApplied) : 0
+  const finalPrice   = basePrice - discountAmt
+
+  function applyCode() {
+    const code = discountCode.trim().toUpperCase()
+    if (DISCOUNT_CODES[code] !== undefined) {
+      setDiscountApplied(DISCOUNT_CODES[code])
+      setDiscountError(null)
+    } else {
+      setDiscountApplied(null)
+      setDiscountError("Code not recognised. Reach out if you're a regular client.")
+    }
+  }
 
   const canProceed = useMemo(() => {
     if (step===1) return rateId !== null
@@ -288,9 +311,41 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                 <div className="flex justify-between"><span className="text-mist">Date</span><span className="text-cream">{selDate?.toLocaleDateString("en-US",{weekday:"short",month:"long",day:"numeric"})}</span></div>
                 <div className="flex justify-between"><span className="text-mist">Time</span><span className="text-cream">{selHour}:00 — {(selHour||0)+(selectedRate?.hours||0)}:00</span></div>
               </div>
-              <div className="px-6 py-4 flex justify-between font-display text-xl">
-                <span className="text-mist text-sm self-center">Total</span>
-                <span className="text-gold">${((selectedRate?.price||0)/100).toFixed(0)}</span>
+              <div className="px-6 py-4 space-y-3">
+                {/* Discount code */}
+                <div className="flex gap-2">
+                  <input
+                    value={discountCode}
+                    onChange={e => { setDiscountCode(e.target.value); setDiscountError(null); setDiscountApplied(null) }}
+                    onKeyDown={e => e.key === "Enter" && applyCode()}
+                    placeholder="Discount code"
+                    className="flex-1 h-9 px-3 text-xs font-mono uppercase bg-studio-dark border border-studio-border rounded-sm text-cream placeholder:text-mist/30 focus:outline-none focus:border-gold/50"
+                  />
+                  <button onClick={applyCode}
+                    className="px-4 h-9 text-xs border border-studio-border text-mist hover:border-gold/40 hover:text-gold rounded-sm transition-all">
+                    Apply
+                  </button>
+                </div>
+                {discountApplied && (
+                  <p className="text-[11px] text-green-400">
+                    ✓ {Math.round(discountApplied * 100)}% discount applied
+                  </p>
+                )}
+                {discountError && (
+                  <p className="text-[11px] text-red-400">{discountError}</p>
+                )}
+              </div>
+              <div className="px-6 py-4 space-y-1">
+                {discountApplied && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-mist">Subtotal</span>
+                    <span className="text-mist line-through">${(basePrice/100).toFixed(0)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-display text-xl">
+                  <span className="text-mist text-sm self-center">Total</span>
+                  <span className="text-gold">${(finalPrice/100).toFixed(0)}</span>
+                </div>
               </div>
             </div>
 
@@ -310,7 +365,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                   Processing…
                 </span>
               ) : (
-                <><CreditCard className="w-5 h-5"/>Pay & Request Booking</>
+                <><CreditCard className="w-5 h-5"/>Pay ${(finalPrice/100).toFixed(0)} & Request Booking</>
               )}
             </button>
             <div className="flex justify-center gap-5 text-mist/40 text-xs">
