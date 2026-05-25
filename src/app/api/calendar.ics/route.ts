@@ -31,7 +31,8 @@ export async function GET() {
       date: string; start_hour: number; client_name: string; status: string
     }>
 
-    const now = new Date().toISOString().replace(/[-:.]/g, "").slice(0, 15)
+    const isoNow = new Date().toISOString()
+    const now = isoNow.replace(/[^0-9T]/g, "").slice(0, 15)
 
     const events = rows.map(b => {
       const start = toIcsDate(b.date, b.start_hour)
