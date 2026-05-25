@@ -45,6 +45,9 @@ function statusColor(status: string) {
   return "outline"
 }
 
+// Force dynamic rendering — this page requires Turso at runtime
+export const dynamic = 'force-dynamic'
+
 export default async function AdminBookingsPage() {
   await initDB()
 
