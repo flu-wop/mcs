@@ -65,7 +65,7 @@ const PROJECTS = [
     image:   "/images/lil-squiggle-character.png",
     body: [
       "#DontDrinkAndDialDecades is a reggae-dub chibi Lego creative campaign centered on the character Lil Squiggle — one call, every era, same regret.",
-      "The campaign spans music, merch, TikTok, and beyond. Original track by Pat Smith, produced at Mid City Sound Studios.",
+      "The campaign spans music, merch, TikTok, and beyond. Written by Russ Kunkel and Donald Markowitz, produced at Mid City Sound Studios.",
     ],
     features: [
       "Original reggae-dub music",

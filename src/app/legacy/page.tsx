@@ -71,7 +71,7 @@ const TIMELINE = [
     city:  "New Orleans, Louisiana",
     icon:  Star,
     title: "Grammy Nomination — Bobby Rush",
-    body:  "Donald produces Bobby Rush's album Decisions, which features a duet with Dr. John on a song co-written by Markowitz called \"Another Murder in New Orleans.\" The album earns a 2014 Grammy Award nomination for Best Blues Album. He also goes on to produce some of Dr. John's final recordings — a profound chapter in New Orleans music history.",
+    body:  "Donald produces Bobby Rush's album Decisions, which features a duet with Dr. John on a song co-written by Markowitz called \"Another Murder in New Orleans.\" The album earns a 2014 Grammy Award nomination for Best Blues Album.",
     tags:  ["Grammy Nominated", "Bobby Rush", "Dr. John", "Best Blues Album", "Decisions"],
   },
   {
@@ -96,12 +96,13 @@ const TIMELINE = [
 
 /* ─── Photo archive — real images ── */
 const GALLERY = [
-  { file: "dr-john-bobby-rush.jpg",   alt: "Dr. John and Bobby Rush" },
-  { file: "art-neville.jpg",          alt: "Art Neville" },
-  { file: "IMG_5376.JPG",             alt: "Donald Markowitz" },
-  { file: "middle-finger.jpg",        alt: "On stage" },
-  { file: "misha2.JPG",               alt: "Misha" },
-  { file: "donny-carol.jpg",          alt: "Donny and Carol" },
+  { file: "dr-john-bobby-rush.jpg",   alt: "Dr. John and Bobby Rush",  caption: "Dr. John and Bobby Rush" },
+  { file: "art-neville.jpg",          alt: "Art and Ian Neville",      caption: "Art and Ian Neville" },
+  { file: "cyril-neville.jpeg",       alt: "Cyril Neville and Donald", caption: "Cyril Neville and Donald" },
+  { file: "middle-finger.jpg",        alt: "On stage",                 caption: "On stage" },
+  { file: "misha2.JPG",               alt: "Misha",                    caption: "Misha" },
+  { file: "donny-carol.jpg",          alt: "Donny and Carol",          caption: "Donny and Carol" },
+  { file: "russ-lee.jpg",               alt: "Russ Kunkel and Lee Sklar", caption: "Russ Kunkel & Lee Sklar" },
 ]
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -269,7 +270,7 @@ export default function LegacyPage() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {GALLERY.map(({ file, alt }) => (
+            {GALLERY.map(({ file, alt, caption }) => (
               <div
                 key={file}
                 className="relative aspect-square bg-studio-dark border border-studio-border rounded-sm overflow-hidden group"
@@ -281,6 +282,11 @@ export default function LegacyPage() {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 640px) 50vw, 33vw"
                 />
+                {caption && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-studio-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <p className="text-cream text-[11px] tracking-wide">{caption}</p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
