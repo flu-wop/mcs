@@ -5,7 +5,7 @@
 import { Resend } from "resend"
 import ics       from "ics"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResend() { return new Resend(process.env.RESEND_API_KEY) }
 
 export interface BookingPayload {
   id:          string
@@ -107,7 +107,7 @@ export async function sendBookingEmails(booking: BookingPayload) {
   `
 
   // Send client confirmation
-  await resend.emails.send({
+  await getResend().emails.send({
     from:        process.env.RESEND_FROM_EMAIL ?? "studio@midcitysound.com",
     to:          booking.clientEmail,
     subject:     `Booking Confirmed — Studio ${booking.room} · ${formattedDate}`,
@@ -116,7 +116,7 @@ export async function sendBookingEmails(booking: BookingPayload) {
   })
 
   // Send studio notification
-  await resend.emails.send({
+  await getResend().emails.send({
     from:        process.env.RESEND_FROM_EMAIL ?? "studio@midcitysound.com",
     to:          process.env.RESEND_TO_EMAIL   ?? "midcitysound1@gmail.com",
     subject:     `[MCS Booking] ${booking.clientName} · Studio ${booking.room} · ${formattedDate}`,

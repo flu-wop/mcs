@@ -6,7 +6,7 @@ import { NextResponse } from "next/server"
 import Stripe           from "stripe"
 import { initDB }       from "@/lib/db"
 
-const stripe   = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" })
+function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? "https://midcitysound.com"
 
 export async function POST(req: Request) {
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const discountPct = discountCode ? (DISCOUNT_CODES[discountCode.toUpperCase()] ?? 0) : 0
     const finalPrice  = Math.round(ratePrice * (1 - discountPct))
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       payment_method_types: ["card"],
       mode:                 "payment",
       line_items: [{

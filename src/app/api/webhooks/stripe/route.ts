@@ -16,7 +16,7 @@ import { getDB, initDB }            from "@/lib/db"
 import { sendBookingEmails }     from "@/lib/booking-email"
 import { randomUUID }            from "crypto"
 
-const stripe         = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" })
+function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!
 
 export async function POST(req: Request) {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, sig, WEBHOOK_SECRET)
+    event = getStripe().webhooks.constructEvent(body, sig, WEBHOOK_SECRET)
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown"
     console.error("[stripe-webhook] Signature failed:", message)
