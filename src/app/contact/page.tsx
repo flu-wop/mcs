@@ -10,7 +10,7 @@
 
 import { useState }   from "react"
 import {
-  Mail, MapPin, Phone, CheckCircle2,
+  Mail, MapPin, CheckCircle2,
   Instagram, Twitter, Youtube,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
@@ -109,12 +109,7 @@ export default function ContactPage() {
                 {
                   icon: Mail,
                   label: "General Inquiries",
-                  value: "midcitysound1@gmail.com", // ← swap real email
-                },
-                {
-                  icon: Phone,
-                  label: "Phone",
-                  value: "+1 (504) 483-1553", // ← swap real phone
+                  value: "midcitysound1@gmail.com",
                 },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-start gap-3">

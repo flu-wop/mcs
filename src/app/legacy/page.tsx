@@ -100,7 +100,7 @@ const GALLERY = [
   { file: "art-neville.jpg",          alt: "Art Neville" },
   { file: "IMG_5376.JPG",             alt: "Donald Markowitz" },
   { file: "middle-finger.jpg",        alt: "On stage" },
-  { file: "misha-brass-bands.JPG",    alt: "Misha brass bands" },
+  { file: "misha2.JPG",               alt: "Misha" },
   { file: "donny-carol.jpg",          alt: "Donny and Carol" },
 ]
 

@@ -1,5 +1,4 @@
 import Link  from "next/link";
-import Image from "next/image";
 import { Instagram, Twitter, Youtube, Mail, ExternalLink } from "lucide-react";
 
 const SITE_LINKS = [
@@ -35,16 +34,10 @@ export function Footer() {
         {/* ── Left: Brand + address + socials ── */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-5">
 
-          <Link href="/" className="block">
-            <div className="relative w-[220px] h-[72px]">
-              <Image
-                src="/images/logo/mcs2-logo.png"
-                alt="Mid City Sound Studios"
-                fill
-                className="object-contain object-left md:object-left object-center"
-                sizes="220px"
-              />
-            </div>
+          <Link href="/" className="group">
+            <span className="font-display text-2xl tracking-wide text-cream group-hover:text-gold transition-colors duration-200">
+              Mid City Sound
+            </span>
           </Link>
 
           <p className="text-mist text-sm leading-relaxed max-w-sm">
