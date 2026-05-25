@@ -12,7 +12,7 @@ import { NextResponse }          from "next/server"
 import Stripe                    from "stripe"
 import { createOrder }           from "@/lib/printful"
 import type { PrintfulOrderRecipient } from "@/lib/printful"
-import { db, initDB }            from "@/lib/db"
+import { getDB, initDB }            from "@/lib/db"
 import { sendBookingEmails }     from "@/lib/booking-email"
 import { randomUUID }            from "crypto"
 
@@ -61,7 +61,7 @@ async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
   const bookingId = randomUUID()
 
   // Save to Turso
-  await db.execute({
+  await getDB().execute({
     sql: `INSERT INTO bookings
             (id, room, rate_label, rate_hours, rate_price, date, start_hour,
              client_name, client_email, client_notes, status, stripe_session_id)

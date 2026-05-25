@@ -4,7 +4,7 @@
 //
 // TODO: protect with middleware.ts + ADMIN_PASSWORD env var
 
-import { db, initDB }   from "@/lib/db"
+import { getDB, initDB }   from "@/lib/db"
 import { Badge }        from "@/components/ui/badge"
 import { Separator }    from "@/components/ui/separator"
 import Link             from "next/link"
@@ -48,7 +48,7 @@ function statusColor(status: string) {
 export default async function AdminBookingsPage() {
   await initDB()
 
-  const result = await db.execute(
+  const result = await getDB().execute(
     "SELECT * FROM bookings ORDER BY date DESC, start_hour DESC"
   )
   const bookings = result.rows as unknown as Booking[]

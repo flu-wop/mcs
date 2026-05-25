@@ -5,7 +5,7 @@
 // Or use the HTTPS URL directly.
 
 import { NextResponse } from "next/server"
-import { db, initDB }   from "@/lib/db"
+import { getDB, initDB }   from "@/lib/db"
 
 function pad(n: number, len = 2) { return String(n).padStart(len, "0") }
 
@@ -22,7 +22,7 @@ function escape(s: string) {
 export async function GET() {
   try {
     await initDB()
-    const result = await db.execute(
+    const result = await getDB().execute(
       "SELECT * FROM bookings WHERE status = 'confirmed' ORDER BY date ASC, start_hour ASC"
     )
 

@@ -1,5 +1,5 @@
 // src/lib/db.ts
-// Turso (libSQL) client — singleton pattern for Next.js edge/server.
+// Turso (libSQL) client — lazy singleton, only connects when first used.
 // Env vars:  TURSO_URL   (libsql://your-db.turso.io)
 //            TURSO_TOKEN (your auth token)
 
@@ -10,7 +10,7 @@ declare global {
   var __tursoClient: ReturnType<typeof createClient> | undefined
 }
 
-function getClient() {
+export function getDB() {
   if (!process.env.TURSO_URL) {
     throw new Error("TURSO_URL env var is not set")
   }
@@ -23,12 +23,13 @@ function getClient() {
   return global.__tursoClient
 }
 
-export const db = getClient()
+// Convenience alias — only call inside request handlers, never at module scope
+export const db = { get: getDB }
 
 /* ─── Schema bootstrap ────────────────────────────────────────────────────── */
-// Run once on startup (safe to re-run — CREATE TABLE IF NOT EXISTS).
 export async function initDB() {
-  await db.execute(`
+  const client = getDB()
+  await client.execute(`
     CREATE TABLE IF NOT EXISTS bookings (
       id          TEXT    PRIMARY KEY,
       room        TEXT    NOT NULL,
@@ -45,4 +46,5 @@ export async function initDB() {
       created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  return client
 }
