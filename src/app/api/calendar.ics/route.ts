@@ -26,7 +26,7 @@ export async function GET() {
       "SELECT * FROM bookings WHERE status = 'confirmed' ORDER BY date ASC, start_hour ASC"
     )
 
-    const rows = result.rows as Array<{
+    const rows = result.rows as unknown as Array<{
       id: string; room: string; rate_label: string; rate_hours: number
       date: string; start_hour: number; client_name: string; status: string
     }>
