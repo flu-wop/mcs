@@ -160,7 +160,7 @@ export default function ContactPage() {
                 { name: "E.T. Deaux",       role: "Sound Engineer / Producer",        href: "/book/et" },
                 { name: "Jesse",            role: "Studio Engineer",                  href: "/book/jesse" },
                 { name: "Rodja",            role: "Studio Engineer",                  href: "/book/rodja" },
-                { name: "Richie Mayfield",  role: "Studio Musician / Intern",         href: null },
+                { name: "Richie Mayfield",  role: "Studio Musician / Intern",         href: "/book/richie" },
               ].map(({ name, role, href }) => (
                 <div key={name} className="flex flex-col">
                   {href ? (
