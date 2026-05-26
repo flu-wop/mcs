@@ -99,7 +99,7 @@ const GALLERY = [
   { file: "dr-john-bobby-rush.jpg",   alt: "Dr. John and Bobby Rush",  caption: "Dr. John and Bobby Rush" },
   { file: "art-neville.jpg",          alt: "Art and Ian Neville",      caption: "Art and Ian Neville" },
   { file: "cyril-neville.jpeg",       alt: "Cyril Neville and Donald", caption: "Cyril Neville and Donald" },
-  { file: "middle-finger.jpg",        alt: "On stage",                 caption: "On stage" },
+  { file: "middle-finger.jpg",        alt: "Russ Kunkel and Lee Sklar", caption: "Russ Kunkel & Lee Sklar" },
   { file: "misha2.JPG",               alt: "Misha",                    caption: "Misha" },
   { file: "donny-carol.jpg",          alt: "Donny and Carol",          caption: "Donny and Carol" },
   { file: "russ-lee.jpg",               alt: "Russ Kunkel and Lee Sklar", caption: "Russ Kunkel & Lee Sklar" },
