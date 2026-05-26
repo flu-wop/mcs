@@ -6,11 +6,12 @@
 // so studio management can filter bookings by engineer.
 
 import { useState, useMemo } from "react"
-import Link from "next/link"
+import Link  from "next/link"
+import Image from "next/image"
 import {
   Mic2, Calendar, CheckCircle2, ArrowLeft,
   ChevronLeft, ChevronRight, Clock, CreditCard,
-  Apple, Shield, AlertCircle, Check,
+  Apple, Shield, AlertCircle, Check, ExternalLink,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
 import { Badge }     from "@/components/ui/badge"
@@ -34,6 +35,8 @@ export interface EngineerConfig {
   room:       "A" | "B" | "C" // default room
   allowRoomSwitch: boolean     // let client pick room?
   rates: { id: string; label: string; hours: number; price: number }[]
+  linktreeUrl?: string         // social / linktree link (optional)
+  photoFile?:  string          // photo filename in /public/images/
 }
 
 const MONTHS = ["January","February","March","April","May","June",

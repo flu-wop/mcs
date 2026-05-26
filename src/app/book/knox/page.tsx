@@ -15,6 +15,7 @@ const config: EngineerConfig = {
   bio:             "Knox Ketchum is a New Orleans-based sound engineer bringing precision and feel to every session at Mid City Sound Studios.",
   room:            "A",
   allowRoomSwitch: true,
+  linktreeUrl: "#", // ← replace with actual linktree/social URL
   rates: [
     { id: "hourly", label: "Hourly",        hours: 1, price: 10000 },
     { id: "half",   label: "Half Day (4hr)", hours: 4, price: 36000 },

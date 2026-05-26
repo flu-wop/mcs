@@ -15,6 +15,7 @@ const config: EngineerConfig = {
   bio:             "Flu runs day-to-day operations at Mid City Sound and oversees production across all active projects. Booking through Flu gets you direct access to the full studio ecosystem.",
   room:            "A",
   allowRoomSwitch: true,
+  linktreeUrl: "#", // ← replace with actual linktree/social URL
   rates: [
     { id: "hourly", label: "Hourly",        hours: 1, price: 10000 },
     { id: "half",   label: "Half Day (4hr)", hours: 4, price: 36000 },

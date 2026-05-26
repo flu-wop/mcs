@@ -15,6 +15,7 @@ const config: EngineerConfig = {
   bio:             "Richie Mayfield is a studio musician and intern at Mid City Sound, bringing fresh energy and versatility to every session.",
   room:            "B",
   allowRoomSwitch: true,
+  linktreeUrl: "#", // ← replace with actual linktree/social URL
   rates: [
     { id: "hourly", label: "Hourly",        hours: 1, price: 10000 },
     { id: "half",   label: "Half Day (4hr)", hours: 4, price: 36000 },
