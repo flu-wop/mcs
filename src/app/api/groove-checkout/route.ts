@@ -3,9 +3,7 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2024-06-20",
-  })
+  return new Stripe(process.env.STRIPE_SECRET_KEY!)
 }
 
 export async function POST() {

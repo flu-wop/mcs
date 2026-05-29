@@ -6,9 +6,7 @@ import { Download, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2024-06-20",
-  })
+  return new Stripe(process.env.STRIPE_SECRET_KEY!)
 }
 
 export default async function GrooveSuccess({
