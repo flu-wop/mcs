@@ -3,19 +3,21 @@
 // STUDIO BOOKING PAGE — Updated with room descriptions, reordered sections,
 // scrollToTop on step navigation, vocal mix pricing update, iCal note.
 //
-// STRIPE INTEGRATION:
-//   OPTION A — Stripe Checkout (redirect):
-//     POST /api/checkout → { url } → window.location.href = url
-//   OPTION B — Stripe Payment Element (inline Apple Pay / Google Pay):
-//     Wrap payment step in <Elements stripe={loadStripe(KEY)}><PaymentElement />
+// STRIPE INTEGRATION — LIVE (Stripe Checkout redirect):
+//   handlePayment POSTs the booking to /api/checkout, receives { url },
+//   and redirects via window.location.href = url. Stripe's hosted page
+//   handles card + Apple Pay + Google Pay. On success, Stripe returns the
+//   customer to the success_url set in /api/checkout/route.ts.
+//   (Set that success_url to `${process.env.NEXT_PUBLIC_URL}/studio?success=1`
+//    to trigger the in-page confirmation here, or to its own success route.)
 //
-//   DISCOUNT CODES — server-side only:
-//     if (code === "REGULAR30") amount = Math.round(amount * 0.7)
+//   DISCOUNT CODES — validated server-side in /api/checkout/route.ts.
+//     This page sends base_cents + discount_code; the route applies the %.
 // ─────────────────────────────────────────────────────────────────────────────
 
 "use client"
 
-import { useState, useMemo, useRef } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -244,6 +246,7 @@ export default function StudioPage() {
   const [form, setForm] = useState({ name:"", email:"", phone:"" })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [payError, setPayError] = useState<string|null>(null)
 
   // Ref for scrolling to booking form top on step change
   const bookingRef = useRef<HTMLDivElement>(null)
@@ -256,6 +259,16 @@ export default function StudioPage() {
     }, 50)
   }
 
+  // If Stripe redirected back to this page after payment, show the confirmation UI.
+  // Requires the /api/checkout success_url to point at `${NEXT_PUBLIC_URL}/studio?success=1`.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("success") === "1" || params.get("session_id")) {
+      setSuccess(true)
+      setTimeout(() => bookingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50)
+    }
+  }, [])
+
   const selectedRate = useMemo(() => {
     const all: typeof RECORDING_RATES = [...RECORDING_RATES, ...MIXING_RATES as any]
     return all.find(r => r.id === rateId) ?? null
@@ -264,6 +277,24 @@ export default function StudioPage() {
   const basePrice     = selectedRate?.price ?? 0
   const discountAmt   = useMemo(() => discountApplied ? Math.round(basePrice * discountApplied) : 0, [basePrice, discountApplied])
   const finalPrice    = basePrice - discountAmt
+
+  // Convert "1:00 PM" → 13, "10:00 AM" → 10, etc. for the booking route
+  const startHour = useMemo(() => {
+    if (!timeSlot) return null
+    const [time, ampm] = timeSlot.split(" ")
+    const h = parseInt(time.split(":")[0], 10)
+    if (ampm === "PM" && h !== 12) return h + 12
+    if (ampm === "AM" && h === 12) return 0
+    return h
+  }, [timeSlot])
+
+  // Recording rates have perHour; mixing/mastering services are project-based
+  const rateHours = useMemo(() => {
+    if (!selectedRate) return null
+    return "perHour" in selectedRate && selectedRate.perHour
+      ? selectedRate.price / selectedRate.perHour
+      : null
+  }, [selectedRate])
 
   function applyCode() {
     const code = discountCode.trim().toUpperCase()
@@ -280,22 +311,36 @@ export default function StudioPage() {
 
   async function handlePayment() {
     setLoading(true)
-    /*
-    ── STRIPE OPTION A ────────────────────────────────────────────────────────
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rateId, sessionType, date: date?.toISOString(),
-        timeSlot, projectNotes, discountCode: discountApplied ? discountCode.toUpperCase() : null,
-        finalPrice, ...form }),
-    })
-    const { url } = await res.json()
-    window.location.href = url
-    ──────────────────────────────────────────────────────────────────────────
-    */
-    await new Promise(r => setTimeout(r, 1600))
-    setLoading(false)
-    setSuccess(true)
+    setPayError(null)
+    try {
+      const res = await fetch("/api/booking-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          room,
+          rateId,
+          rateLabel:    selectedRate?.label ?? "",
+          rateHours:    rateHours ?? 0,
+          ratePrice:    basePrice,                                        // pre-discount cents; route applies code server-side
+          date:         date ? date.toISOString().slice(0, 10) : "",     // YYYY-MM-DD
+          startHour:    startHour ?? 0,                                   // integer 0–23
+          clientName:   form.name,
+          clientEmail:  form.email,
+          clientNotes:  [projectNotes, form.phone ? `Phone: ${form.phone}` : ""].filter(Boolean).join("\n"),
+          discountCode: discountApplied ? discountCode.trim().toUpperCase() : "",
+        }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url   // → Stripe-hosted Checkout (card + Apple Pay + Google Pay)
+      } else {
+        setPayError(data.error || "Could not start checkout. Please try again.")
+        setLoading(false)
+      }
+    } catch {
+      setPayError("Network error — please check your connection and try again.")
+      setLoading(false)
+    }
   }
 
   const ratesForSession: any[] = sessionType==="recording" ? RECORDING_RATES
@@ -831,24 +876,11 @@ export default function StudioPage() {
                       <p className="text-[10px] tracking-widest uppercase text-gold/70">Secure Payment · Powered by Stripe</p>
                     </div>
                     <div className="p-6 space-y-4">
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        <button onClick={handlePayment} className="h-12 bg-studio-black border border-studio-border rounded-sm flex items-center justify-center gap-2 text-cream hover:border-gold/40 transition-all text-sm font-medium">
-                          <Apple className="w-5 h-5" /> Apple Pay
-                        </button>
-                        <button onClick={handlePayment} className="h-12 bg-studio-black border border-studio-border rounded-sm flex items-center justify-center gap-2 text-cream hover:border-gold/40 transition-all text-sm font-medium">
-                          <span className="text-base">G</span> Google Pay
-                        </button>
-                      </div>
-                      <div className="flex items-center gap-3 text-mist/40">
-                        <div className="flex-1 h-px bg-studio-border" /><span className="text-[11px]">or pay with card</span><div className="flex-1 h-px bg-studio-border" />
-                      </div>
-                      <div className="border border-dashed border-studio-border/50 rounded-sm p-4 space-y-3">
-                        <div className="space-y-1"><Label>Card Number</Label><Input placeholder="4242 4242 4242 4242" disabled className="opacity-40 cursor-not-allowed" /></div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-1"><Label>Expiry</Label><Input placeholder="MM / YY" disabled className="opacity-40 cursor-not-allowed" /></div>
-                          <div className="space-y-1"><Label>CVC</Label><Input placeholder="123" disabled className="opacity-40 cursor-not-allowed" /></div>
-                        </div>
-                        <p className="text-mist/40 text-[10px] text-center">Wire up Stripe Elements — see comments in page.tsx</p>
+                      <div className="flex items-center justify-center gap-3 py-2 text-mist/70">
+                        <CreditCard className="w-5 h-5 text-gold/50" />
+                        <Apple className="w-5 h-5 text-gold/50" />
+                        <span className="text-base text-gold/50 font-semibold">G</span>
+                        <span className="text-xs">Card, Apple Pay &amp; Google Pay — all handled securely on the next screen</span>
                       </div>
                       <div className="border border-gold/20 bg-gold/5 rounded-sm p-4 flex items-start gap-3">
                         <AlertCircle className="w-4 h-4 text-gold/60 shrink-0 mt-0.5" />
@@ -856,6 +888,12 @@ export default function StudioPage() {
                           <strong className="text-cream">Payment reserves your spot.</strong> All bookings require final approval within 24 hours. If we can't accommodate your date, you'll receive a full refund immediately.
                         </p>
                       </div>
+                      {payError && (
+                        <div className="border border-red-500/30 bg-red-500/5 rounded-sm p-4 flex items-start gap-3">
+                          <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                          <p className="text-xs text-red-300 leading-relaxed">{payError}</p>
+                        </div>
+                      )}
                       <Button onClick={handlePayment} disabled={loading} className="w-full" size="lg">
                         {loading ? (
                           <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-studio-black/30 border-t-studio-black rounded-full animate-spin" />Processing payment…</span>
