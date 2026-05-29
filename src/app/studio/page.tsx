@@ -23,7 +23,7 @@ import Image from "next/image"
 import {
   Mic2, Headphones, Music2, Clock, DollarSign,
   ArrowLeft, ArrowRight, CheckCircle2, CreditCard,
-  Apple, Shield, Tag, Calendar, ChevronLeft,
+  Shield, Tag, Calendar, ChevronLeft,
   ChevronRight, AlertCircle, Check, Guitar, Drum,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
@@ -875,13 +875,7 @@ export default function StudioPage() {
                       <Shield className="w-4 h-4 text-gold/50" />
                       <p className="text-[10px] tracking-widest uppercase text-gold/70">Secure Payment · Powered by Stripe</p>
                     </div>
-                    <div className="p-6 space-y-4">
-                      <div className="flex items-center justify-center gap-3 py-2 text-mist/70">
-                        <CreditCard className="w-5 h-5 text-gold/50" />
-                        <Apple className="w-5 h-5 text-gold/50" />
-                        <span className="text-base text-gold/50 font-semibold">G</span>
-                        <span className="text-xs">Card, Apple Pay &amp; Google Pay — all handled securely on the next screen</span>
-                      </div>
+                    <div className="p-6 space-y-4">                  
                       <div className="border border-gold/20 bg-gold/5 rounded-sm p-4 flex items-start gap-3">
                         <AlertCircle className="w-4 h-4 text-gold/60 shrink-0 mt-0.5" />
                         <p className="text-xs text-mist leading-relaxed">

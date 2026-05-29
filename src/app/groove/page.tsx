@@ -1,20 +1,123 @@
-// src/app/groove/page.tsx — Groove of the Week
-// Audio files:
-//   /public/audio/groove-preview.mp3  — 30-second clip (always plays free)
-//   /public/audio/groove-full.mp3     — full track (unlocked after purchase)
+// src/app/groove/page.tsx
+"use client"
 
-import type { Metadata } from "next"
-import { GroovePlayer } from "@/components/ui/GroovePlayer"
-
-export const metadata: Metadata = {
-  title: "Groove of the Week | Mid City Sound Studios",
-  description: "A weekly groove from the Mid City Sound Studios vault — produced by Donald Markowitz in New Orleans. Stream the 30-second preview free, or download the full track for $0.99.",
-}
+import { useState } from "react"
+import { Shield, Download, Music2, CreditCard, AlertCircle } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function GroovePage() {
+  const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState<string | null>(null)
+
+  async function handlePurchase() {
+    setLoading(true)
+    setError(null)
+    try {
+      const res  = await fetch("/api/groove-checkout", { method: "POST" })
+      const data = await res.json()
+      if (!res.ok || !data.url) throw new Error(data.error ?? "Checkout failed")
+      window.location.href = data.url
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.")
+      setLoading(false)
+    }
+  }
+
   return (
-    <div className="pt-16 min-h-screen bg-studio-black flex flex-col items-center justify-center px-4 py-20">
-      <GroovePlayer />
+    <div className="bg-studio-black min-h-screen">
+
+      {/* ── Hero ── */}
+      <section className="relative py-24 px-6 text-center border-b border-studio-border/40">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(212,175,119,0.06),transparent)]" />
+        <div className="relative mx-auto max-w-2xl">
+          <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-4">
+            Mid City Sound Studios · New Orleans
+          </p>
+          <h1 className="font-display text-5xl md:text-6xl text-cream mb-4 italic">
+            Groove of the Week
+          </h1>
+          <p className="text-mist text-sm">
+            A weekly groove from the vault — produced by Donald Markowitz.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Player + Purchase ── */}
+      <section className="py-16 px-6">
+        <div className="mx-auto max-w-xl space-y-6">
+
+          {/* Preview player */}
+          <div className="border border-studio-border rounded-sm bg-studio-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-studio-border bg-studio-dark">
+              <p className="text-[10px] tracking-widest uppercase text-gold/70 flex items-center gap-2">
+                <Music2 className="w-3 h-3" />
+                This Week's Groove · 30-Second Preview
+              </p>
+            </div>
+            <div className="p-6">
+              <audio
+                controls
+                className="w-full accent-[#D4AF77]"
+                preload="metadata"
+              >
+                <source src="/audio/groove-preview.mp3" type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+              <p className="text-mist/40 text-[11px] mt-3 text-center">
+                30-second preview · Full track download below
+              </p>
+            </div>
+          </div>
+
+          {/* Purchase card */}
+          <div className="border border-studio-border rounded-sm bg-studio-card overflow-hidden">
+            <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-2">
+              <Shield className="w-4 h-4 text-gold/50" />
+              <p className="text-[10px] tracking-widest uppercase text-gold/70">
+                Download the Full Track
+              </p>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="text-center space-y-1">
+                <p className="font-display text-5xl text-gold">$0.99</p>
+                <p className="text-mist text-sm">High-quality MP3 — yours to keep forever.</p>
+              </div>
+
+              <div className="flex items-center justify-center gap-6 text-xs text-mist/50">
+                <span className="flex items-center gap-1.5">
+                  <Shield className="w-3 h-3 text-gold/40" />Secure
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <CreditCard className="w-3 h-3 text-gold/40" />Stripe
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Download className="w-3 h-3 text-gold/40" />Instant download
+                </span>
+              </div>
+
+              {error && (
+                <div className="border border-red-500/30 bg-red-500/5 rounded-sm p-3 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-300">{error}</p>
+                </div>
+              )}
+
+              <Button onClick={handlePurchase} disabled={loading} className="w-full" size="lg">
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-studio-black/30 border-t-studio-black rounded-full animate-spin" />
+                    Redirecting to checkout…
+                  </span>
+                ) : (
+                  <><Download className="w-4 h-4" />Download for $0.99</>
+                )}
+              </Button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
     </div>
   )
 }
