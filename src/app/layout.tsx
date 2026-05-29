@@ -7,6 +7,7 @@ import { Navbar }   from "@/components/layout/Navbar";
 import { Footer }   from "@/components/layout/Footer";
 import { Toaster }  from "@/components/ui/toaster";
 import CartProvider from "@/components/merch/CartProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /* ─── SEO Metadata ──────────────────────────────────────────────────────────── */
 export const metadata: Metadata = {
@@ -74,6 +75,7 @@ export default function RootLayout({
           <Footer />
           <Toaster />
         </CartProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
