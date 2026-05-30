@@ -1,13 +1,30 @@
 // src/app/groove/page.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Shield, Download, Music2, CreditCard, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
+// ── Update this each week ──────────────────────────────────────────────────
+const GROOVE = {
+  songName:   "Groove of the Week",   // e.g. "Second Line Strut"
+  artistName: "Donald Markowitz",
+}
+// ──────────────────────────────────────────────────────────────────────────
 
 export default function GroovePage() {
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState<string | null>(null)
+  const audioRef              = useRef<HTMLAudioElement>(null)
+
+  // Hard-stop preview at 30 seconds
+  function handleTimeUpdate() {
+    const audio = audioRef.current
+    if (audio && audio.currentTime >= 30) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+  }
 
   async function handlePurchase() {
     setLoading(true)
@@ -49,14 +66,23 @@ export default function GroovePage() {
           {/* Preview player */}
           <div className="border border-studio-border rounded-sm bg-studio-card overflow-hidden">
             <div className="px-6 py-4 border-b border-studio-border bg-studio-dark">
-              <p className="text-[10px] tracking-widest uppercase text-gold/70 flex items-center gap-2">
-                <Music2 className="w-3 h-3" />
-                This Week's Groove · 30-Second Preview
-              </p>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-cream text-sm font-medium">{GROOVE.songName}</p>
+                  <p className="text-gold/60 text-[10px] tracking-wide uppercase mt-0.5">{GROOVE.artistName}</p>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                  <Music2 className="w-3 h-3 text-gold/50" />
+                  <p className="text-[10px] tracking-widest uppercase text-gold/50">Preview</p>
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <audio
+                ref={audioRef}
                 controls
+                onTimeUpdate={handleTimeUpdate}
+                controlsList="nodownload"
                 className="w-full accent-[#D4AF77]"
                 preload="metadata"
               >
@@ -83,18 +109,6 @@ export default function GroovePage() {
                 <p className="text-mist text-sm">High-quality MP3 — yours to keep forever.</p>
               </div>
 
-              <div className="flex items-center justify-center gap-6 text-xs text-mist/50">
-                <span className="flex items-center gap-1.5">
-                  <Shield className="w-3 h-3 text-gold/40" />Secure
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CreditCard className="w-3 h-3 text-gold/40" />Stripe
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Download className="w-3 h-3 text-gold/40" />Instant download
-                </span>
-              </div>
-
               {error && (
                 <div className="border border-red-500/30 bg-red-500/5 rounded-sm p-3 flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -112,6 +126,10 @@ export default function GroovePage() {
                   <><Download className="w-4 h-4" />Download for $0.99</>
                 )}
               </Button>
+
+              <p className="text-mist/30 text-[11px] text-center flex items-center justify-center gap-1.5">
+                <CreditCard className="w-3 h-3" />Powered by Stripe · Secure checkout
+              </p>
             </div>
           </div>
 

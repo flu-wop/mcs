@@ -1,13 +1,11 @@
 "use client"
 // src/components/EngineerBooking.tsx
-// Shared booking component used by /book/[engineer] pages.
-// Each engineer page passes their own config — name, bio, room defaults.
 
 import { useState, useMemo } from "react"
 import Link  from "next/link"
 import {
   ArrowLeft, ChevronLeft, ChevronRight,
-  CreditCard, Apple, Shield, AlertCircle, Check,
+  CreditCard, AlertCircle, Check,
 } from "lucide-react"
 import { Button }    from "@/components/ui/button"
 import { Badge }     from "@/components/ui/badge"
@@ -15,13 +13,11 @@ import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { cn }        from "@/lib/utils"
 
-/* ─── Discount codes (mirror server-side) ── */
 const DISCOUNT_CODES: Record<string, number> = {
   REGULAR30: 0.30,
   STUDIO10:  0.10,
 }
 
-/* ─── Types ── */
 export interface EngineerConfig {
   name:       string
   slug:       string
@@ -41,12 +37,12 @@ const DAYS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
 function getDaysInMonth(y: number, m: number) { return new Date(y, m+1, 0).getDate() }
 function getFirstDay(y: number, m: number)    { return new Date(y, m, 1).getDay() }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
 export function EngineerBooking({ config }: { config: EngineerConfig }) {
   const today = new Date()
   const [step,      setStep]      = useState(1)
   const [room,      setRoom]      = useState<"A"|"B"|"C">(config.room)
   const [rateId,    setRateId]    = useState<string|null>(null)
+  const [hourlyQty, setHourlyQty] = useState(2)           // min 2 hours for hourly
   const [calYear,   setCalYear]   = useState(today.getFullYear())
   const [calMonth,  setCalMonth]  = useState(today.getMonth())
   const [selDate,   setSelDate]   = useState<Date|null>(null)
@@ -58,16 +54,21 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
   const [discountApplied, setDiscountApplied] = useState<number|null>(null)
   const [discountError,   setDiscountError]   = useState<string|null>(null)
 
-  const selectedRate = config.rates.find(r => r.id === rateId)
-  const basePrice    = selectedRate?.price ?? 0
-  const discountAmt  = discountApplied ? Math.round(basePrice * discountApplied) : 0
-  const finalPrice   = basePrice - discountAmt
+  const selectedRate   = config.rates.find(r => r.id === rateId)
+  // For hourly rate: multiply by hourlyQty; otherwise use fixed price
+  const effectivePrice = selectedRate
+    ? (selectedRate.id === "hourly" ? selectedRate.price * hourlyQty : selectedRate.price)
+    : 0
+  const effectiveHours = selectedRate
+    ? (selectedRate.id === "hourly" ? hourlyQty : selectedRate.hours)
+    : 0
+  const discountAmt    = discountApplied ? Math.round(effectivePrice * discountApplied) : 0
+  const finalPrice     = effectivePrice - discountAmt
 
   function applyCode() {
     const code = discountCode.trim().toUpperCase()
     if (DISCOUNT_CODES[code] !== undefined) {
-      setDiscountApplied(DISCOUNT_CODES[code])
-      setDiscountError(null)
+      setDiscountApplied(DISCOUNT_CODES[code]); setDiscountError(null)
     } else {
       setDiscountApplied(null)
       setDiscountError("Code not recognised. Reach out if you're a regular client.")
@@ -81,7 +82,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
     return false
   }, [step, rateId, selDate, selHour, clientInfo])
 
-  /* ── Calendar helpers ── */
   const daysInMonth = getDaysInMonth(calYear, calMonth)
   const firstDay    = getFirstDay(calYear, calMonth)
   const prevMonth   = () => { if (calMonth===0) { setCalYear(y=>y-1); setCalMonth(11) } else setCalMonth(m=>m-1) }
@@ -91,7 +91,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
 
   const HOURS = [9,10,11,12,13,14,15,16,17,18,19,20]
 
-  /* ── Payment ── */
   async function handleSubmit() {
     setLoading(true)
     setPayError(null)
@@ -105,8 +104,8 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
           room,
           rateId:       rateId ?? "",
           rateLabel:    selectedRate?.label ?? "",
-          rateHours:    selectedRate?.hours ?? 0,
-          ratePrice:    selectedRate?.price ?? 0,
+          rateHours:    effectiveHours,
+          ratePrice:    effectivePrice,   // pre-discount; server recalculates
           date:         selDate?.toISOString().split("T")[0] ?? "",
           startHour:    selHour ?? 0,
           clientName:   clientInfo.name,
@@ -150,9 +149,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
       <div className="border-b border-studio-border bg-studio-dark px-6 py-4">
         <div className="mx-auto max-w-3xl flex items-center gap-2">
           {STEP_LABELS.map((label, i) => {
-            const n = i + 1
-            const done   = step > n
-            const active = step === n
+            const n = i + 1; const done = step > n; const active = step === n
             return (
               <div key={label} className="flex items-center gap-2">
                 <div className={cn("w-6 h-6 rounded-full border text-[10px] flex items-center justify-center font-medium transition-all",
@@ -195,18 +192,46 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
 
             <div className="space-y-3">
               {config.rates.map(rate => (
-                <button key={rate.id} onClick={() => setRateId(rate.id)}
+                <button key={rate.id} onClick={() => { setRateId(rate.id); if (rate.id !== "hourly") setHourlyQty(2) }}
                   className={cn("w-full flex items-center justify-between p-4 border rounded-sm text-left transition-all",
                     rateId===rate.id ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40"
                   )}>
                   <div>
                     <p className="text-cream text-sm font-medium">{rate.label}</p>
-                    <p className="text-mist text-xs">{rate.hours} hour{rate.hours!==1?"s":""}</p>
+                    <p className="text-mist text-xs">
+                      {rate.id === "hourly" ? "Minimum 2 hours" : `${rate.hours} hours`}
+                    </p>
                   </div>
-                  <p className="font-display text-xl text-gold">${(rate.price/100).toFixed(0)}</p>
+                  <p className="font-display text-xl text-gold">
+                    ${(rate.price/100).toFixed(0)}{rate.id === "hourly" ? "/hr" : ""}
+                  </p>
                 </button>
               ))}
             </div>
+
+            {/* Hourly hour selector — shows only when hourly is selected */}
+            {rateId === "hourly" && (
+              <div className="flex items-center justify-between border border-gold/20 bg-gold/5 rounded-sm p-4">
+                <div>
+                  <p className="text-cream text-sm font-medium">How many hours?</p>
+                  <p className="text-mist text-xs">
+                    Minimum 2 hours · ${((config.rates.find(r=>r.id==="hourly")?.price ?? 10000)/100).toFixed(0)}/hr
+                    <span className="text-gold ml-2">= ${(((config.rates.find(r=>r.id==="hourly")?.price ?? 10000) * hourlyQty)/100).toFixed(0)} total</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => setHourlyQty(q => Math.max(2, q-1))}
+                    className="w-9 h-9 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold/40 transition-all text-lg">
+                    −
+                  </button>
+                  <span className="font-display text-2xl text-gold w-8 text-center">{hourlyQty}</span>
+                  <button type="button" onClick={() => setHourlyQty(q => Math.min(12, q+1))}
+                    className="w-9 h-9 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold/40 transition-all text-lg">
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -214,7 +239,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
         {step===2 && (
           <div className="space-y-6">
             <h2 className="font-display text-2xl text-cream">Pick a date & time</h2>
-
             <div className="border border-studio-border rounded-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 bg-studio-dark border-b border-studio-border">
                 <button onClick={prevMonth} className="text-mist hover:text-gold p-1"><ChevronLeft className="w-4 h-4"/></button>
@@ -228,9 +252,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                 <div className="grid grid-cols-7 gap-1">
                   {Array(firstDay).fill(null).map((_,i) => <div key={`e${i}`}/>)}
                   {Array(daysInMonth).fill(null).map((_,i) => {
-                    const d   = i+1
-                    const past = isPast(d)
-                    const sel  = isSelected(d)
+                    const d = i+1; const past = isPast(d); const sel = isSelected(d)
                     return (
                       <button key={d} disabled={past}
                         onClick={() => { setSelDate(new Date(calYear,calMonth,d)); setSelHour(null) }}
@@ -238,14 +260,12 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                           past ? "text-mist/20 cursor-not-allowed" :
                           sel  ? "bg-gold text-studio-black font-bold" :
                           "text-mist hover:bg-studio-border hover:text-cream"
-                        )}
-                      >{d}</button>
+                        )}>{d}</button>
                     )
                   })}
                 </div>
               </div>
             </div>
-
             {selDate && (
               <div className="space-y-3">
                 <p className="text-mist text-sm">Start time</p>
@@ -290,21 +310,23 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
           <div className="space-y-6">
             <h2 className="font-display text-2xl text-cream">Confirm your booking</h2>
 
-            {/* Order summary */}
             <div className="border border-studio-border rounded-sm divide-y divide-studio-border">
               <div className="px-6 py-4 space-y-3 text-sm">
                 <div className="flex justify-between"><span className="text-mist">Engineer</span><span className="text-cream">{config.name}</span></div>
                 <div className="flex justify-between"><span className="text-mist">Room</span><span className="text-cream">Studio {room}</span></div>
-                <div className="flex justify-between"><span className="text-mist">Session</span><span className="text-cream">{selectedRate?.label}</span></div>
+                <div className="flex justify-between">
+                  <span className="text-mist">Session</span>
+                  <span className="text-cream">
+                    {selectedRate?.label}{selectedRate?.id === "hourly" ? ` · ${hourlyQty} hours` : ""}
+                  </span>
+                </div>
                 <div className="flex justify-between"><span className="text-mist">Date</span><span className="text-cream">{selDate?.toLocaleDateString("en-US",{weekday:"short",month:"long",day:"numeric"})}</span></div>
-                <div className="flex justify-between"><span className="text-mist">Time</span><span className="text-cream">{selHour}:00 — {(selHour||0)+(selectedRate?.hours||0)}:00</span></div>
+                <div className="flex justify-between"><span className="text-mist">Time</span><span className="text-cream">{selHour}:00 — {(selHour||0)+effectiveHours}:00</span></div>
               </div>
 
-              {/* Discount */}
               <div className="px-6 py-4 space-y-3">
                 <div className="flex gap-2">
-                  <input
-                    value={discountCode}
+                  <input value={discountCode}
                     onChange={e => { setDiscountCode(e.target.value); setDiscountError(null); setDiscountApplied(null) }}
                     onKeyDown={e => e.key==="Enter" && applyCode()}
                     placeholder="Discount code"
@@ -319,12 +341,11 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                 {discountError  && <p className="text-[11px] text-red-400">{discountError}</p>}
               </div>
 
-              {/* Total */}
               <div className="px-6 py-4 space-y-1">
                 {discountApplied && (
                   <div className="flex justify-between text-sm">
                     <span className="text-mist">Subtotal</span>
-                    <span className="text-mist line-through">${(basePrice/100).toFixed(0)}</span>
+                    <span className="text-mist line-through">${(effectivePrice/100).toFixed(0)}</span>
                   </div>
                 )}
                 <div className="flex justify-between font-display text-xl">
@@ -334,7 +355,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
               </div>
             </div>
 
-            {/* Notice */}
             <div className="border border-studio-border/40 rounded-sm p-4 flex gap-3">
               <AlertCircle className="w-4 h-4 text-gold/50 shrink-0 mt-0.5" />
               <p className="text-mist text-xs leading-relaxed">
@@ -343,7 +363,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
               </p>
             </div>
 
-            {/* Error */}
             {payError && (
               <div className="border border-red-500/30 bg-red-500/5 rounded-sm p-4 flex items-start gap-3">
                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
@@ -351,7 +370,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
               </div>
             )}
 
-            {/* Pay button */}
             <button onClick={handleSubmit} disabled={loading}
               className="w-full h-14 bg-gold text-studio-black text-sm font-bold tracking-widest uppercase rounded-sm hover:bg-gold-light transition-all disabled:opacity-60 flex items-center justify-center gap-2">
               {loading ? (
@@ -363,16 +381,10 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                 <><CreditCard className="w-5 h-5"/>Pay ${(finalPrice/100).toFixed(0)} & Reserve</>
               )}
             </button>
-
-            <div className="flex justify-center gap-5 text-mist/40 text-xs">
-              {([{icon:Shield,text:"Secure"},{icon:Apple,text:"Apple Pay"},{icon:CreditCard,text:"Stripe"}] as const).map(({icon:Icon,text})=>(
-                <div key={text} className="flex items-center gap-1"><Icon className="w-3 h-3"/>{text}</div>
-              ))}
-            </div>
           </div>
         )}
 
-        {/* Nav buttons */}
+        {/* Nav */}
         <div className="flex justify-between pt-4">
           {step > 1 ? (
             <Button variant="outline" onClick={() => setStep(s=>s-1)}>
@@ -389,7 +401,6 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
             </Button>
           )}
         </div>
-
       </div>
     </div>
   )

@@ -234,7 +234,7 @@ function StepIndicator({ step }: { step: number }) {
 
 export default function StudioPage() {
   const [step,            setStep]            = useState(1)
-  const [sessionType,     setSessionType]     = useState<"recording"|"mixing"|"both"|null>(null)
+  const [sessionTypes,    setSessionTypes]    = useState<Set<"recording"|"mixing">>(new Set())
   const [room,            setRoom]            = useState<"A"|"B"|"C"|null>(null)
   const [rateId,          setRateId]          = useState<string|null>(null)
   const [date,            setDate]            = useState<Date|null>(null)
@@ -244,9 +244,10 @@ export default function StudioPage() {
   const [discountApplied, setDiscountApplied] = useState<number|null>(null)
   const [discountError,   setDiscountError]   = useState<string|null>(null)
   const [form, setForm] = useState({ name:"", email:"", phone:"" })
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [payError, setPayError] = useState<string|null>(null)
+  const [loading,   setLoading]   = useState(false)
+  const [success,   setSuccess]   = useState(false)
+  const [payError,  setPayError]  = useState<string|null>(null)
+  const [hourlyQty, setHourlyQty] = useState(2)   // min 2 hours for hourly rate
 
   // Ref for scrolling to booking form top on step change
   const bookingRef = useRef<HTMLDivElement>(null)
@@ -274,7 +275,13 @@ export default function StudioPage() {
     return all.find(r => r.id === rateId) ?? null
   }, [rateId])
 
-  const basePrice     = selectedRate?.price ?? 0
+  // For hourly: multiply by hourlyQty; otherwise use the fixed package price
+  const basePrice = useMemo(() => {
+    if (!selectedRate) return 0
+    if (selectedRate.id === "hourly") return selectedRate.price * hourlyQty
+    return selectedRate.price
+  }, [selectedRate, hourlyQty])
+
   const discountAmt   = useMemo(() => discountApplied ? Math.round(basePrice * discountApplied) : 0, [basePrice, discountApplied])
   const finalPrice    = basePrice - discountAmt
 
@@ -288,13 +295,14 @@ export default function StudioPage() {
     return h
   }, [timeSlot])
 
-  // Recording rates have perHour; mixing/mastering services are project-based
+  // Recording rates: hourly uses qty, blocks use fixed hours; mixing is project-based
   const rateHours = useMemo(() => {
     if (!selectedRate) return null
+    if (selectedRate.id === "hourly") return hourlyQty
     return "perHour" in selectedRate && selectedRate.perHour
       ? selectedRate.price / selectedRate.perHour
       : null
-  }, [selectedRate])
+  }, [selectedRate, hourlyQty])
 
   function applyCode() {
     const code = discountCode.trim().toUpperCase()
@@ -303,11 +311,11 @@ export default function StudioPage() {
   }
 
   const canProceed = useMemo(() => {
-    if (step===1) return sessionType!==null && rateId!==null && room!==null
+    if (step===1) return sessionTypes.size > 0 && rateId!==null && room!==null
     if (step===2) return date!==null && timeSlot!==null
     if (step===3) return form.name.trim()!=="" && form.email.trim()!==""
     return true
-  }, [step, sessionType, rateId, date, timeSlot, form])
+  }, [step, sessionTypes, rateId, date, timeSlot, form])
 
   async function handlePayment() {
     setLoading(true)
@@ -343,10 +351,10 @@ export default function StudioPage() {
     }
   }
 
-  const ratesForSession: any[] = sessionType==="recording" ? RECORDING_RATES
-    : sessionType==="mixing" ? MIXING_RATES
-    : sessionType==="both"   ? [...RECORDING_RATES.slice(0,2), ...MIXING_RATES]
-    : []
+  const ratesForSession: any[] = [
+  ...(sessionTypes.has("recording") ? RECORDING_RATES : []),
+  ...(sessionTypes.has("mixing")    ? (MIXING_RATES as any[]) : []),
+]
 
   return (
     <div className="pt-16 min-h-screen bg-studio-black">
@@ -464,7 +472,7 @@ export default function StudioPage() {
                   {[
                     "Full drum kit — professionally miked",
                     "Upright piano — professionally miked",
-                    "Guitar pedal rack",
+                    "Mac Pro workstation",
                     "Bass & electric guitar amplifiers",
                     "Shure digital vocal microphone",
                     "Tascam mixer → Universal Audio Apollo (4 inputs)",
@@ -496,7 +504,8 @@ export default function StudioPage() {
                 <ul className="space-y-2">
                   {[
                     "Private creative office",
-                    "Irvin Mayfield's personal workspace",
+                    "Mac Pro workstation",
+		    "Irvin's personal guitar collection",
                     "Available by arrangement",
                     "Ideal for small ensemble work",
                   ].map(item => (
@@ -697,24 +706,42 @@ export default function StudioPage() {
                   <div>
                     <h3 className="font-display text-2xl text-cream mb-4">What type of session?</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {(["recording","mixing","both"] as const).map(type => (
-                        <button key={type} onClick={() => { setSessionType(type); setRateId(null) }}
+                      {(["recording","mixing","both"] as const).map(type => {
+                        const isBoth = type === "both"
+                        const active = isBoth
+                          ? sessionTypes.has("recording") && sessionTypes.has("mixing")
+                          : sessionTypes.has(type as "recording"|"mixing")
+                        return (
+                          <button key={type} onClick={() => {
+                            if (isBoth) {
+                              const bothOn = sessionTypes.has("recording") && sessionTypes.has("mixing")
+                              setSessionTypes(bothOn ? new Set() : new Set(["recording","mixing"]))
+                            } else {
+                              setSessionTypes(prev => {
+                                const next = new Set(prev)
+                                next.has(type as any) ? next.delete(type as any) : next.add(type as any)
+                                return next
+                              })
+                            }
+                            setRateId(null)
+                          }}
                           className={cn("flex items-center gap-3 p-4 border rounded-sm text-left transition-all min-h-[72px]",
-                            sessionType===type ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40"
+                            active ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40"
                           )}>
-                          <div className={cn("w-8 h-8 rounded-sm border flex items-center justify-center shrink-0",
-                            sessionType===type ? "border-gold bg-gold/10" : "border-studio-border"
-                          )}>
-                            {type==="recording" ? <Mic2 className="w-4 h-4 text-gold/70" />
-                              : type==="mixing"  ? <Music2 className="w-4 h-4 text-gold/70" />
-                              :                   <Headphones className="w-4 h-4 text-gold/70" />}
-                          </div>
-                          <div>
-                            <p className="text-cream text-sm font-medium capitalize">{type==="both" ? "Recording + Mixing" : type}</p>
-                            <p className="text-mist text-[10px]">{type==="recording" ? "Live room tracking" : type==="mixing" ? "Submit stems remotely" : "Full production package"}</p>
-                          </div>
-                        </button>
-                      ))}
+                            <div className={cn("w-8 h-8 rounded-sm border flex items-center justify-center shrink-0",
+                              active ? "border-gold bg-gold/10" : "border-studio-border"
+                            )}>
+                              {type==="recording" ? <Mic2 className="w-4 h-4 text-gold/70" />
+                                : type==="mixing"  ? <Music2 className="w-4 h-4 text-gold/70" />
+                                :                   <Headphones className="w-4 h-4 text-gold/70" />}
+                            </div>
+                            <div>
+                              <p className="text-cream text-sm font-medium capitalize">{type==="both" ? "Recording + Mixing" : type}</p>
+                              <p className="text-mist text-[10px]">{type==="recording" ? "Live room tracking" : type==="mixing" ? "Submit stems remotely" : "Full production package"}</p>
+                            </div>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
 
@@ -724,8 +751,8 @@ export default function StudioPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {([
                         { id: "A" as const, label: "Studio A", sub: "Control / Vocal Room", desc: "Dedicated vocal booth, Neumann U87, UA Apollo, Donald's guitar collection." },
-                        { id: "B" as const, label: "Studio B", sub: "Live Room",            desc: "Full drum kit, upright piano, bass & guitar amps — all professionally miked." },
-                        { id: "C" as const, label: "Studio C", sub: "Irvin Mayfield's Office", desc: "Private creative space. Available for select sessions by arrangement." },
+                        { id: "B" as const, label: "Studio B", sub: "Live Room",            desc: "Full drum kit, upright piano, bass & guitar amps, Mac Pro workstation — all professionally miked." },
+                        { id: "C" as const, label: "Studio C", sub: "Irvin Mayfield's Office", desc: "Irvin's private creative space with some of his personal guitar collection. Available for select sessions by arrangement." },
                       ]).map(({ id, label, sub, desc }) => (
                         <button key={id} onClick={() => setRoom(id)}
                           className={cn("flex items-start gap-3 p-4 border rounded-sm text-left transition-all",
@@ -746,14 +773,33 @@ export default function StudioPage() {
                     </div>
                   </div>
 
-                  {sessionType && (
+                  {sessionTypes.size > 0 && (
                     <div>
                       <h3 className="font-display text-2xl text-cream mb-4">Choose a package</h3>
                       <div className="grid sm:grid-cols-2 gap-3">
                         {ratesForSession.map((rate: any) => (
-                          <PricingCard key={rate.id} item={rate} selected={rateId===rate.id} onSelect={() => setRateId(rate.id)} showPerHour={"perHour" in rate} />
+                          <PricingCard key={rate.id} item={rate} selected={rateId===rate.id} onSelect={() => { setRateId(rate.id); if (rate.id !== "hourly") setHourlyQty(2) }} showPerHour={"perHour" in rate} />
                         ))}
                       </div>
+                      {/* Hourly quantity stepper — only when hourly is selected */}
+                      {rateId === "hourly" && (
+                        <div className="flex items-center justify-between border border-gold/20 bg-gold/5 rounded-sm p-4 mt-4">
+                          <div>
+                            <p className="text-cream text-sm font-medium">How many hours?</p>
+                            <p className="text-mist text-xs">
+                              Minimum 2 hours · $100/hr
+                              <span className="text-gold ml-2">= ${hourlyQty * 100} total</span>
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button type="button" onClick={() => setHourlyQty(q => Math.max(2, q-1))}
+                              className="w-9 h-9 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold/40 transition-all text-lg">−</button>
+                            <span className="font-display text-2xl text-gold w-8 text-center">{hourlyQty}</span>
+                            <button type="button" onClick={() => setHourlyQty(q => Math.min(12, q+1))}
+                              className="w-9 h-9 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold/40 transition-all text-lg">+</button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex justify-end pt-2">
@@ -849,7 +895,7 @@ export default function StudioPage() {
                       <p className="text-[10px] tracking-widest uppercase text-gold/70">Order Summary</p>
                     </div>
                     <div className="p-6 space-y-3 text-sm">
-                      <div className="flex justify-between"><span className="text-mist">Session</span><span className="text-cream">{selectedRate?.label}</span></div>
+                      <div className="flex justify-between"><span className="text-mist">Session</span><span className="text-cream">{selectedRate?.label}{rateId === "hourly" ? ` · ${hourlyQty} hrs` : ""}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Room</span><span className="text-cream">Studio {room}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Date</span><span className="text-cream">{date?.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</span></div>
                       <div className="flex justify-between"><span className="text-mist">Time</span><span className="text-cream">{timeSlot}</span></div>
