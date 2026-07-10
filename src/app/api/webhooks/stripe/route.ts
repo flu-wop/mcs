@@ -95,8 +95,6 @@ async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
     clientEmail: m.clientEmail,
     clientNotes: m.clientNotes ?? "",
   })
-
-  console.log(`[stripe-webhook] Studio booking ${bookingId} saved — Room ${m.room} · ${m.date}`)
 }
 
 /* ─── Merch order fulfillment ─────────────────────────────────────────────── */
@@ -133,6 +131,5 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     retail_price:    item.price.toFixed(2),
   }))
 
-  const order = await createOrder({ recipient, items, confirm: true })
-  console.log(`[stripe-webhook] Printful order #${order.id} created for session ${session.id}`)
+  await createOrder({ recipient, items, confirm: true })
 }
