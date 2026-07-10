@@ -1,5 +1,5 @@
 // app/api/webhooks/stripe/route.ts
-// Handles: mcs-merch (Printful) + mcs-studio-booking (Turso + Resend + iCal)
+// Handles: mcs-merch (Printify) + mcs-studio-booking (Turso + Resend + iCal)
 //
 // Register in Stripe dashboard:
 //   URL: https://midcitysound.com/api/webhooks/stripe
@@ -10,8 +10,8 @@
 
 import { NextResponse }          from "next/server"
 import Stripe                    from "stripe"
-import { createOrder }           from "@/lib/printful"
-import type { PrintfulOrderRecipient } from "@/lib/printful"
+import { createOrder }           from "@/lib/printify"
+import type { PrintifyOrderRecipient } from "@/lib/printify"
 import { getDB, initDB }            from "@/lib/db"
 import { sendBookingEmails }     from "@/lib/booking-email"
 import { randomUUID }            from "crypto"
@@ -104,7 +104,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   if (!rawItems) throw new Error(`No cartItems in metadata for session ${session.id}`)
 
   const cartItems = JSON.parse(rawItems) as Array<{
-    variantId: number; quantity: number; price: number; name: string
+    variantId: number; productId: string; quantity: number; price: number; name: string
   }>
 
   if (!cartItems.length) throw new Error(`Empty cartItems for session ${session.id}`)
@@ -113,23 +113,28 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   const customer = session.customer_details
   if (!shipping?.address || !customer) throw new Error(`Missing shipping/customer for session ${session.id}`)
 
-  const recipient: PrintfulOrderRecipient = {
-    name:         shipping.name ?? customer.name ?? "Customer",
-    address1:     shipping.address.line1 ?? "",
-    address2:     shipping.address.line2 ?? undefined,
-    city:         shipping.address.city ?? "",
-    state_code:   shipping.address.state ?? "",
-    country_code: shipping.address.country ?? "US",
-    zip:          shipping.address.postal_code ?? "",
-    email:        customer.email ?? undefined,
-    phone:        customer.phone ?? undefined,
+  const fullName = shipping.name ?? customer.name ?? "Customer"
+  const [firstName, ...rest] = fullName.trim().split(/\s+/)
+  const lastName = rest.join(" ") || "—"
+
+  const recipient: PrintifyOrderRecipient = {
+    first_name: firstName,
+    last_name:  lastName,
+    address1:   shipping.address.line1 ?? "",
+    address2:   shipping.address.line2 ?? undefined,
+    city:       shipping.address.city ?? "",
+    region:     shipping.address.state ?? "",
+    country:    shipping.address.country ?? "US",
+    zip:        shipping.address.postal_code ?? "",
+    email:      customer.email ?? undefined,
+    phone:      customer.phone ?? undefined,
   }
 
   const items = cartItems.map(item => ({
-    sync_variant_id: item.variantId,
-    quantity:        item.quantity,
-    retail_price:    item.price.toFixed(2),
+    product_id: item.productId,
+    variant_id: item.variantId,
+    quantity:   item.quantity,
   }))
 
-  await createOrder({ recipient, items, confirm: true })
+  await createOrder({ recipient, items })
 }

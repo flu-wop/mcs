@@ -70,7 +70,7 @@ const PROJECTS = [
     features: [
       "Original reggae-dub music",
       "Chibi Lego character universe",
-      "Merch via Printful/Printify",
+      "Merch via Printify",
       "TikTok & YouTube campaign",
     ],
     cta:    { label: "Visit Site", href: "https://lilsquiggle.vercel.app", external: true },

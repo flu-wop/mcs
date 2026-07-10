@@ -207,7 +207,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
               </span>
             </div>
             <p className="text-[10px] text-[#5a4c3a] font-['DM_Sans'] leading-relaxed">
-              Shipping calculated at checkout · Ships from New Orleans via Printful
+              Shipping calculated at checkout · Ships from New Orleans via Printify
             </p>
             <button
               onClick={() => void checkout()}

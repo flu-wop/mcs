@@ -7,7 +7,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { MerchProduct, PrintfulSyncVariantDetail } from '@/lib/printful'
+import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from './CartProvider'
 
 // ─── Brand accent colours ─────────────────────────────────────────────────────
@@ -69,7 +69,7 @@ function ProductSchema({ product }: { product: MerchProduct }) {
 
 interface ProductCardProps {
   product: MerchProduct
-  variants?: PrintfulSyncVariantDetail[]
+  variants?: PrintifyVariantDetail[]
   featured?: boolean          // larger card in carousel
   showSchema?: boolean        // only true for first visible cards (above fold)
 }
@@ -81,7 +81,7 @@ export default function ProductCard({
   showSchema = false,
 }: ProductCardProps) {
   const { addItem, openDrawer } = useCart()
-  const [selectedVariant, setSelectedVariant] = useState<PrintfulSyncVariantDetail | null>(
+  const [selectedVariant, setSelectedVariant] = useState<PrintifyVariantDetail | null>(
     variants?.[0] ?? null
   )
   const [added, setAdded] = useState(false)
@@ -92,7 +92,7 @@ export default function ProductCard({
 
   // Group variants by size for quick-select
   const sizeVariants = variants?.filter(v =>
-    v.options.some(o => o.id === 'size')
+    v.options.some(o => o.id === 'size' || o.id === 'sizes')
   ) ?? []
 
   const handleAddToCart = useCallback(() => {
@@ -100,17 +100,16 @@ export default function ProductCard({
     if (!variant) return
 
     addItem({
-      variantId:    variant.sync_variant_id,
+      variantId:    variant.variantId,
       productId:    product.id,
       slug:         product.slug,
       name:         product.name,
       variantName:  variant.name,
       brand:        product.brand,
       type:         product.type,
-      price:        parseFloat(variant.retail_price),
+      price:        parseFloat(variant.retailPrice),
       quantity:     1,
-      thumbnailUrl: variant.files.find(f => f.type === 'preview')?.thumbnail_url
-                    ?? product.thumbnailUrl,
+      thumbnailUrl: variant.imageUrl || product.thumbnailUrl,
     })
 
     setAdded(true)
@@ -201,11 +200,11 @@ export default function ProductCard({
         {sizeVariants.length > 1 && (
           <div className="flex flex-wrap gap-1 mb-3" role="group" aria-label="Select size">
             {sizeVariants.map(v => {
-              const size = v.options.find(o => o.id === 'size')?.value ?? v.name
-              const isSelected = selectedVariant?.sync_variant_id === v.sync_variant_id
+              const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
+              const isSelected = selectedVariant?.variantId === v.variantId
               return (
                 <button
-                  key={v.sync_variant_id}
+                  key={v.variantId}
                   onClick={() => setSelectedVariant(v)}
                   aria-pressed={isSelected}
                   className={[
@@ -229,7 +228,7 @@ export default function ProductCard({
             text-lg leading-none">
             {product.priceFormatted || (
               selectedVariant
-                ? `$${parseFloat(selectedVariant.retail_price).toFixed(2)}`
+                ? `$${parseFloat(selectedVariant.retailPrice).toFixed(2)}`
                 : '—'
             )}
           </span>

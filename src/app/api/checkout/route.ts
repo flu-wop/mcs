@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     // Validate all items have required fields
     for (const item of items) {
-      if (!item.variantId || !item.price || !item.quantity) {
+      if (!item.variantId || !item.productId || !item.price || !item.quantity) {
         return NextResponse.json(
           { error: `Invalid cart item: ${item.name}` },
           { status: 400 }
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         quantity: item.quantity,
       })),
 
-      // Collect shipping address for Printful order creation
+      // Collect shipping address for Printify order creation
       shipping_address_collection: {
         allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'NL', 'SE', 'JP'],
       },
@@ -61,12 +61,14 @@ export async function POST(req: Request) {
       // Automatic tax calculation — enable in Stripe dashboard if desired
       // automatic_tax: { enabled: true },
 
-      // Store full cart in metadata so the webhook can reconstruct the Printful order
-      // Stripe metadata values max 500 chars — serialize only what Printful needs
+      // Store full cart in metadata so the webhook can reconstruct the Printify order
+      // Stripe metadata values max 500 chars — serialize only what Printify needs
+      // (Printify requires BOTH product_id and variant_id per line item)
       metadata: {
         cartItems: JSON.stringify(
           items.map(i => ({
             variantId: i.variantId,
+            productId: i.productId,
             quantity:  i.quantity,
             price:     i.price,
             name:      i.name,
@@ -78,7 +80,7 @@ export async function POST(req: Request) {
       // Branding
       custom_text: {
         submit: {
-          message: 'Ships from New Orleans via Printful · Usually 3–7 business days',
+          message: 'Ships from New Orleans via Printify · Usually 3–7 business days',
         },
       },
 

@@ -8,7 +8,7 @@ import { useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import FilterBar from '@/components/merch/FilterBar'
 import ProductCard from '@/components/merch/ProductCard'
-import type { MerchProduct, Brand, ProductType } from '@/lib/printful'
+import type { MerchProduct, Brand, ProductType } from '@/lib/printify'
 import type { SortOption } from '@/components/merch/FilterBar'
 
 // ─── Types ───────────────────────────────────────────────────────────────────

@@ -36,7 +36,7 @@ function SuccessContent() {
           Order confirmed.
         </h1>
         <p className="text-[13px] text-[#A89880] font-['DM_Sans'] leading-relaxed mb-2">
-          Your order is being prepared and will ship from New Orleans via Printful.
+          Your order is being prepared and will ship from New Orleans via Printify.
           You'll receive a confirmation email with tracking once it's on the way.
         </p>
         {sessionId && (
@@ -59,7 +59,7 @@ function SuccessContent() {
           </Link>
         </div>
         <p className="mt-12 text-[10px] tracking-[0.1em] uppercase text-[#3a3020] font-['DM_Sans']">
-          Ships from New Orleans · Fulfilled by Printful
+          Ships from New Orleans · Fulfilled by Printify
         </p>
       </div>
     </main>

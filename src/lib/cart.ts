@@ -3,13 +3,13 @@
 // Uses a single localStorage key so cart persists across all four brand sites.
 // Import this in CartProvider and in any component that needs direct cart access.
 
-import type { Brand, ProductType } from './printful'
+import type { Brand, ProductType } from './printify'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CartItem {
   variantId: number
-  productId: number
+  productId: string
   slug: string
   name: string
   variantName: string         // e.g. "Black / M"

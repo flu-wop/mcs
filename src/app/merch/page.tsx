@@ -5,7 +5,7 @@
 
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-import { getProductsWithPrices, type MerchProduct, type Brand, type ProductType } from '@/lib/printful'
+import { getProductsWithPrices, type MerchProduct, type Brand, type ProductType } from '@/lib/printify'
 import ShopClient from './ShopClient'
 
 // ─── ISR — re-fetch products every hour ───────────────────────────────────────
@@ -55,7 +55,7 @@ export default async function MerchPage({ searchParams }: PageProps) {
   try {
     products = await getProductsWithPrices(24)
   } catch (err) {
-    console.error('Failed to load products from Printful:', err)
+    console.error('Failed to load products from Printify:', err)
     // ShopClient renders an error/empty state — don't throw here
   }
 
@@ -113,7 +113,7 @@ function ShopHero() {
 
       <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-wide text-[#A89880] font-['DM_Sans']">
         Print-on-demand merch from four brands born in the studio.
-        Ships from New Orleans via Printful — no inventory, no minimums.
+        Ships from New Orleans via Printify — no inventory, no minimums.
       </p>
 
       {/* Ecosystem quick links */}

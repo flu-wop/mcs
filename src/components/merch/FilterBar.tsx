@@ -6,7 +6,7 @@
 
 import { useCallback, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import type { Brand, ProductType } from '@/lib/printful'
+import type { Brand, ProductType } from '@/lib/printify'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
