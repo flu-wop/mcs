@@ -281,7 +281,7 @@ async function pfPost(path: string, body: unknown) {
 // Fetch all published, visible products for the shop (with full variant + price detail —
 // Printify's list endpoint already returns full variant data, unlike Printful's two-step fetch).
 export async function getProducts(): Promise<MerchProduct[]> {
-  const data = await pfGet(`/shops/${SHOP_ID}/products.json?limit=100`)
+  const data = await pfGet(`/shops/${SHOP_ID}/products.json?limit=50`)
   const raw: PrintifyRawProduct[] = data.data ?? []
 
   return raw
