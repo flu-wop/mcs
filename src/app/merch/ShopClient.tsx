@@ -156,6 +156,7 @@ export default function ShopClient({
               <ProductCard
                 key={product.id}
                 product={product}
+                variants={product.variants}
                 showSchema={i < 4}
                 featured
               />
@@ -201,6 +202,7 @@ export default function ShopClient({
               <ProductCard
                 key={product.id}
                 product={product}
+                variants={product.variants}
                 showSchema={!isFiltering && i < 4}
               />
             ))}

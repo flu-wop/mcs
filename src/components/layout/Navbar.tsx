@@ -2,8 +2,10 @@
 
 import Link            from "next/link";
 import { usePathname } from "next/navigation";
-import { useState }    from "react";
-import { Menu, X }     from "lucide-react";
+import { useState, useEffect }    from "react";
+import { Menu, X, ShoppingBag }     from "lucide-react";
+import { useCart }     from "@/components/merch/CartProvider";
+import { cartCount }   from "@/lib/cart";
 
 const NAV_LINKS = [
   { label: "Home",     href: "/" },
@@ -18,6 +20,26 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname        = usePathname();
   const [open, setOpen] = useState(false);
+  const { state, openDrawer } = useCart();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const count = mounted ? cartCount(state.items) : 0;
+
+  const CartButton = ({ className = "" }: { className?: string }) => (
+    <button
+      onClick={openDrawer}
+      aria-label={`Open cart${count > 0 ? `, ${count} item${count === 1 ? "" : "s"}` : ""}`}
+      className={`relative p-2 text-mist hover:text-cream transition-colors ${className}`}
+    >
+      <ShoppingBag className="w-5 h-5" />
+      {count > 0 && (
+        <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center
+          min-w-[16px] h-4 px-1 rounded-full bg-gold text-studio-black text-[10px] font-semibold leading-none">
+          {count}
+        </span>
+      )}
+    </button>
+  );
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-studio-border/60 bg-studio-black/95 backdrop-blur-md">
@@ -61,16 +83,20 @@ export function Navbar() {
           >
             Book Now
           </Link>
+          <CartButton className="ml-1" />
         </nav>
 
-        {/* ── Mobile Hamburger ── */}
-        <button
-          className="md:hidden p-2 text-mist hover:text-cream transition-colors"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* ── Mobile: cart + hamburger ── */}
+        <div className="md:hidden flex items-center">
+          <CartButton />
+          <button
+            className="p-2 text-mist hover:text-cream transition-colors"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* ── Mobile Drawer ── */}

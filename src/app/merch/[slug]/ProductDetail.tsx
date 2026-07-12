@@ -41,8 +41,25 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
       .filter((c): c is string => !!c && !seen.has(c) && (seen.add(c), true))
   }, [variants])
 
+  // One representative thumbnail per color — this is what the gallery renders
+  // when the product has color variants, so clicking a picture *is* the color picker.
+  const colorThumbs = useMemo(() => {
+    return colors.map(color => {
+      const match = variants.find(v => optionValue(v, 'color') === color && v.imageUrl)
+      return { color, url: match?.imageUrl || product.thumbnailUrl }
+    })
+  }, [colors, variants, product.thumbnailUrl])
+
+  // Fallback gallery for products with no color variants at all (e.g. posters, stickers) —
+  // just cycles through whatever distinct images exist.
+  const plainGallery = useMemo(() => {
+    const urls = Array.from(new Set(variants.map(v => v.imageUrl).filter(Boolean)))
+    return urls.length ? urls : [product.thumbnailUrl]
+  }, [variants, product.thumbnailUrl])
+
   const [selectedSize, setSelectedSize]   = useState<string | undefined>(sizes[0])
   const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0])
+  const [activeImage, setActiveImage]     = useState(0)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
@@ -54,16 +71,9 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     ) ?? variants[0]
   }, [variants, sizes, colors, selectedSize, selectedColor])
 
-  // Gallery: unique images across variants, falling back to the product thumbnail
-  const gallery = useMemo(() => {
-    const urls = Array.from(new Set(variants.map(v => v.imageUrl).filter(Boolean)))
-    return urls.length ? urls : [product.thumbnailUrl]
-  }, [variants, product.thumbnailUrl])
-
-  const [activeImage, setActiveImage] = useState(0)
-
-  // When the selected variant has its own image, jump the gallery to it
-  const displayImage = selectedVariant?.imageUrl || gallery[activeImage] || product.thumbnailUrl
+  const displayImage = colors.length > 1
+    ? (colorThumbs.find(t => t.color === selectedColor)?.url ?? product.thumbnailUrl)
+    : (plainGallery[activeImage] ?? product.thumbnailUrl)
 
   const handleAddToCart = useCallback(() => {
     if (!selectedVariant) return
@@ -112,9 +122,28 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           )}
         </div>
 
-        {gallery.length > 1 && (
+        {/* Thumbnails double as the color picker when the product has colors */}
+        {colors.length > 1 ? (
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-1" role="group" aria-label="Select color">
+            {colorThumbs.map(({ color, url }) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color)}
+                aria-pressed={selectedColor === color}
+                aria-label={color}
+                title={color}
+                className={[
+                  'relative w-16 h-16 shrink-0 border overflow-hidden bg-[#111111] transition-colors',
+                  selectedColor === color ? 'border-[#D4AF77]/70' : 'border-[#D4AF77]/12 hover:border-[#A89880]/40',
+                ].join(' ')}
+              >
+                <Image src={url} alt={color} fill className="object-cover" sizes="64px" />
+              </button>
+            ))}
+          </div>
+        ) : plainGallery.length > 1 ? (
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-            {gallery.map((url, i) => (
+            {plainGallery.map((url, i) => (
               <button
                 key={url + i}
                 onClick={() => setActiveImage(i)}
@@ -127,6 +156,12 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
               </button>
             ))}
           </div>
+        ) : null}
+
+        {colors.length > 1 && selectedColor && (
+          <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a] font-['DM_Sans'] mt-2">
+            {selectedColor}
+          </p>
         )}
       </div>
 
@@ -148,33 +183,6 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
         <span className="font-['Cormorant_Garamond'] text-[#D4AF77] text-2xl mb-6">
           ${price.toFixed(2)}
         </span>
-
-        {/* Color select */}
-        {colors.length > 1 && (
-          <div className="mb-5">
-            <p className="text-[9px] tracking-[0.14em] uppercase text-[#5a4c3a] font-['DM_Sans'] mb-2">
-              Color
-            </p>
-            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select color">
-              {colors.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setSelectedColor(c)}
-                  aria-pressed={selectedColor === c}
-                  className={[
-                    'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5',
-                    "font-['DM_Sans'] border transition-colors",
-                    selectedColor === c
-                      ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                      : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
-                  ].join(' ')}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Size select */}
         {sizes.length > 1 && (

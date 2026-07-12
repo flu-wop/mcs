@@ -108,15 +108,6 @@ export interface PrintifyOrderLineItem {
 // e.g. "[djm:poster] Billboard #1" or "[mcs:hat] MCS Patch Hat"
 // Falls back gracefully if the convention isn't followed.
 
-const BRAND_PREFIXES: Record<string, Brand> = {
-  djm: 'djm',
-  streetbeat: 'streetbeat',
-  sb: 'streetbeat',
-  squiggle: 'squiggle',
-  ls: 'squiggle',
-  mcs: 'mcs',
-}
-
 const TYPE_KEYWORDS: Record<string, ProductType> = {
   tee: 'tee',
   't-shirt': 'tee',
@@ -147,11 +138,12 @@ const MVP_SLUGS = new Set([
 ])
 
 function parseBrand(raw: string): Brand {
-  const match = raw.match(/^\[([a-z]+)(?::[a-z]+)?\]/i)
-  if (match) {
-    const key = match[1].toLowerCase()
-    return BRAND_PREFIXES[key] ?? 'mcs'
-  }
+  const match = raw.match(/^\[([^\]]+)\]/i)
+  if (!match) return 'mcs'
+  const key = match[1].toLowerCase()
+  if (key.includes('squiggle')) return 'squiggle'
+  if (key.includes('streetbeat') || /\bsb\b/.test(key)) return 'streetbeat'
+  if (key.includes('djm')) return 'djm'
   return 'mcs'
 }
 
