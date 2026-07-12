@@ -84,8 +84,8 @@ export async function POST(req: Request) {
         },
       },
 
-      success_url: `${BASE_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${BASE_URL}/shop`,
+      success_url: `${BASE_URL}/merch/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${BASE_URL}/merch`,
     })
 
     return NextResponse.json({ url: session.url })

@@ -206,7 +206,7 @@ export default function ShopClient({
             ))}
           </div>
         ) : (
-          <EmptyState onClear={() => { window.location.href = '/shop' }} />
+          <EmptyState onClear={() => { window.location.href = '/merch' }} />
         )}
       </section>
 

@@ -45,7 +45,7 @@ function SuccessContent() {
           </p>
         )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
-          <Link href="/shop"
+          <Link href="/merch"
             className="text-[10px] tracking-[0.16em] uppercase px-6 py-3
               border border-[#D4AF77] text-[#D4AF77] hover:bg-[#D4AF77]/08
               transition-all font-['DM_Sans']">
