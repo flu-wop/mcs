@@ -10,6 +10,7 @@ import {
   useReducer,
   useEffect,
   useCallback,
+  useState,
   useTransition,
   type ReactNode,
 } from 'react'
@@ -60,6 +61,7 @@ const BRAND_ACCENT: Record<string, string> = {
 export default function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false })
   const [isCheckingOut, startCheckout] = useTransition()
+  const [discountCode, setDiscountCode] = useState('')
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -95,7 +97,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
           const res = await fetch('/api/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: state.items }),
+            body: JSON.stringify({ items: state.items, discountCode: discountCode.trim() || undefined }),
           })
           if (!res.ok) throw new Error('Checkout session creation failed')
           const { url } = await res.json() as { url: string }
@@ -107,7 +109,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         }
       })
     })
-  }, [state.items])
+  }, [state.items, discountCode])
 
   const total = cartTotal(state.items)
   const count = cartCount(state.items)
@@ -209,6 +211,15 @@ export default function CartProvider({ children }: { children: ReactNode }) {
             <p className="text-[10px] text-[#5a4c3a] font-['DM_Sans'] leading-relaxed">
               Shipping calculated at checkout · Ships from New Orleans via Printify
             </p>
+            <input
+              type="text"
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value)}
+              placeholder="DISCOUNT CODE"
+              className="w-full bg-transparent border border-[#D4AF77]/15 px-3 py-2
+                text-[11px] tracking-[0.1em] uppercase text-[#F5EDD8] placeholder:text-[#5a4c3a]
+                font-['DM_Sans'] focus:outline-none focus:border-[#D4AF77]/40 transition-colors"
+            />
             <button
               onClick={() => void checkout()}
               disabled={isCheckingOut}

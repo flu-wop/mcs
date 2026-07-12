@@ -12,10 +12,16 @@ function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.vercel.app'
 
+// Merch discount codes — applied server-side, same pattern as booking-checkout.
+// Skip codes on already-thin-margin items (stickers) by checking item.type below.
+const DISCOUNT_CODES: Record<string, number> = {
+  LOCAL10: 0.10,
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json() as { items: CartItem[] }
-    const { items } = body
+    const body = await req.json() as { items: CartItem[]; discountCode?: string }
+    const { items, discountCode } = body
 
     if (!items?.length) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
@@ -31,27 +37,39 @@ export async function POST(req: Request) {
       }
     }
 
+    const discountPct = discountCode
+      ? (DISCOUNT_CODES[discountCode.toUpperCase()] ?? 0)
+      : 0
+
     const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
 
-      line_items: items.map(item => ({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: item.name,
-            description: item.variantName,
-            images: item.thumbnailUrl ? [item.thumbnailUrl] : [],
-            metadata: {
-              brand:      item.brand,
-              type:       item.type,
-              slug:       item.slug,
+      line_items: items.map(item => {
+        // Stickers stay full price even with a code applied — margin's too thin to discount
+        const applies = discountPct > 0 && item.type !== 'sticker'
+        const finalPrice = applies
+          ? Math.round(item.price * (1 - discountPct) * 100) / 100
+          : item.price
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+              description: item.variantName,
+              images: item.thumbnailUrl ? [item.thumbnailUrl] : [],
+              metadata: {
+                brand:      item.brand,
+                type:       item.type,
+                slug:       item.slug,
+              },
             },
+            unit_amount: Math.round(finalPrice * 100), // Stripe uses cents
           },
-          unit_amount: Math.round(item.price * 100), // Stripe uses cents
-        },
-        quantity: item.quantity,
-      })),
+          quantity: item.quantity,
+        }
+      }),
 
       // Collect shipping address for Printify order creation
       shipping_address_collection: {
@@ -75,6 +93,7 @@ export async function POST(req: Request) {
           }))
         ),
         source: 'mcs-merch',
+        discountCode: discountPct > 0 ? discountCode!.toUpperCase() : '',
       },
 
       // Branding
