@@ -6,6 +6,7 @@
 
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from './CartProvider'
 
@@ -49,7 +50,7 @@ function ProductSchema({ product }: { product: MerchProduct }) {
       price: product.price,
       priceCurrency: 'USD',
       availability: 'https://schema.org/InStock',
-      url: `https://midcitysound.vercel.app/shop/${product.slug}`,
+      url: `https://midcitysound.com/merch/${product.slug}`,
       seller: {
         '@type': 'Organization',
         name: 'Mid City Sound Studios',
@@ -131,7 +132,8 @@ export default function ProductCard({
       {showSchema && <ProductSchema product={product} />}
 
       {/* ── Image ──────────────────────────────────────────────────────── */}
-      <div
+      <Link
+        href={`/merch/${product.slug}`}
         className="relative block aspect-square overflow-hidden bg-[#0d0d0d]"
       >
         {!imgError ? (
@@ -169,19 +171,22 @@ export default function ProductCard({
           font-['DM_Sans'] border bg-[#090909]/75 ${tagClass}`}>
           {BRAND_LABELS[product.brand] ?? product.brand.toUpperCase()}
         </span>
-      </div>
+      </Link>
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
       <div className="flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08">
 
         {/* Name */}
-        <h3 className={[
-          'font-[\'Cormorant_Garamond\'] font-light text-[#F5EDD8]',
-          'leading-tight mb-0.5',
-          featured ? 'text-lg' : 'text-base',
-        ].join(' ')}>
-          {product.name}
-        </h3>
+        <Link href={`/merch/${product.slug}`} className="group/name">
+          <h3 className={[
+            'font-[\'Cormorant_Garamond\'] font-light text-[#F5EDD8]',
+            'leading-tight mb-0.5',
+            'group-hover/name:text-[#D4AF77] transition-colors',
+            featured ? 'text-lg' : 'text-base',
+          ].join(' ')}>
+            {product.name}
+          </h3>
+        </Link>
 
         {/* Type */}
         <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a]

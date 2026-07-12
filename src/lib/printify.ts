@@ -80,6 +80,7 @@ export interface MerchProduct {
   variantCount: number
   mvp: boolean                // true for the 8 launch products
   variants?: PrintifyVariantDetail[]
+  description: string         // raw HTML from Printify (basic <p> tags — safe to render)
 }
 
 export interface PrintifyOrderRecipient {
@@ -244,6 +245,7 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
     variantCount: p.variants.length,
     mvp,
     variants: p.variants.map(v => enrichVariant(v, p)),
+    description: p.description ?? '',
   }
 }
 
