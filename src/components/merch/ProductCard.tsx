@@ -90,10 +90,18 @@ export default function ProductCard({
   const borderClass = BRAND_BORDER[product.brand] ?? BRAND_BORDER.mcs
   const tagClass    = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
 
-  // Group variants by size for quick-select
-  const sizeVariants = variants?.filter(v =>
-    v.options.some(o => o.id === 'size' || o.id === 'sizes')
-  ) ?? []
+  // Group variants by size for quick-select — dedupe to one button per unique
+  // size, not one per variant (a variant exists per color x size combo, so
+  // without this a 9-color tee would render the same size 9 times over).
+  const sizeVariants = (() => {
+    const seen = new Set<string>()
+    return (variants ?? []).filter(v => {
+      const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value
+      if (!size || seen.has(size)) return false
+      seen.add(size)
+      return true
+    })
+  })()
 
   const handleAddToCart = useCallback(() => {
     const variant = selectedVariant ?? variants?.[0]
