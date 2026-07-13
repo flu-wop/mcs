@@ -190,24 +190,39 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
             <p className="text-[9px] tracking-[0.14em] uppercase text-[#5a4c3a] font-['DM_Sans'] mb-2">
               Size
             </p>
-            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select size">
-              {sizes.map(s => (
-                <button
-                  key={s}
-                  onClick={() => setSelectedSize(s)}
-                  aria-pressed={selectedSize === s}
-                  className={[
-                    'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
-                    "font-['DM_Sans'] border transition-colors",
-                    selectedSize === s
-                      ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                      : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
-                  ].join(' ')}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
+            {sizes.length > 10 ? (
+              <select
+                aria-label="Select size"
+                value={selectedSize ?? ''}
+                onChange={(e) => setSelectedSize(e.target.value)}
+                className="w-full bg-[#0d0d0d] border border-[#D4AF77]/20 text-[#A89880]
+                  text-[11px] tracking-[0.08em] uppercase px-3 py-2.5 font-['DM_Sans']
+                  focus:outline-none focus:border-[#D4AF77]/50"
+              >
+                {sizes.map(s => (
+                  <option key={s} value={s} className="bg-[#111111] text-[#F5EDD8]">{s}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select size">
+                {sizes.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedSize(s)}
+                    aria-pressed={selectedSize === s}
+                    className={[
+                      'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
+                      "font-['DM_Sans'] border transition-colors",
+                      selectedSize === s
+                        ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                        : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                    ].join(' ')}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

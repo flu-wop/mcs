@@ -202,30 +202,55 @@ export default function ProductCard({
           {product.type}
         </p>
 
-        {/* Size quick-select (only for tees / hoodies with size variants) */}
+        {/* Size quick-select: buttons for small sets (apparel S–5XL), a dropdown
+            for anything larger (posters can have 20+ genuinely distinct sizes —
+            rendering that many buttons on a compact card breaks the layout) */}
         {sizeVariants.length > 1 && (
-          <div className="flex flex-wrap gap-1 mb-3" role="group" aria-label="Select size">
-            {sizeVariants.map(v => {
-              const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
-              const isSelected = selectedVariant?.variantId === v.variantId
-              return (
-                <button
-                  key={v.variantId}
-                  onClick={() => setSelectedVariant(v)}
-                  aria-pressed={isSelected}
-                  className={[
-                    'text-[9px] tracking-[0.1em] uppercase px-2 py-1',
-                    'font-[\'DM_Sans\'] border transition-colors min-w-[28px]',
-                    isSelected
-                      ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                      : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
-                  ].join(' ')}
-                >
-                  {size}
-                </button>
-              )
-            })}
-          </div>
+          sizeVariants.length > 6 ? (
+            <select
+              aria-label="Select size"
+              value={selectedVariant?.variantId ?? ''}
+              onChange={(e) => {
+                const v = sizeVariants.find(sv => sv.variantId === Number(e.target.value))
+                if (v) setSelectedVariant(v)
+              }}
+              className="mb-3 w-full bg-[#0d0d0d] border border-[#D4AF77]/20 text-[#A89880]
+                text-[10px] tracking-[0.08em] uppercase px-2 py-2 font-['DM_Sans']
+                focus:outline-none focus:border-[#D4AF77]/50"
+            >
+              {sizeVariants.map(v => {
+                const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
+                return (
+                  <option key={v.variantId} value={v.variantId} className="bg-[#111111] text-[#F5EDD8]">
+                    {size}
+                  </option>
+                )
+              })}
+            </select>
+          ) : (
+            <div className="flex flex-wrap gap-1 mb-3" role="group" aria-label="Select size">
+              {sizeVariants.map(v => {
+                const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
+                const isSelected = selectedVariant?.variantId === v.variantId
+                return (
+                  <button
+                    key={v.variantId}
+                    onClick={() => setSelectedVariant(v)}
+                    aria-pressed={isSelected}
+                    className={[
+                      'text-[9px] tracking-[0.1em] uppercase px-2 py-1',
+                      'font-[\'DM_Sans\'] border transition-colors min-w-[28px]',
+                      isSelected
+                        ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                        : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                    ].join(' ')}
+                  >
+                    {size}
+                  </button>
+                )
+              })}
+            </div>
+          )
         )}
 
         {/* Price + Add CTA */}
