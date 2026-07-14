@@ -165,11 +165,19 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* MVP badge */}
-        {product.mvp && (
+        {/* MVP badge (hidden when sold out — sold-out badge takes priority) */}
+        {product.mvp && product.inStock && (
           <span className="absolute top-2.5 left-2.5 z-10 bg-[#D4AF77] text-[#090909]
             text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5 font-medium">
             Launch
+          </span>
+        )}
+
+        {/* Sold out badge */}
+        {!product.inStock && (
+          <span className="absolute top-2.5 left-2.5 z-10 bg-[#111111] text-[#A89880]
+            border border-[#A89880]/30 text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5">
+            Sold Out
           </span>
         )}
 
@@ -182,7 +190,7 @@ export default function ProductCard({
       </Link>
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08">
+      <div className={`flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08 ${!product.inStock ? 'opacity-60' : ''}`}>
 
         {/* Name */}
         <Link href={`/merch/${product.slug}`} className="group/name">
@@ -266,8 +274,8 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            disabled={!variants && !product.price}
-            aria-label={`Add ${product.name} to cart`}
+            disabled={(!variants && !product.price) || !product.inStock}
+            aria-label={product.inStock ? `Add ${product.name} to cart` : `${product.name} is sold out`}
             className={[
               'text-[9px] tracking-[0.14em] uppercase px-3 py-2',
               'font-[\'DM_Sans\'] border transition-all duration-150',
@@ -275,10 +283,10 @@ export default function ProductCard({
               added
                 ? 'border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
                 : 'border-[#D4AF77]/20 text-[#A89880] hover:border-[#D4AF77]/60 hover:text-[#D4AF77]',
-              (!variants && !product.price) ? 'opacity-30 cursor-not-allowed' : '',
+              ((!variants && !product.price) || !product.inStock) ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
-            {added ? '✓ Added' : '+ Add'}
+            {!product.inStock ? 'Sold Out' : added ? '✓ Added' : '+ Add'}
           </button>
         </div>
       </div>

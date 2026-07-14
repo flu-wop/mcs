@@ -22,10 +22,9 @@ function optionValue(v: PrintifyVariantDetail, key: string) {
 
 export default function ProductDetail({ product }: { product: MerchProduct }) {
   const { addItem, openDrawer } = useCart()
-  const variants = useMemo(
-    () => (product.variants ?? []).filter(v => v.isAvailable),
-    [product.variants]
-  )
+  // Keep ALL variants, not just available ones — out-of-stock sizes/colors
+  // should show up disabled, not vanish, so people know an option exists.
+  const variants = useMemo(() => product.variants ?? [], [product.variants])
 
   const sizes  = useMemo(() => {
     const seen = new Set<string>()
@@ -45,8 +44,13 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   // when the product has color variants, so clicking a picture *is* the color picker.
   const colorThumbs = useMemo(() => {
     return colors.map(color => {
-      const match = variants.find(v => optionValue(v, 'color') === color && v.imageUrl)
-      return { color, url: match?.imageUrl || product.thumbnailUrl }
+      const colorVariants = variants.filter(v => optionValue(v, 'color') === color)
+      const match = colorVariants.find(v => v.imageUrl) ?? colorVariants[0]
+      return {
+        color,
+        url: match?.imageUrl || product.thumbnailUrl,
+        available: colorVariants.some(v => v.isAvailable),
+      }
     })
   }, [colors, variants, product.thumbnailUrl])
 
@@ -64,6 +68,14 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
+  const isSizeAvailable = useCallback((size: string) => {
+    return variants.some(v =>
+      optionValue(v, 'size') === size &&
+      (!colors.length || optionValue(v, 'color') === selectedColor) &&
+      v.isAvailable
+    )
+  }, [variants, colors, selectedColor])
+
   const selectedVariant = useMemo(() => {
     return variants.find(v =>
       (!sizes.length  || optionValue(v, 'size')  === selectedSize) &&
@@ -71,12 +83,14 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     ) ?? variants[0]
   }, [variants, sizes, colors, selectedSize, selectedColor])
 
+  const canAddToCart = !!selectedVariant?.isAvailable
+
   const displayImage = colors.length > 1
     ? (colorThumbs.find(t => t.color === selectedColor)?.url ?? product.thumbnailUrl)
     : (plainGallery[activeImage] ?? product.thumbnailUrl)
 
   const handleAddToCart = useCallback(() => {
-    if (!selectedVariant) return
+    if (!selectedVariant || !selectedVariant.isAvailable) return
     addItem({
       variantId:    selectedVariant.variantId,
       productId:    product.id,
@@ -125,19 +139,25 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
         {/* Thumbnails double as the color picker when the product has colors */}
         {colors.length > 1 ? (
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1" role="group" aria-label="Select color">
-            {colorThumbs.map(({ color, url }) => (
+            {colorThumbs.map(({ color, url, available }) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
                 aria-pressed={selectedColor === color}
-                aria-label={color}
-                title={color}
+                aria-label={available ? color : `${color} (out of stock)`}
+                title={available ? color : `${color} — out of stock`}
                 className={[
                   'relative w-16 h-16 shrink-0 border overflow-hidden bg-[#111111] transition-colors',
                   selectedColor === color ? 'border-[#D4AF77]/70' : 'border-[#D4AF77]/12 hover:border-[#A89880]/40',
+                  !available ? 'opacity-30' : '',
                 ].join(' ')}
               >
                 <Image src={url} alt={color} fill className="object-cover" sizes="64px" />
+                {!available && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-[#090909]/40">
+                    <span className="w-full h-px bg-[#A89880]/70 rotate-45" />
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -180,9 +200,17 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           {product.type}
         </p>
 
-        <span className="font-['Cormorant_Garamond'] text-[#D4AF77] text-2xl mb-6">
-          ${price.toFixed(2)}
-        </span>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="font-['Cormorant_Garamond'] text-[#D4AF77] text-2xl">
+            ${price.toFixed(2)}
+          </span>
+          {!product.inStock && (
+            <span className="text-[9px] tracking-[0.12em] uppercase px-2 py-0.5
+              border border-[#A89880]/30 text-[#A89880] font-['DM_Sans']">
+              Sold Out
+            </span>
+          )}
+        </div>
 
         {/* Size select */}
         {sizes.length > 1 && (
@@ -200,27 +228,37 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
                   focus:outline-none focus:border-[#D4AF77]/50"
               >
                 {sizes.map(s => (
-                  <option key={s} value={s} className="bg-[#111111] text-[#F5EDD8]">{s}</option>
+                  <option key={s} value={s} className="bg-[#111111] text-[#F5EDD8]">
+                    {s}{!isSizeAvailable(s) ? ' — out of stock' : ''}
+                  </option>
                 ))}
               </select>
             ) : (
               <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select size">
-                {sizes.map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setSelectedSize(s)}
-                    aria-pressed={selectedSize === s}
-                    className={[
-                      'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
-                      "font-['DM_Sans'] border transition-colors",
-                      selectedSize === s
-                        ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                        : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
-                    ].join(' ')}
-                  >
-                    {s}
-                  </button>
-                ))}
+                {sizes.map(s => {
+                  const available = isSizeAvailable(s)
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => setSelectedSize(s)}
+                      aria-pressed={selectedSize === s}
+                      title={available ? undefined : `${s} — out of stock`}
+                      className={[
+                        'relative text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
+                        "font-['DM_Sans'] border transition-colors",
+                        selectedSize === s
+                          ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                          : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                        !available ? 'opacity-40' : '',
+                      ].join(' ')}
+                    >
+                      {s}
+                      {!available && (
+                        <span className="absolute left-1 right-1 top-1/2 h-px bg-current -translate-y-1/2" />
+                      )}
+                    </button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -248,17 +286,17 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
 
           <button
             onClick={handleAddToCart}
-            disabled={!selectedVariant}
+            disabled={!canAddToCart}
             className={[
               'flex-1 text-[10px] tracking-[0.14em] uppercase px-4 py-3',
               "font-['DM_Sans'] border transition-all duration-150",
               added
                 ? 'border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
                 : 'border-[#D4AF77]/30 text-[#D4AF77] hover:bg-[#D4AF77]/08',
-              !selectedVariant ? 'opacity-30 cursor-not-allowed' : '',
+              !canAddToCart ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
-            {added ? '✓ Added to Cart' : 'Add to Cart'}
+            {added ? '✓ Added to Cart' : canAddToCart ? 'Add to Cart' : 'Out of Stock'}
           </button>
         </div>
 

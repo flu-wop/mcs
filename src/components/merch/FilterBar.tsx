@@ -29,7 +29,7 @@ const BRAND_CHIPS: { value: Brand | 'all'; label: string }[] = [
   { value: 'squiggle',   label: 'Lil Squiggle'      },
 ]
 
-const TYPE_CHIPS: { value: ProductType | 'all'; label: string }[] = [
+export const TYPE_CHIPS: { value: ProductType | 'all'; label: string }[] = [
   { value: 'all',       label: 'All Types'   },
   { value: 'tee',       label: 'Tees'        },
   { value: 'hoodie',    label: 'Hoodies'     },
@@ -41,7 +41,7 @@ const TYPE_CHIPS: { value: ProductType | 'all'; label: string }[] = [
   { value: 'sticker',   label: 'Stickers'    },
 ]
 
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+export const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'featured',   label: 'Featured'          },
   { value: 'price-asc',  label: 'Price: Low → High' },
   { value: 'price-desc', label: 'Price: High → Low' },

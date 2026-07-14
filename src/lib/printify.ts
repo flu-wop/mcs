@@ -81,6 +81,7 @@ export interface MerchProduct {
   mvp: boolean                // true for the 8 launch products
   variants?: PrintifyVariantDetail[]
   description: string         // raw HTML from Printify (basic <p> tags — safe to render)
+  inStock: boolean            // true if at least one variant is enabled + available
 }
 
 export interface PrintifyOrderRecipient {
@@ -238,6 +239,7 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
     mvp,
     variants: p.variants.map(v => enrichVariant(v, p)),
     description: p.description ?? '',
+    inStock: p.variants.some(v => v.is_enabled && v.is_available),
   }
 }
 

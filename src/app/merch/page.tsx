@@ -126,7 +126,7 @@ function ShopHero() {
         ] as const).map(({ label, brand }) => (
           <a
             key={brand}
-            href={`/merch?brand=${brand}`}
+            href={`/merch/brand/${brand}`}
             className="text-[10px] tracking-[0.14em] uppercase text-[#A89880]
               border-b border-[#A89880]/20 pb-px hover:text-[#D4AF77]
               hover:border-[#D4AF77]/40 transition-colors font-['DM_Sans']"
