@@ -19,6 +19,7 @@ interface MerchOrderRow {
   status:             string
   printify_order_id:  string | null
   printify_error:     string | null
+  email_error:        string | null
   created_at:         string
 }
 
@@ -44,7 +45,7 @@ export default async function AdminOrdersPage() {
   )
   const orders = result.rows as unknown as MerchOrderRow[]
 
-  const failed  = orders.filter(o => o.status === "printify_failed").length
+  const failed  = orders.filter(o => o.status === "printify_failed" || o.email_error).length
   const revenue = orders.reduce((sum, o) => sum + o.total_paid, 0)
 
   return (
@@ -88,7 +89,9 @@ export default async function AdminOrdersPage() {
             {orders.map(o => {
               const address: ShippingAddress = JSON.parse(o.shipping_address)
               const items: OrderItem[] = JSON.parse(o.items)
-              const failedOrder = o.status === "printify_failed"
+              const printifyFailed = o.status === "printify_failed"
+              const emailFailed    = !!o.email_error
+              const failedOrder    = printifyFailed || emailFailed
 
               return (
                 <div
@@ -106,7 +109,10 @@ export default async function AdminOrdersPage() {
                       >
                         {failedOrder ? (
                           <span className="flex items-center gap-1">
-                            <AlertTriangle className="w-3 h-3" /> Printify Failed
+                            <AlertTriangle className="w-3 h-3" />
+                            {printifyFailed && emailFailed
+                              ? 'Printify + Email Failed'
+                              : printifyFailed ? 'Printify Failed' : 'Email Failed'}
                           </span>
                         ) : 'Submitted'}
                       </Badge>
@@ -137,9 +143,14 @@ export default async function AdminOrdersPage() {
                       )}
                     </div>
 
-                    {failedOrder && o.printify_error && (
+                    {printifyFailed && o.printify_error && (
                       <p className="text-red-400/80 text-xs italic border-t border-red-500/20 pt-2 mt-2">
-                        {o.printify_error} — create this order manually in Printify.
+                        Printify: {o.printify_error} — create this order manually in Printify.
+                      </p>
+                    )}
+                    {emailFailed && (
+                      <p className="text-red-400/80 text-xs italic border-t border-red-500/20 pt-2 mt-2">
+                        Email: {o.email_error} — customer was NOT notified, follow up manually.
                       </p>
                     )}
                   </div>

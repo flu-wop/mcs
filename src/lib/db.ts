@@ -62,6 +62,7 @@ export async function initDB() {
       status             TEXT    NOT NULL DEFAULT 'submitted',  -- 'submitted' | 'printify_failed'
       printify_order_id  TEXT,
       printify_error     TEXT,
+      email_error        TEXT,
       created_at         TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
@@ -72,5 +73,13 @@ export async function initDB() {
       created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  // Migration: email_error column was added after merch_orders already existed
+  // in production — CREATE TABLE IF NOT EXISTS won't retroactively add it.
+  try {
+    await client.execute(`ALTER TABLE merch_orders ADD COLUMN email_error TEXT`)
+  } catch {
+    // Column already exists — fine, this just means the migration already ran.
+  }
+
   return client
 }

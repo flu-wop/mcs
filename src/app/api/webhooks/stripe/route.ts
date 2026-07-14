@@ -230,22 +230,37 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     })
   }
 
-  await sendMerchOrderEmails({
-    id:              orderId,
-    customerName:    fullName,
-    customerEmail:   customer.email ?? "",
-    shippingAddress: {
-      line1: recipient.address1, line2: recipient.address2,
-      city: recipient.city, region: recipient.region, zip: recipient.zip, country: recipient.country,
-    },
-    items:           cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price })),
-    totalPaid,
-    discountCode:    session.metadata?.discountCode ?? "",
-    printifyOrderId,
-    printifyError,
-  })
+  // Email failure should never be silent — the order is already safely
+  // recorded above regardless of whether this succeeds. If it fails, record
+  // why directly on the order so it's visible in /admin/orders without
+  // needing to go hunting through logs or a third-party dashboard.
+  let emailError: string | null = null
+  try {
+    await sendMerchOrderEmails({
+      id:              orderId,
+      customerName:    fullName,
+      customerEmail:   customer.email ?? "",
+      shippingAddress: {
+        line1: recipient.address1, line2: recipient.address2,
+        city: recipient.city, region: recipient.region, zip: recipient.zip, country: recipient.country,
+      },
+      items:           cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price })),
+      totalPaid,
+      discountCode:    session.metadata?.discountCode ?? "",
+      printifyOrderId,
+      printifyError,
+    })
+  } catch (err) {
+    emailError = err instanceof Error ? err.message : String(err)
+    console.error("[stripe-webhook] Order email failed:", emailError)
+    await getDB().execute({
+      sql: `UPDATE merch_orders SET email_error = ? WHERE id = ?`,
+      args: [emailError, orderId],
+    })
+  }
 
-  // Surface the Printify failure to the webhook's own error log/return path too,
-  // even though the order is now safely recorded and both emails are sent.
+  // Surface failures to the webhook's own error log/return path too, even
+  // though the order itself is already safely recorded either way.
   if (printifyError) throw new Error(`Printify order creation failed (order recorded as ${orderId}): ${printifyError}`)
+  if (emailError) throw new Error(`Order email failed (order recorded as ${orderId}): ${emailError}`)
 }
