@@ -44,6 +44,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   const colors = useMemo(() => {
     const seen = new Set<string>()
     return variants
+      .filter(v => v.isAvailable)
       .map(v => optionValue(v, 'color'))
       .filter((c): c is string => !!c && !seen.has(c) && (seen.add(c), true))
   }, [variants])
@@ -157,25 +158,19 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
         {/* Thumbnails double as the color picker when the product has colors */}
         {colors.length > 1 ? (
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1" role="group" aria-label="Select color">
-            {colorThumbs.map(({ color, url, available }) => (
+            {colorThumbs.map(({ color, url }) => (
               <button
                 key={color}
                 onClick={() => setSelectedColor(color)}
                 aria-pressed={selectedColor === color}
-                aria-label={available ? color : `${color} (out of stock)`}
-                title={available ? color : `${color} — out of stock`}
+                aria-label={color}
+                title={color}
                 className={[
                   'relative w-16 h-16 shrink-0 border overflow-hidden bg-[#111111] transition-colors',
                   selectedColor === color ? 'border-[#D4AF77]/70' : 'border-[#D4AF77]/12 hover:border-[#A89880]/40',
-                  !available ? 'opacity-30' : '',
                 ].join(' ')}
               >
                 <Image src={url} alt={color} fill className="object-cover" sizes="64px" />
-                {!available && (
-                  <span className="absolute inset-0 flex items-center justify-center bg-[#090909]/40">
-                    <span className="w-full h-px bg-[#A89880]/70 rotate-45" />
-                  </span>
-                )}
               </button>
             ))}
           </div>
@@ -256,30 +251,22 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
               </select>
             ) : (
               <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select size">
-                {sizes.map(s => {
-                  const available = isSizeAvailable(s)
-                  return (
-                    <button
-                      key={s}
-                      onClick={() => setSelectedSize(s)}
-                      aria-pressed={selectedSize === s}
-                      title={available ? undefined : `${s} — out of stock`}
-                      className={[
-                        'relative text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
-                        "font-['DM_Sans'] border transition-colors",
-                        selectedSize === s
-                          ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                          : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
-                        !available ? 'opacity-40' : '',
-                      ].join(' ')}
-                    >
-                      {s}
-                      {!available && (
-                        <span className="absolute left-1 right-1 top-1/2 h-px bg-current -translate-y-1/2" />
-                      )}
-                    </button>
-                  )
-                })}
+                {sizes.filter(isSizeAvailable).map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setSelectedSize(s)}
+                    aria-pressed={selectedSize === s}
+                    className={[
+                      'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5 min-w-[36px]',
+                      "font-['DM_Sans'] border transition-colors",
+                      selectedSize === s
+                        ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                        : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                    ].join(' ')}
+                  >
+                    {s}
+                  </button>
+                ))}
               </div>
             )}
           </div>

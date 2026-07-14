@@ -95,14 +95,18 @@ export default function ShopClient({
     })
   }, [products])
 
-  // Filtered + sorted grid products
-  const filtered = useMemo(
-    () => applyFilters(products, brand, type, search, sort),
-    [products, brand, type, search, sort]
-  )
-
   // Whether we're in a "filtered" state (hide carousel when filtering)
   const isFiltering = brand !== 'all' || type !== 'all' || search !== '' || sort !== 'featured'
+
+  // Filtered + sorted grid products — when the featured carousel is showing,
+  // exclude whatever it already displays so nothing appears twice on the
+  // page (rows shift down to start with the next products instead of
+  // repeating the carousel as the grid's first row). When actively
+  // filtering, the carousel is hidden anyway, so show everything.
+  const filtered = useMemo(() => {
+    const pool = isFiltering ? products : products.filter(p => !p.mvp)
+    return applyFilters(pool, brand, type, search, sort)
+  }, [products, brand, type, search, sort, isFiltering])
 
   // Back-link: if ?brand= is set and we came from a brand sub-site
   const brandOrigins: Record<string, { label: string; href: string }> = {
