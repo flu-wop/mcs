@@ -8,6 +8,8 @@ import Stripe from 'stripe'
 import type { CartItem } from '@/lib/cart'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
 import { DISCOUNT_CODES } from '@/lib/discount-codes'
+import { initDB, getDB } from '@/lib/db'
+import { randomUUID } from 'crypto'
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia', }) }
@@ -40,6 +42,27 @@ export async function POST(req: Request) {
     const discountPct = discountCode
       ? (DISCOUNT_CODES[discountCode.toUpperCase()] ?? 0)
       : 0
+
+    // Full cart goes to Turso, not Stripe metadata — a single metadata value
+    // caps at 500 characters, which a cart of even 4-5 items with real
+    // product/variant names blows past easily. Only a short reference ID
+    // goes to Stripe; the webhook looks the real cart up by that ID.
+    const cartId = randomUUID()
+    await initDB()
+    await getDB().execute({
+      sql: `INSERT INTO pending_carts (id, items) VALUES (?, ?)`,
+      args: [
+        cartId,
+        JSON.stringify(items.map(i => ({
+          variantId:   i.variantId,
+          productId:   i.productId,
+          quantity:    i.quantity,
+          price:       i.price,
+          name:        i.name,
+          variantName: i.variantName,
+        }))),
+      ],
+    })
 
     const session = await getStripe().checkout.sessions.create({
       payment_method_types: ['card'],
@@ -79,20 +102,11 @@ export async function POST(req: Request) {
       // Automatic tax calculation — enable in Stripe dashboard if desired
       // automatic_tax: { enabled: true },
 
-      // Store full cart in metadata so the webhook can reconstruct the Printify order
-      // and record/email a real order with size/color, not just product name.
-      // Stripe metadata values max 500 chars — fine for typical small-cart sizes here.
+      // Only a short reference goes here — the real cart lives in Turso
+      // (pending_carts table), looked up by this ID in the webhook. Stripe
+      // metadata values cap at 500 characters; a real cart's JSON doesn't.
       metadata: {
-        cartItems: JSON.stringify(
-          items.map(i => ({
-            variantId:   i.variantId,
-            productId:   i.productId,
-            quantity:    i.quantity,
-            price:       i.price,
-            name:        i.name,
-            variantName: i.variantName,
-          }))
-        ),
+        cartId,
         source: 'mcs-merch',
         discountCode: discountPct > 0 ? discountCode!.toUpperCase() : '',
       },

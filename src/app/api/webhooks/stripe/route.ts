@@ -127,14 +127,20 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     return
   }
 
-  const rawItems = session.metadata?.cartItems
-  if (!rawItems) throw new Error(`No cartItems in metadata for session ${session.id}`)
+  const cartId = session.metadata?.cartId
+  if (!cartId) throw new Error(`No cartId in metadata for session ${session.id}`)
 
-  const cartItems = JSON.parse(rawItems) as Array<{
+  const cartRow = await getDB().execute({
+    sql: `SELECT items FROM pending_carts WHERE id = ?`,
+    args: [cartId],
+  })
+  if (!cartRow.rows.length) throw new Error(`No pending_carts row found for cartId ${cartId} (session ${session.id})`)
+
+  const cartItems = JSON.parse(cartRow.rows[0].items as string) as Array<{
     variantId: number; productId: string; quantity: number; price: number; name: string; variantName?: string
   }>
 
-  if (!cartItems.length) throw new Error(`Empty cartItems for session ${session.id}`)
+  if (!cartItems.length) throw new Error(`Empty cart for cartId ${cartId} (session ${session.id})`)
 
   const shipping = session.collected_information?.shipping_details
   const customer = session.customer_details
@@ -200,6 +206,13 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
       printifyOrderId,
       printifyError,
     ],
+  })
+
+  // Cart data is now safely copied into merch_orders.items — the pending
+  // row was only ever needed to get past Stripe's metadata size limit.
+  await getDB().execute({
+    sql: `DELETE FROM pending_carts WHERE id = ?`,
+    args: [cartId],
   })
 
   await sendMerchOrderEmails({

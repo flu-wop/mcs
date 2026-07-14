@@ -65,5 +65,12 @@ export async function initDB() {
       created_at         TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS pending_carts (
+      id          TEXT    PRIMARY KEY,
+      items       TEXT    NOT NULL,  -- full cart JSON, no size limit unlike Stripe metadata
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
   return client
 }
