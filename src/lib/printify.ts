@@ -291,9 +291,11 @@ export async function getProduct(id: string): Promise<MerchProduct> {
 
 // Kept for API-compatibility with existing callers — Printify's list endpoint
 // already returns full variant/price data, so this is just an alias for getProducts().
-export async function getProductsWithPrices(limit = 24): Promise<MerchProduct[]> {
+// No default cap: the catalog is small (under 50, Printify's own page limit) and every
+// visible product should show up. Pass a limit explicitly if you ever want to cap it.
+export async function getProductsWithPrices(limit?: number): Promise<MerchProduct[]> {
   const products = await getProducts()
-  return products.slice(0, limit)
+  return typeof limit === 'number' ? products.slice(0, limit) : products
 }
 
 // ─── Order creation (called from Stripe webhook only) ─────────────────────────

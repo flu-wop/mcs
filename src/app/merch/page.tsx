@@ -1,5 +1,5 @@
 // app/merch/page.tsx
-// Central shop page for midcitysound.vercel.app/shop.
+// Central shop page for midcitysound.com/merch.
 // Server component: fetches products at build/ISR, passes to client ShopClient.
 // URL params: ?brand=djm|streetbeat|squiggle|mcs &type=tee|hoodie|poster|accessory|mug|hat|tote|sticker &search=... &sort=featured|price-asc|price-desc|name
 
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: 'Mid City Sound Merch',
     description: 'Four brands. One studio. Wear the culture.',
     images: [{ url: '/images/og-shop.jpg', width: 1200, height: 630 }],
-    url: 'https://midcitysound.vercel.app/shop',
+    url: 'https://midcitysound.com/merch',
     siteName: 'Mid City Sound Studios',
     type: 'website',
   },
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     images: ['/images/og-shop.jpg'],
   },
   alternates: {
-    canonical: 'https://midcitysound.vercel.app/shop',
+    canonical: 'https://midcitysound.com/merch',
   },
 }
 
@@ -53,7 +53,7 @@ export default async function MerchPage({ searchParams }: PageProps) {
   // Fetch all products with prices (cached via ISR)
   let products: MerchProduct[] = []
   try {
-    products = await getProductsWithPrices(24)
+    products = await getProductsWithPrices()
   } catch (err) {
     console.error('Failed to load products from Printify:', err)
     // ShopClient renders an error/empty state — don't throw here
@@ -126,7 +126,7 @@ function ShopHero() {
         ] as const).map(({ label, brand }) => (
           <a
             key={brand}
-            href={`/shop?brand=${brand}`}
+            href={`/merch?brand=${brand}`}
             className="text-[10px] tracking-[0.14em] uppercase text-[#A89880]
               border-b border-[#A89880]/20 pb-px hover:text-[#D4AF77]
               hover:border-[#D4AF77]/40 transition-colors font-['DM_Sans']"
