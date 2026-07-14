@@ -24,6 +24,7 @@ import {
   type CartItem,
   type CartState,
 } from '@/lib/cart'
+import { applyDiscount, type DiscountResult } from '@/lib/discount-codes'
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 
@@ -63,6 +64,8 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false })
   const [isCheckingOut, startCheckout] = useTransition()
   const [discountCode, setDiscountCode] = useState('')
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountResult | null>(null)
+  const [discountError, setDiscountError] = useState<string | null>(null)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   // Hydrate from localStorage on mount
@@ -90,6 +93,31 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const clear      = useCallback(() => dispatch({ type: 'CLEAR' }), [])
   const openDrawer  = useCallback(() => dispatch({ type: 'OPEN_DRAWER' }), [])
   const closeDrawer = useCallback(() => dispatch({ type: 'CLOSE_DRAWER' }), [])
+
+  const handleDiscountInput = useCallback((value: string) => {
+    setDiscountCode(value)
+    // Require re-applying after any edit, so the shown total never lags behind
+    // what's actually typed in the box.
+    setAppliedDiscount(null)
+    setDiscountError(null)
+  }, [])
+
+  const applyDiscountCode = useCallback(() => {
+    const code = discountCode.trim()
+    if (!code) {
+      setDiscountError('Enter a code first.')
+      setAppliedDiscount(null)
+      return
+    }
+    const result = applyDiscount(state.items, code)
+    if (!result.valid) {
+      setDiscountError('That code isn\u2019t valid.')
+      setAppliedDiscount(null)
+      return
+    }
+    setDiscountError(null)
+    setAppliedDiscount(result)
+  }, [discountCode, state.items])
 
   // Stripe Checkout — POST to /api/checkout, redirect to Stripe-hosted page
   const checkout = useCallback(() => {
@@ -207,26 +235,70 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         {/* Footer */}
         {state.items.length > 0 && (
           <div className="border-t border-[#D4AF77]/10 px-6 py-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs tracking-[0.1em] uppercase text-[#A89880] font-['DM_Sans']">
-                Subtotal
-              </span>
-              <span className="font-['Cormorant_Garamond'] text-xl text-[#D4AF77]">
-                ${total.toFixed(2)}
-              </span>
-            </div>
+            {appliedDiscount?.valid ? (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs tracking-[0.1em] uppercase text-[#5a4c3a] font-['DM_Sans']">
+                    Subtotal
+                  </span>
+                  <span className="font-['Cormorant_Garamond'] text-base text-[#5a4c3a] line-through">
+                    ${total.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs tracking-[0.1em] uppercase text-[#D4AF77] font-['DM_Sans']">
+                    {appliedDiscount.code} applied
+                  </span>
+                  <span className="font-['Cormorant_Garamond'] text-base text-[#D4AF77]">
+                    −${appliedDiscount.savings.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-1 border-t border-[#D4AF77]/10">
+                  <span className="text-xs tracking-[0.1em] uppercase text-[#A89880] font-['DM_Sans']">
+                    Total
+                  </span>
+                  <span className="font-['Cormorant_Garamond'] text-xl text-[#D4AF77]">
+                    ${appliedDiscount.discountedTotal.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span className="text-xs tracking-[0.1em] uppercase text-[#A89880] font-['DM_Sans']">
+                  Subtotal
+                </span>
+                <span className="font-['Cormorant_Garamond'] text-xl text-[#D4AF77]">
+                  ${total.toFixed(2)}
+                </span>
+              </div>
+            )}
             <p className="text-[10px] text-[#5a4c3a] font-['DM_Sans'] leading-relaxed">
               Shipping calculated at checkout · Ships from New Orleans via Printify
             </p>
-            <input
-              type="text"
-              value={discountCode}
-              onChange={(e) => setDiscountCode(e.target.value)}
-              placeholder="DISCOUNT CODE"
-              className="w-full bg-transparent border border-[#D4AF77]/15 px-3 py-2
-                text-[11px] tracking-[0.1em] uppercase text-[#F5EDD8] placeholder:text-[#5a4c3a]
-                font-['DM_Sans'] focus:outline-none focus:border-[#D4AF77]/40 transition-colors"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={discountCode}
+                onChange={(e) => handleDiscountInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyDiscountCode() } }}
+                placeholder="DISCOUNT CODE"
+                className="flex-1 min-w-0 bg-transparent border border-[#D4AF77]/15 px-3 py-2
+                  text-[11px] tracking-[0.1em] uppercase text-[#F5EDD8] placeholder:text-[#5a4c3a]
+                  font-['DM_Sans'] focus:outline-none focus:border-[#D4AF77]/40 transition-colors"
+              />
+              <button
+                onClick={applyDiscountCode}
+                className="shrink-0 px-4 text-[10px] tracking-[0.14em] uppercase font-['DM_Sans']
+                  border border-[#D4AF77]/30 text-[#D4AF77] hover:bg-[#D4AF77]/10 transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+            {discountError && (
+              <p className="text-[10px] text-[#c0392b] font-['DM_Sans'] -mt-2">
+                {discountError}
+              </p>
+            )}
             <button
               onClick={() => void checkout()}
               disabled={isCheckingOut}

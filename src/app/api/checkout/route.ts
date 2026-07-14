@@ -7,17 +7,13 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import type { CartItem } from '@/lib/cart'
 import { rateLimit, clientIp } from '@/lib/rate-limit'
+import { DISCOUNT_CODES } from '@/lib/discount-codes'
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia', }) }
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.vercel.app'
 
-// Merch discount codes — applied server-side, same pattern as booking-checkout.
-// Skip codes on already-thin-margin items (stickers) by checking item.type below.
-const DISCOUNT_CODES: Record<string, number> = {
-  LOCAL10: 0.10,
-}
 
 export async function POST(req: Request) {
   try {
