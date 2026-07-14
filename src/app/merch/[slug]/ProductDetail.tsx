@@ -5,6 +5,7 @@ import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from '@/components/merch/CartProvider'
+import { sortSizes, defaultSize } from '@/lib/sizes'
 
 const BRAND_LABELS: Record<string, string> = {
   mcs: 'Mid City Sound', djm: 'Donald Markowitz', streetbeat: 'Streetbeat', squiggle: 'Lil Squiggle',
@@ -28,9 +29,10 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
 
   const sizes  = useMemo(() => {
     const seen = new Set<string>()
-    return variants
+    const unsorted = variants
       .map(v => optionValue(v, 'size'))
       .filter((s): s is string => !!s && !seen.has(s) && (seen.add(s), true))
+    return sortSizes(unsorted, s => s)
   }, [variants])
 
   const colors = useMemo(() => {
@@ -61,7 +63,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     return urls.length ? urls : [product.thumbnailUrl]
   }, [variants, product.thumbnailUrl])
 
-  const [selectedSize, setSelectedSize]   = useState<string | undefined>(sizes[0])
+  const [selectedSize, setSelectedSize]   = useState<string | undefined>(defaultSize(sizes))
   const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0])
   const [activeImage, setActiveImage]     = useState(0)
   const [qty, setQty] = useState(1)

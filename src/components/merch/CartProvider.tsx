@@ -37,6 +37,7 @@ interface CartContext {
   closeDrawer: () => void
   checkout: () => Promise<void>
   isCheckingOut: boolean
+  checkoutError: string | null
 }
 
 const CartCtx = createContext<CartContext | null>(null)
@@ -62,6 +63,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [], isOpen: false })
   const [isCheckingOut, startCheckout] = useTransition()
   const [discountCode, setDiscountCode] = useState('')
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   // Hydrate from localStorage on mount
   useEffect(() => {
@@ -93,18 +95,23 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const checkout = useCallback(() => {
     return new Promise<void>((resolve, reject) => {
       startCheckout(async () => {
+        setCheckoutError(null)
         try {
           const res = await fetch('/api/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ items: state.items, discountCode: discountCode.trim() || undefined }),
           })
-          if (!res.ok) throw new Error('Checkout session creation failed')
-          const { url } = await res.json() as { url: string }
-          window.location.href = url
+          const data = await res.json().catch(() => ({}))
+          if (!res.ok || !data.url) {
+            throw new Error(data.error || 'Checkout failed — please try again.')
+          }
+          window.location.href = data.url
           resolve()
         } catch (err) {
+          const message = err instanceof Error ? err.message : 'Checkout failed — please try again.'
           console.error('Checkout error:', err)
+          setCheckoutError(message)
           reject(err)
         }
       })
@@ -115,7 +122,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const count = cartCount(state.items)
 
   return (
-    <CartCtx.Provider value={{ state, addItem, removeItem, updateQty, clear, openDrawer, closeDrawer, checkout, isCheckingOut }}>
+    <CartCtx.Provider value={{ state, addItem, removeItem, updateQty, clear, openDrawer, closeDrawer, checkout, isCheckingOut, checkoutError }}>
       {children}
 
       {/* ── Overlay ──────────────────────────────────────────────────────── */}
@@ -234,6 +241,11 @@ export default function CartProvider({ children }: { children: ReactNode }) {
             >
               {isCheckingOut ? 'Redirecting…' : 'Proceed to Checkout →'}
             </button>
+            {checkoutError && (
+              <p className="text-[10px] text-[#c0392b] font-['DM_Sans'] text-center -mt-2">
+                {checkoutError}
+              </p>
+            )}
             <button
               onClick={clear}
               className="w-full text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a]

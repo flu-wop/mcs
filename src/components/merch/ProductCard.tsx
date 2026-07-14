@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from './CartProvider'
+import { sortSizes, defaultSize } from '@/lib/sizes'
 
 // ─── Brand accent colours ─────────────────────────────────────────────────────
 
@@ -81,27 +82,38 @@ export default function ProductCard({
   showSchema = false,
 }: ProductCardProps) {
   const { addItem, openDrawer } = useCart()
-  const [selectedVariant, setSelectedVariant] = useState<PrintifyVariantDetail | null>(
-    variants?.[0] ?? null
-  )
-  const [added, setAdded] = useState(false)
-  const [imgError, setImgError] = useState(false)
-
-  const borderClass = BRAND_BORDER[product.brand] ?? BRAND_BORDER.mcs
-  const tagClass    = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
 
   // Group variants by size for quick-select — dedupe to one button per unique
-  // size, not one per variant (a variant exists per color x size combo, so
-  // without this a 9-color tee would render the same size 9 times over).
+  // size (not one per variant — a variant exists per color x size combo, so
+  // without this a 9-color tee would render the same size 9 times over),
+  // and sort into logical size order (Printify's own order is arbitrary,
+  // which is why products were defaulting to whatever size happened to be
+  // first — often 2XL — instead of something sensible like M or L).
   const sizeVariants = (() => {
     const seen = new Set<string>()
-    return (variants ?? []).filter(v => {
+    const deduped = (variants ?? []).filter(v => {
       const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value
       if (!size || seen.has(size)) return false
       seen.add(size)
       return true
     })
+    return sortSizes(deduped, v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? '')
   })()
+
+  const defaultVariant = (() => {
+    if (!sizeVariants.length) return variants?.[0] ?? null
+    const sizes = sizeVariants.map(v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? '')
+    const preferred = defaultSize(sizes)
+    return sizeVariants.find(v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value === preferred)
+      ?? sizeVariants[0]
+  })()
+
+  const [selectedVariant, setSelectedVariant] = useState<PrintifyVariantDetail | null>(defaultVariant)
+  const [added, setAdded] = useState(false)
+  const [imgError, setImgError] = useState(false)
+
+  const borderClass = BRAND_BORDER[product.brand] ?? BRAND_BORDER.mcs
+  const tagClass    = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
 
   const handleAddToCart = useCallback(() => {
     const variant = selectedVariant ?? variants?.[0]
