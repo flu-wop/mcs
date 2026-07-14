@@ -127,18 +127,30 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     return
   }
 
-  const cartId = session.metadata?.cartId
-  if (!cartId) throw new Error(`No cartId in metadata for session ${session.id}`)
-
-  const cartRow = await getDB().execute({
-    sql: `SELECT items FROM pending_carts WHERE id = ?`,
-    args: [cartId],
-  })
-  if (!cartRow.rows.length) throw new Error(`No pending_carts row found for cartId ${cartId} (session ${session.id})`)
-
-  const cartItems = JSON.parse(cartRow.rows[0].items as string) as Array<{
+  type CartItemPayload = {
     variantId: number; productId: string; quantity: number; price: number; name: string; variantName?: string
-  }>
+  }
+
+  const cartId = session.metadata?.cartId
+  let cartItems: CartItemPayload[]
+
+  if (cartId) {
+    const cartRow = await getDB().execute({
+      sql: `SELECT items FROM pending_carts WHERE id = ?`,
+      args: [cartId],
+    })
+    if (!cartRow.rows.length) throw new Error(`No pending_carts row found for cartId ${cartId} (session ${session.id})`)
+    cartItems = JSON.parse(cartRow.rows[0].items as string)
+  } else if (session.metadata?.cartItems) {
+    // Legacy format — sessions created before the pending_carts migration
+    // stored the cart directly in metadata instead of a cartId reference.
+    // Kept for backward compatibility so old unprocessed/retried webhook
+    // events (like a resend of a session from before this fix existed)
+    // still resolve correctly instead of failing on a missing cartId.
+    cartItems = JSON.parse(session.metadata.cartItems)
+  } else {
+    throw new Error(`No cartId or cartItems in metadata for session ${session.id}`)
+  }
 
   if (!cartItems.length) throw new Error(`Empty cart for cartId ${cartId} (session ${session.id})`)
 
@@ -210,10 +222,13 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
 
   // Cart data is now safely copied into merch_orders.items — the pending
   // row was only ever needed to get past Stripe's metadata size limit.
-  await getDB().execute({
-    sql: `DELETE FROM pending_carts WHERE id = ?`,
-    args: [cartId],
-  })
+  // Legacy sessions (old cartItems metadata format) never had one to begin with.
+  if (cartId) {
+    await getDB().execute({
+      sql: `DELETE FROM pending_carts WHERE id = ?`,
+      args: [cartId],
+    })
+  }
 
   await sendMerchOrderEmails({
     id:              orderId,
