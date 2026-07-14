@@ -73,7 +73,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   }, [variants, product.thumbnailUrl])
 
   const [selectedSize, setSelectedSize]   = useState<string | undefined>(
-    defaultSize(availableSizes.length ? availableSizes : sizes)
+    sizes.length > 10 ? undefined : defaultSize(availableSizes.length ? availableSizes : sizes)
   )
   const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0])
   const [activeImage, setActiveImage]     = useState(0)
@@ -90,10 +90,15 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   }, [variants, colors, selectedColor])
 
   const selectedVariant = useMemo(() => {
-    return variants.find(v =>
+    const match = variants.find(v =>
       (!sizes.length  || optionValue(v, 'size')  === selectedSize) &&
       (!colors.length || optionValue(v, 'color') === selectedColor)
-    ) ?? variants[0]
+    )
+    if (match) return match
+    // Dropdown case (10+ sizes) requires an explicit pick — don't silently
+    // fall back to some arbitrary size just because nothing matched yet.
+    if (sizes.length > 10 && !selectedSize) return undefined
+    return variants[0]
   }, [variants, sizes, colors, selectedSize, selectedColor])
 
   const canAddToCart = !!selectedVariant?.isAvailable
@@ -240,6 +245,9 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
                   text-[11px] tracking-[0.08em] uppercase px-3 py-2.5 font-['DM_Sans']
                   focus:outline-none focus:border-[#D4AF77]/50"
               >
+                <option value="" disabled className="bg-[#111111] text-[#5a4c3a]">
+                  Select a size
+                </option>
                 {availableSizes.map(s => (
                   <option key={s} value={s} className="bg-[#111111] text-[#F5EDD8]">
                     {s}
@@ -309,7 +317,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
               !canAddToCart ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
-            {added ? '✓ Added to Cart' : canAddToCart ? 'Add to Cart' : 'Out of Stock'}
+            {added ? '✓ Added to Cart' : canAddToCart ? 'Add to Cart' : (sizes.length > 10 && !selectedSize) ? 'Select a Size' : 'Out of Stock'}
           </button>
         </div>
 

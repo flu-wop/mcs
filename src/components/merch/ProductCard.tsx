@@ -109,7 +109,9 @@ export default function ProductCard({
       ?? sizeVariants[0]
   })()
 
-  const [selectedVariant, setSelectedVariant] = useState<PrintifyVariantDetail | null>(defaultVariant)
+  const [selectedVariant, setSelectedVariant] = useState<PrintifyVariantDetail | null>(
+    sizeVariants.length > 6 ? null : defaultVariant
+  )
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
@@ -117,6 +119,9 @@ export default function ProductCard({
   const tagClass    = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
 
   const handleAddToCart = useCallback(() => {
+    // If the dropdown is showing (a real size choice exists) and nothing's
+    // been picked yet, don't silently add some arbitrary size.
+    if (sizeVariants.length > 6 && !selectedVariant) return
     const variant = selectedVariant ?? variants?.[0]
     if (!variant) return
 
@@ -136,7 +141,7 @@ export default function ProductCard({
     setAdded(true)
     openDrawer()
     setTimeout(() => setAdded(false), 2000)
-  }, [addItem, openDrawer, product, selectedVariant, variants])
+  }, [addItem, openDrawer, product, selectedVariant, variants, sizeVariants])
 
   return (
     <article
@@ -239,6 +244,9 @@ export default function ProductCard({
                 text-[10px] tracking-[0.08em] uppercase px-2 py-2 font-['DM_Sans']
                 focus:outline-none focus:border-[#D4AF77]/50"
             >
+              <option value="" disabled className="bg-[#111111] text-[#5a4c3a]">
+                Select a size
+              </option>
               {sizeVariants.map(v => {
                 const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
                 return (
@@ -287,7 +295,7 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            disabled={(!variants && !product.price) || !product.inStock}
+            disabled={(!variants && !product.price) || !product.inStock || (sizeVariants.length > 6 && !selectedVariant)}
             aria-label={product.inStock ? `Add ${product.name} to cart` : `${product.name} is sold out`}
             className={[
               'text-[9px] tracking-[0.14em] uppercase px-3 py-2',
@@ -296,7 +304,7 @@ export default function ProductCard({
               added
                 ? 'border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
                 : 'border-[#D4AF77]/20 text-[#A89880] hover:border-[#D4AF77]/60 hover:text-[#D4AF77]',
-              ((!variants && !product.price) || !product.inStock) ? 'opacity-30 cursor-not-allowed' : '',
+              ((!variants && !product.price) || !product.inStock || (sizeVariants.length > 6 && !selectedVariant)) ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
             {!product.inStock ? 'Sold Out' : added ? '✓ Added' : '+ Add'}
