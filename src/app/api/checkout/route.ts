@@ -80,16 +80,17 @@ export async function POST(req: Request) {
       // automatic_tax: { enabled: true },
 
       // Store full cart in metadata so the webhook can reconstruct the Printify order
-      // Stripe metadata values max 500 chars — serialize only what Printify needs
-      // (Printify requires BOTH product_id and variant_id per line item)
+      // and record/email a real order with size/color, not just product name.
+      // Stripe metadata values max 500 chars — fine for typical small-cart sizes here.
       metadata: {
         cartItems: JSON.stringify(
           items.map(i => ({
-            variantId: i.variantId,
-            productId: i.productId,
-            quantity:  i.quantity,
-            price:     i.price,
-            name:      i.name,
+            variantId:   i.variantId,
+            productId:   i.productId,
+            quantity:    i.quantity,
+            price:       i.price,
+            name:        i.name,
+            variantName: i.variantName,
           }))
         ),
         source: 'mcs-merch',

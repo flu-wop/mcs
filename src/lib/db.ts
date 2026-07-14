@@ -46,5 +46,21 @@ export async function initDB() {
       created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS merch_orders (
+      id                 TEXT    PRIMARY KEY,
+      stripe_session_id  TEXT    NOT NULL,
+      customer_name      TEXT    NOT NULL,
+      customer_email     TEXT    NOT NULL,
+      shipping_address   TEXT    NOT NULL,  -- JSON blob
+      items              TEXT    NOT NULL,  -- JSON array: [{name, variantName, quantity, price}]
+      total_paid         INTEGER NOT NULL,  -- cents
+      discount_code      TEXT    NOT NULL DEFAULT '',
+      status             TEXT    NOT NULL DEFAULT 'submitted',  -- 'submitted' | 'printify_failed'
+      printify_order_id  TEXT,
+      printify_error     TEXT,
+      created_at         TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
   return client
 }

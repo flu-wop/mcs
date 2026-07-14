@@ -14,6 +14,7 @@ import { createOrder }           from "@/lib/printify"
 import type { PrintifyOrderRecipient } from "@/lib/printify"
 import { getDB, initDB }            from "@/lib/db"
 import { sendBookingEmails }     from "@/lib/booking-email"
+import { sendMerchOrderEmails }  from "@/lib/merch-email"
 import { randomUUID }            from "crypto"
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
@@ -104,7 +105,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   if (!rawItems) throw new Error(`No cartItems in metadata for session ${session.id}`)
 
   const cartItems = JSON.parse(rawItems) as Array<{
-    variantId: number; productId: string; quantity: number; price: number; name: string
+    variantId: number; productId: string; quantity: number; price: number; name: string; variantName?: string
   }>
 
   if (!cartItems.length) throw new Error(`Empty cartItems for session ${session.id}`)
@@ -130,11 +131,68 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     phone:      customer.phone ?? undefined,
   }
 
-  const items = cartItems.map(item => ({
+  const printifyItems = cartItems.map(item => ({
     product_id: item.productId,
     variant_id: item.variantId,
     quantity:   item.quantity,
   }))
 
-  await createOrder({ recipient, items })
+  // Try Printify separately from everything else — a failure here should NOT
+  // prevent the order from being recorded or the confirmation emails from
+  // going out. Payment already succeeded; the customer paid, full stop.
+  let printifyOrderId: string | null = null
+  let printifyError: string | null = null
+  try {
+    const result = await createOrder({ recipient, items: printifyItems })
+    printifyOrderId = result.id
+  } catch (err) {
+    printifyError = err instanceof Error ? err.message : String(err)
+    console.error("[stripe-webhook] Printify order creation failed:", printifyError)
+  }
+
+  const orderId = randomUUID()
+  const totalPaid = session.amount_total ?? 0
+
+  await initDB()
+  await getDB().execute({
+    sql: `INSERT INTO merch_orders
+            (id, stripe_session_id, customer_name, customer_email, shipping_address,
+             items, total_paid, discount_code, status, printify_order_id, printify_error)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+    args: [
+      orderId,
+      session.id,
+      fullName,
+      customer.email ?? "",
+      JSON.stringify({
+        line1: recipient.address1, line2: recipient.address2 ?? "",
+        city: recipient.city, region: recipient.region, zip: recipient.zip, country: recipient.country,
+      }),
+      JSON.stringify(cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price }))),
+      totalPaid,
+      session.metadata?.discountCode ?? "",
+      printifyOrderId ? "submitted" : "printify_failed",
+      printifyOrderId,
+      printifyError,
+    ],
+  })
+
+  await sendMerchOrderEmails({
+    id:              orderId,
+    customerName:    fullName,
+    customerEmail:   customer.email ?? "",
+    shippingAddress: {
+      line1: recipient.address1, line2: recipient.address2,
+      city: recipient.city, region: recipient.region, zip: recipient.zip, country: recipient.country,
+    },
+    items:           cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price })),
+    totalPaid,
+    discountCode:    session.metadata?.discountCode ?? "",
+    printifyOrderId,
+    printifyError,
+  })
+
+  // Surface the Printify failure to the webhook's own error log/return path too,
+  // even though the order is now safely recorded and both emails are sent.
+  if (printifyError) throw new Error(`Printify order creation failed (order recorded as ${orderId}): ${printifyError}`)
 }
