@@ -3,9 +3,9 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
-import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
+import type { MerchProduct } from '@/lib/printify'
 import { useCart } from '@/components/merch/CartProvider'
-import { sortSizes, defaultSize } from '@/lib/sizes'
+import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 import { GALLERY_OVERRIDES } from '@/lib/product-overrides'
 
 const BRAND_LABELS: Record<string, string> = {
@@ -16,10 +16,6 @@ const BRAND_TAG_COLOR: Record<string, string> = {
   djm:        'text-[#c8a45a] border-[#c8a45a]/20',
   streetbeat: 'text-[#4a7acc] border-[#4a7acc]/20',
   squiggle:   'text-[#1d9e75] border-[#1d9e75]/20',
-}
-
-function optionValue(v: PrintifyVariantDetail, key: string) {
-  return v.options.find(o => o.id === key || o.id === `${key}s`)?.value
 }
 
 export default function ProductDetail({ product }: { product: MerchProduct }) {

@@ -9,7 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from './CartProvider'
-import { sortSizes, defaultSize } from '@/lib/sizes'
+import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 
 // ─── Brand accent colours ─────────────────────────────────────────────────────
 
@@ -93,19 +93,19 @@ export default function ProductCard({
     const seen = new Set<string>()
     const deduped = (variants ?? []).filter(v => {
       if (!v.isAvailable) return false
-      const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value
+      const size = optionValue(v, 'size')
       if (!size || seen.has(size)) return false
       seen.add(size)
       return true
     })
-    return sortSizes(deduped, v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? '')
+    return sortSizes(deduped, v => optionValue(v, 'size') ?? '')
   })()
 
   const defaultVariant = (() => {
     if (!sizeVariants.length) return variants?.[0] ?? null
-    const sizes = sizeVariants.map(v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? '')
+    const sizes = sizeVariants.map(v => optionValue(v, 'size') ?? '')
     const preferred = defaultSize(sizes)
-    return sizeVariants.find(v => v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value === preferred)
+    return sizeVariants.find(v => optionValue(v, 'size') === preferred)
       ?? sizeVariants[0]
   })()
 
@@ -248,7 +248,7 @@ export default function ProductCard({
                 Select a size
               </option>
               {sizeVariants.map(v => {
-                const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
+                const size = optionValue(v, 'size') ?? v.name
                 return (
                   <option key={v.variantId} value={v.variantId} className="bg-[#111111] text-[#F5EDD8]">
                     {size}
@@ -259,7 +259,7 @@ export default function ProductCard({
           ) : (
             <div className="flex flex-wrap gap-1 mb-3" role="group" aria-label="Select size">
               {sizeVariants.map(v => {
-                const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value ?? v.name
+                const size = optionValue(v, 'size') ?? v.name
                 const isSelected = selectedVariant?.variantId === v.variantId
                 return (
                   <button
