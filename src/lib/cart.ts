@@ -123,8 +123,3 @@ export function saveCart(items: CartItem[]): void {
     // localStorage quota exceeded — fail silently
   }
 }
-
-export function clearCart(): void {
-  if (typeof window === 'undefined') return
-  localStorage.removeItem(CART_KEY)
-}

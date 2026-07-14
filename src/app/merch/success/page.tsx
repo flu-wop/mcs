@@ -3,19 +3,20 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { clearCart } from '@/lib/cart'
+import { useCart } from '@/components/merch/CartProvider'
 
 function SuccessContent() {
   const params    = useSearchParams()
   const sessionId = params.get('session_id')
   const [cleared, setCleared] = useState(false)
+  const { clear } = useCart()
 
   useEffect(() => {
     if (!cleared) {
-      clearCart()
+      clear()
       setCleared(true)
     }
-  }, [cleared])
+  }, [cleared, clear])
 
   return (
     <main className="min-h-screen bg-[#090909] flex items-center justify-center px-6">
