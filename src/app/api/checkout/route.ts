@@ -16,6 +16,10 @@ function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.com'
 
+// Free shipping over this subtotal (post-discount), flat rate under it.
+const FREE_SHIPPING_THRESHOLD = 75.00
+const FLAT_SHIPPING_RATE      = 5.99
+
 
 export async function POST(req: Request) {
   try {
@@ -43,6 +47,20 @@ export async function POST(req: Request) {
       ? (DISCOUNT_CODES[discountCode.toUpperCase()] ?? 0)
       : 0
 
+    // Compute each item's final (post-discount) price once — used for both
+    // the Stripe line items and the free-shipping threshold check below, so
+    // the two can never drift out of sync with each other.
+    const pricedItems = items.map(item => {
+      const applies = discountPct > 0 && item.type !== 'sticker'
+      const finalPrice = applies
+        ? Math.round(item.price * (1 - discountPct) * 100) / 100
+        : item.price
+      return { item, finalPrice }
+    })
+
+    const subtotal = pricedItems.reduce((sum, { item, finalPrice }) => sum + finalPrice * item.quantity, 0)
+    const freeShipping = subtotal >= FREE_SHIPPING_THRESHOLD
+
     // Full cart goes to Turso, not Stripe metadata — a single metadata value
     // caps at 500 characters, which a cart of even 4-5 items with real
     // product/variant names blows past easily. Only a short reference ID
@@ -68,39 +86,65 @@ export async function POST(req: Request) {
       payment_method_types: ['card'],
       mode: 'payment',
 
-      line_items: items.map(item => {
-        // Stickers stay full price even with a code applied — margin's too thin to discount
-        const applies = discountPct > 0 && item.type !== 'sticker'
-        const finalPrice = applies
-          ? Math.round(item.price * (1 - discountPct) * 100) / 100
-          : item.price
+      line_items: pricedItems.map(({ item, finalPrice }) => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.name,
+            description: item.variantName,
+            images: item.thumbnailUrl ? [item.thumbnailUrl] : [],
+            metadata: {
+              brand:      item.brand,
+              type:       item.type,
+              slug:       item.slug,
+            },
+          },
+          unit_amount: Math.round(finalPrice * 100), // Stripe uses cents
+        },
+        quantity: item.quantity,
+      })),
 
-        return {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: item.name,
-              description: item.variantName,
-              images: item.thumbnailUrl ? [item.thumbnailUrl] : [],
-              metadata: {
-                brand:      item.brand,
-                type:       item.type,
-                slug:       item.slug,
+      shipping_options: [
+        freeShipping
+          ? {
+              shipping_rate_data: {
+                type: 'fixed_amount',
+                fixed_amount: { amount: 0, currency: 'usd' },
+                display_name: `Free shipping (orders $${FREE_SHIPPING_THRESHOLD.toFixed(0)}+)`,
+                delivery_estimate: {
+                  minimum: { unit: 'business_day', value: 3 },
+                  maximum: { unit: 'business_day', value: 7 },
+                },
+              },
+            }
+          : {
+              shipping_rate_data: {
+                type: 'fixed_amount',
+                fixed_amount: { amount: Math.round(FLAT_SHIPPING_RATE * 100), currency: 'usd' },
+                display_name: 'Standard shipping',
+                delivery_estimate: {
+                  minimum: { unit: 'business_day', value: 3 },
+                  maximum: { unit: 'business_day', value: 7 },
+                },
               },
             },
-            unit_amount: Math.round(finalPrice * 100), // Stripe uses cents
-          },
-          quantity: item.quantity,
-        }
-      }),
+      ],
 
       // Collect shipping address for Printify order creation
       shipping_address_collection: {
         allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'NL', 'SE', 'JP'],
       },
 
-      // Automatic tax calculation — enable in Stripe dashboard if desired
-      // automatic_tax: { enabled: true },
+      // Sales tax collection — NOT enabled yet. This is separate from any tax
+      // Printify charges you on production cost (that's Printify's own tax
+      // obligation, unrelated to what a customer owes their state).
+      // To turn this on: activate Stripe Tax in the Stripe Dashboard, confirm
+      // your registered tax jurisdictions there, then set:
+      //   automatic_tax: { enabled: true },
+      // Stripe calculates the correct destination-based rate automatically
+      // once that's active — deliberately not flipping this on in code alone,
+      // since collecting tax you're not registered for is a compliance issue,
+      // not just a settings toggle.
 
       // Only a short reference goes here — the real cart lives in Turso
       // (pending_carts table), looked up by this ID in the webhook. Stripe
