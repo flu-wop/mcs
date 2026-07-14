@@ -4,7 +4,7 @@
 //
 // Projects:
 
-//   2. Lil Squiggle       — links to lilsquiggle.vercel.app + merch
+//   2. Lil Squiggle       — links to lilsquiggle.com + merch
 //   3. Time of My Life 40th — Dirty Dancing 40th anniversary campaign
 //   4. Street Beat Documentary — Now Available
 // ─────────────────────────────────────────────────────────────────────────────
@@ -73,8 +73,8 @@ const PROJECTS = [
       "Merch via Printify",
       "TikTok & YouTube campaign",
     ],
-    cta:    { label: "Visit Site", href: "https://lilsquiggle.vercel.app", external: true },
-    ctaAlt: { label: "Shop Merch", href: "https://store.lilsquiggle.com", external: true },
+    cta:    { label: "Visit Site", href: "https://lilsquiggle.com", external: true },
+    ctaAlt: { label: "Shop Merch", href: "/merch/brand/squiggle" },
     handles: ["@lilsquigglemon (TikTok, YouTube, X)", "@lil.squiggle (Instagram)"],
   },
 

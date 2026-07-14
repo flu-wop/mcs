@@ -21,7 +21,7 @@ const SOCIALS = [
 const ECOSYSTEM = [
   { label: "Donald Markowitz", sub: "Composer · Producer · Legend", href: "https://donaldmarkowitz.com" },
   { label: "Street Beat",      sub: "Documentary Film · 2025",       href: "https://streetbeat.video" },
-  { label: "Lil Squiggle",     sub: "Reggae-Dub · Merch Campaign",   href: "https://lilsquiggle.vercel.app" },
+  { label: "Lil Squiggle",     sub: "Reggae-Dub · Merch Campaign",   href: "https://lilsquiggle.com" },
 ];
 
 export function Footer() {
