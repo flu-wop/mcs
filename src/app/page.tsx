@@ -70,7 +70,7 @@ const PROJECT_CARDS = [
     tag:      "Coming Soon",
     desc:     "#DontDrinkAndDialDecades — reggae-dub chibi Lego campaign.",
     image:    "/images/lil-squiggle-character.png",
-    href:     "https://lilsquiggle.com",
+    href:     "https://lilsquiggle.vercel.app",
     external: true,
     contain:  true,
   },

@@ -93,7 +93,7 @@ export default function ShopClient({
   const brandOrigins: Record<string, { label: string; href: string }> = {
     djm:        { label: 'Donald Markowitz', href: 'https://donaldmarkowitz.com' },
     streetbeat: { label: 'Street Beat',      href: 'https://streetbeat.video'    },
-    squiggle:   { label: 'Lil Squiggle',     href: 'https://lilsquiggle.com'     },
+    squiggle:   { label: 'Lil Squiggle',     href: 'https://lilsquiggle.vercel.app' },
   }
   const origin = brand !== 'all' ? brandOrigins[brand] : null
 
@@ -255,7 +255,7 @@ function EcosystemStrip() {
     { label: 'Mid City Sound Studios', href: '/',                              note: 'Studio · New Orleans'       },
     { label: 'Donald Markowitz',       href: 'https://donaldmarkowitz.com',    note: 'Composer · Producer · Legend' },
     { label: 'Street Beat',            href: 'https://streetbeat.video',       note: 'Documentary · 2025'          },
-    { label: 'Lil Squiggle',           href: 'https://lilsquiggle.com',        note: '#DontDrinkAndDialDecades'    },
+    { label: 'Lil Squiggle',           href: 'https://lilsquiggle.vercel.app', note: '#DontDrinkAndDialDecades'    },
   ]
 
   return (
