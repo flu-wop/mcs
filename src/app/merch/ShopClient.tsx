@@ -23,6 +23,12 @@ interface ShopClientProps {
 
 // ─── Filter + sort logic ──────────────────────────────────────────────────────
 
+// Pinned to always appear first in the default "featured" sort/carousel,
+// ahead of even other MVP/launch products — a manual placement request,
+// not tied to any product attribute like mvp/inStock, so it lives here
+// explicitly rather than as a data-driven rule.
+const PINNED_FIRST_ID = '6a553c87566692467d039225' // We Make Records Tee
+
 function applyFilters(
   products: MerchProduct[],
   brand:  Brand | 'all',
@@ -49,8 +55,10 @@ function applyFilters(
     case 'price-desc': result = [...result].sort((a, b) => b.price - a.price); break
     case 'name':       result = [...result].sort((a, b) => a.name.localeCompare(b.name)); break
     default:
-      // "featured" — MVP products first, then alphabetical
+      // "featured" — pinned product first, then MVP products, then alphabetical
       result = [...result].sort((a, b) => {
+        if (a.id === PINNED_FIRST_ID) return -1
+        if (b.id === PINNED_FIRST_ID) return 1
         if (a.mvp && !b.mvp) return -1
         if (!a.mvp && b.mvp) return 1
         return a.name.localeCompare(b.name)
@@ -77,8 +85,15 @@ export default function ShopClient({
   const search = searchParams.get('search') ?? initialSearch
   const sort   = (searchParams.get('sort')   as SortOption)          ?? initialSort
 
-  // MVP products for the featured carousel (always unfiltered)
-  const mvpProducts = useMemo(() => products.filter(p => p.mvp), [products])
+  // MVP products for the featured carousel (always unfiltered) — pinned
+  // product first, same placement rule as the main grid below.
+  const mvpProducts = useMemo(() => {
+    return products.filter(p => p.mvp).sort((a, b) => {
+      if (a.id === PINNED_FIRST_ID) return -1
+      if (b.id === PINNED_FIRST_ID) return 1
+      return 0
+    })
+  }, [products])
 
   // Filtered + sorted grid products
   const filtered = useMemo(

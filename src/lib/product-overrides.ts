@@ -53,4 +53,8 @@ export const GALLERY_OVERRIDES: Record<string, string[]> = {
   '6a36280441155d651f090328': [
     'https://images-api.printify.com/mockup/6a36280441155d651f090328/99146/92793/billboard-poster.jpg?camera_label=front',
   ],
+  // Drumming Below Sea Level Poster (Streetbeat) — only the first image needed.
+  '6a45dce73f51befdc7058199': [
+    'https://images-api.printify.com/mockup/6a45dce73f51befdc7058199/75293/22727/drumming-below-sea-level-poster.jpg?camera_label=context-2',
+  ],
 }
