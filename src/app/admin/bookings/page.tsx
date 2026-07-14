@@ -1,8 +1,6 @@
 // src/app/admin/bookings/page.tsx
 // Admin dashboard — all studio bookings from Turso.
-// Access at /admin/bookings  (add auth middleware when ready)
-//
-// TODO: protect with middleware.ts + ADMIN_PASSWORD env var
+// Access at /admin/bookings — protected by src/middleware.ts (HTTP Basic Auth)
 
 import { getDB, initDB }   from "@/lib/db"
 import { Badge }        from "@/components/ui/badge"
