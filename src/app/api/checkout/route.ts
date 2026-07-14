@@ -12,7 +12,7 @@ import { DISCOUNT_CODES } from '@/lib/discount-codes'
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia', }) }
 
-const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.vercel.app'
+const BASE_URL = process.env.NEXT_PUBLIC_URL ?? 'https://midcitysound.com'
 
 
 export async function POST(req: Request) {

@@ -91,9 +91,9 @@ export default function ShopClient({
 
   // Back-link: if ?brand= is set and we came from a brand sub-site
   const brandOrigins: Record<string, { label: string; href: string }> = {
-    djm:        { label: 'Donald Markowitz', href: 'https://donaldmarkowitz.vercel.app' },
-    streetbeat: { label: 'Street Beat',      href: 'https://streetbeat.video'           },
-    squiggle:   { label: 'Lil Squiggle',     href: 'https://lilsquiggle.vercel.app'     },
+    djm:        { label: 'Donald Markowitz', href: 'https://donaldmarkowitz.com' },
+    streetbeat: { label: 'Street Beat',      href: 'https://streetbeat.video'    },
+    squiggle:   { label: 'Lil Squiggle',     href: 'https://lilsquiggle.com'     },
   }
   const origin = brand !== 'all' ? brandOrigins[brand] : null
 
@@ -252,10 +252,10 @@ function EmptyState({ onClear }: { onClear: () => void }) {
 
 function EcosystemStrip() {
   const links = [
-    { label: 'Mid City Sound Studios', href: 'https://midcitysound.vercel.app',     note: 'Studio · New Orleans'       },
-    { label: 'Donald Markowitz',       href: 'https://donaldmarkowitz.vercel.app',  note: 'Composer · Producer · Legend' },
-    { label: 'Street Beat',            href: 'https://streetbeat.video',            note: 'Documentary · 2025'          },
-    { label: 'Lil Squiggle',           href: 'https://lilsquiggle.vercel.app',      note: '#DontDrinkAndDialDecades'    },
+    { label: 'Mid City Sound Studios', href: '/',                              note: 'Studio · New Orleans'       },
+    { label: 'Donald Markowitz',       href: 'https://donaldmarkowitz.com',    note: 'Composer · Producer · Legend' },
+    { label: 'Street Beat',            href: 'https://streetbeat.video',       note: 'Documentary · 2025'          },
+    { label: 'Lil Squiggle',           href: 'https://lilsquiggle.com',        note: '#DontDrinkAndDialDecades'    },
   ]
 
   return (
