@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.printify.com",
       },
+      {
+        // Printify stores some re-uploaded/custom mockup images on S3 directly
+        // instead of their usual images-api.printify.com CDN. Wildcarding the
+        // region in case other buckets/regions show up the same way later.
+        protocol: "https",
+        hostname: "pfy-prod-products-mockup-media.s3.*.amazonaws.com",
+      },
     ],
   },
   async headers() {
