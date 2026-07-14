@@ -42,14 +42,17 @@ export async function initDB() {
       client_email TEXT   NOT NULL,
       client_notes TEXT   NOT NULL DEFAULT '',
       status      TEXT    NOT NULL DEFAULT 'pending',
-      stripe_session_id TEXT,
+      stripe_session_id TEXT UNIQUE,
       created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  // Existing DBs created before this constraint existed won't have it retroactively —
+  // this catches those without erroring if it's already there.
+  await client.execute(`CREATE UNIQUE INDEX IF NOT EXISTS idx_bookings_session ON bookings(stripe_session_id)`)
   await client.execute(`
     CREATE TABLE IF NOT EXISTS merch_orders (
       id                 TEXT    PRIMARY KEY,
-      stripe_session_id  TEXT    NOT NULL,
+      stripe_session_id  TEXT    NOT NULL UNIQUE,
       customer_name      TEXT    NOT NULL,
       customer_email     TEXT    NOT NULL,
       shipping_address   TEXT    NOT NULL,  -- JSON blob

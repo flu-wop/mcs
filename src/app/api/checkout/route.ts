@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import type { CartItem } from '@/lib/cart'
+import { rateLimit, clientIp } from '@/lib/rate-limit'
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia', }) }
@@ -20,6 +21,9 @@ const DISCOUNT_CODES: Record<string, number> = {
 
 export async function POST(req: Request) {
   try {
+    const ok = await rateLimit(`checkout:${clientIp(req)}`, 10, 600) // 10 per 10 min
+    if (!ok) return NextResponse.json({ error: 'Too many requests — try again shortly.' }, { status: 429 })
+
     const body = await req.json() as { items: CartItem[]; discountCode?: string }
     const { items, discountCode } = body
 

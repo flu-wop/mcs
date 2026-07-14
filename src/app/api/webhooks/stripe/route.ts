@@ -57,6 +57,18 @@ export async function POST(req: Request) {
 
 async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
   await initDB()
+
+  // Idempotency: Stripe retries webhook delivery on timeout/non-200, which
+  // would otherwise create duplicate bookings and send duplicate emails.
+  const existing = await getDB().execute({
+    sql: `SELECT id FROM bookings WHERE stripe_session_id = ?`,
+    args: [session.id],
+  })
+  if (existing.rows.length > 0) {
+    console.log(`[stripe-webhook] Booking already processed for session ${session.id}, skipping`)
+    return
+  }
+
   const m = session.metadata!
 
   const bookingId = randomUUID()
@@ -101,6 +113,20 @@ async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
 /* ─── Merch order fulfillment ─────────────────────────────────────────────── */
 
 async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
+  await initDB()
+
+  // Idempotency: check BEFORE doing anything with side effects (Printify order,
+  // emails) — not just at insert time, since by then the Printify order would
+  // already have been double-submitted and the customer double-emailed.
+  const existing = await getDB().execute({
+    sql: `SELECT id FROM merch_orders WHERE stripe_session_id = ?`,
+    args: [session.id],
+  })
+  if (existing.rows.length > 0) {
+    console.log(`[stripe-webhook] Merch order already processed for session ${session.id}, skipping`)
+    return
+  }
+
   const rawItems = session.metadata?.cartItems
   if (!rawItems) throw new Error(`No cartItems in metadata for session ${session.id}`)
 
@@ -153,7 +179,6 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   const orderId = randomUUID()
   const totalPaid = session.amount_total ?? 0
 
-  await initDB()
   await getDB().execute({
     sql: `INSERT INTO merch_orders
             (id, stripe_session_id, customer_name, customer_email, shipping_address,

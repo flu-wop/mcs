@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 import { initDB } from "@/lib/db"
+import { rateLimit, clientIp } from "@/lib/rate-limit"
 
 const DISCOUNT_CODES: Record<string, number> = {
   REGULAR30: 0.30,
@@ -14,6 +15,9 @@ function getStripe() {
 
 export async function POST(req: NextRequest) {
   try {
+    const ok = await rateLimit(`engineer-checkout:${clientIp(req)}`, 10, 600)
+    if (!ok) return NextResponse.json({ error: "Too many requests — try again shortly." }, { status: 429 })
+
     const body = await req.json()
     const {
       engineerName, engineerSlug,

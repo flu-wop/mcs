@@ -5,12 +5,16 @@
 import { NextResponse } from "next/server"
 import Stripe           from "stripe"
 import { initDB }       from "@/lib/db"
+import { rateLimit, clientIp } from "@/lib/rate-limit"
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? "https://midcitysound.com"
 
 export async function POST(req: Request) {
   try {
+    const ok = await rateLimit(`booking-checkout:${clientIp(req)}`, 10, 600)
+    if (!ok) return NextResponse.json({ error: "Too many requests — try again shortly." }, { status: 429 })
+
     await initDB()
     const body = await req.json()
     const {
