@@ -92,6 +92,7 @@ export default function ProductCard({
   const sizeVariants = (() => {
     const seen = new Set<string>()
     const deduped = (variants ?? []).filter(v => {
+      if (!v.isAvailable) return false
       const size = v.options.find(o => o.id === 'size' || o.id === 'sizes')?.value
       if (!size || seen.has(size)) return false
       seen.add(size)

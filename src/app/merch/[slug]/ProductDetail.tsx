@@ -35,6 +35,15 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     return sortSizes(unsorted, s => s)
   }, [variants])
 
+  const availableSizes = useMemo(() => {
+    const seen = new Set<string>()
+    const unsorted = variants
+      .filter(v => v.isAvailable)
+      .map(v => optionValue(v, 'size'))
+      .filter((s): s is string => !!s && !seen.has(s) && (seen.add(s), true))
+    return sortSizes(unsorted, s => s)
+  }, [variants])
+
   const colors = useMemo(() => {
     const seen = new Set<string>()
     return variants
@@ -63,7 +72,9 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     return urls.length ? urls : [product.thumbnailUrl]
   }, [variants, product.thumbnailUrl])
 
-  const [selectedSize, setSelectedSize]   = useState<string | undefined>(defaultSize(sizes))
+  const [selectedSize, setSelectedSize]   = useState<string | undefined>(
+    defaultSize(availableSizes.length ? availableSizes : sizes)
+  )
   const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0])
   const [activeImage, setActiveImage]     = useState(0)
   const [qty, setQty] = useState(1)
@@ -229,9 +240,9 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
                   text-[11px] tracking-[0.08em] uppercase px-3 py-2.5 font-['DM_Sans']
                   focus:outline-none focus:border-[#D4AF77]/50"
               >
-                {sizes.map(s => (
+                {availableSizes.map(s => (
                   <option key={s} value={s} className="bg-[#111111] text-[#F5EDD8]">
-                    {s}{!isSizeAvailable(s) ? ' — out of stock' : ''}
+                    {s}
                   </option>
                 ))}
               </select>
