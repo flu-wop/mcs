@@ -6,6 +6,7 @@ import Image from 'next/image'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
 import { useCart } from '@/components/merch/CartProvider'
 import { sortSizes, defaultSize } from '@/lib/sizes'
+import { GALLERY_OVERRIDES } from '@/lib/product-overrides'
 
 const BRAND_LABELS: Record<string, string> = {
   mcs: 'Mid City Sound', djm: 'Donald Markowitz', streetbeat: 'Streetbeat', squiggle: 'Lil Squiggle',
@@ -66,11 +67,14 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   }, [colors, variants, product.thumbnailUrl])
 
   // Fallback gallery for products with no color variants at all (e.g. posters, stickers) —
-  // just cycles through whatever distinct images exist.
+  // just cycles through whatever distinct images exist, unless a specific product has
+  // a curated override (see GALLERY_OVERRIDES).
   const plainGallery = useMemo(() => {
+    const override = GALLERY_OVERRIDES[product.id]
+    if (override?.length) return override
     const urls = Array.from(new Set(variants.map(v => v.imageUrl).filter(Boolean)))
     return urls.length ? urls : [product.thumbnailUrl]
-  }, [variants, product.thumbnailUrl])
+  }, [variants, product.thumbnailUrl, product.id])
 
   const [selectedSize, setSelectedSize]   = useState<string | undefined>(
     sizes.length > 10 ? undefined : defaultSize(availableSizes.length ? availableSizes : sizes)

@@ -39,3 +39,18 @@ export const PRODUCT_OVERRIDES: Record<string, { brand: Brand; type: ProductType
   '6a2c6cc8a4bf9acfe901c035': { brand: 'mcs',        type: 'tee' },     // Mid City Sound Wave Tee
   '6a2c6b22aa0cfe0a810b8f90': { brand: 'mcs',        type: 'tee' },     // Mid City Sound Crescent Wave Tee
 }
+
+// ─── Gallery overrides ─────────────────────────────────────────────────────
+//
+// The product detail page normally shows one thumbnail per available
+// size/finish combo, deduped by image — the right default for most
+// multi-variant products. Some products just don't need that (visually
+// near-identical mockups across sizes); this lets a specific product show
+// a single curated image instead, keyed by product ID same as above.
+export const GALLERY_OVERRIDES: Record<string, string[]> = {
+  // Billboard Poster — was showing 4 near-identical size mockups; only the
+  // 60" x 40" Matte shot is needed.
+  '6a36280441155d651f090328': [
+    'https://images-api.printify.com/mockup/6a36280441155d651f090328/99146/92793/billboard-poster.jpg?camera_label=front',
+  ],
+}
