@@ -109,7 +109,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
 
   if (!cartItems.length) throw new Error(`Empty cartItems for session ${session.id}`)
 
-  const shipping = (session as any).shipping_details
+  const shipping = session.collected_information?.shipping_details
   const customer = session.customer_details
   if (!shipping?.address || !customer) throw new Error(`Missing shipping/customer for session ${session.id}`)
 
