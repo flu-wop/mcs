@@ -2,6 +2,8 @@
 // Printify API client for Mid City Sound Studios merch ecosystem.
 // Replaces the old Printful-based client (lib/printful.ts, removed).
 
+import { PRODUCT_OVERRIDES } from './product-overrides'
+
 const BASE   = 'https://api.printify.com/v1'
 const TOKEN  = process.env.PRINTIFY_API_TOKEN!
 const SHOP_ID = process.env.PRINTIFY_SHOP_ID!
@@ -212,8 +214,9 @@ function enrichVariant(v: PrintifyRawVariant, product: PrintifyRawProduct): Prin
 }
 
 function enrichProduct(p: PrintifyRawProduct): MerchProduct {
-  const brand = parseBrand(p.title)
-  const type  = parseType(p.title)
+  const override = PRODUCT_OVERRIDES[p.id]
+  const brand = override?.brand ?? parseBrand(p.title)
+  const type  = override?.type  ?? parseType(p.title)
   const name  = cleanName(p.title)
   const slug  = toSlug(name)
   const mvp   = MVP_SLUGS.has(slug)
