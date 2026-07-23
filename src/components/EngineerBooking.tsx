@@ -1,7 +1,7 @@
 "use client"
 // src/components/EngineerBooking.tsx
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link  from "next/link"
 import {
   ArrowLeft, ChevronLeft, ChevronRight,
@@ -47,6 +47,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
   const [calMonth,  setCalMonth]  = useState(today.getMonth())
   const [selDate,   setSelDate]   = useState<Date|null>(null)
   const [selHour,   setSelHour]   = useState<number|null>(null)
+  const [bookedRanges, setBookedRanges] = useState<{start_hour:number; rate_hours:number}[]>([])
   const [clientInfo,setClientInfo]= useState({ name:"", email:"", notes:"" })
   const [loading,   setLoading]   = useState(false)
   const [payError,  setPayError]  = useState<string|null>(null)
@@ -90,6 +91,21 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
   const isSelected  = (d: number) => selDate?.getFullYear()===calYear && selDate?.getMonth()===calMonth && selDate?.getDate()===d
 
   const HOURS = [9,10,11,12,13,14,15,16,17,18,19,20]
+
+  useEffect(() => {
+    if (!selDate) { setBookedRanges([]); return }
+    const dateStr = selDate.toISOString().slice(0, 10)
+    fetch(`/api/availability?room=${room}&date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => setBookedRanges(data.booked ?? []))
+      .catch(() => setBookedRanges([]))
+  }, [selDate, room])
+
+  function isSlotBooked(startHour: number) {
+    const hours = effectiveHours || 1
+    const end = startHour + hours
+    return bookedRanges.some(r => startHour < r.start_hour + r.rate_hours && end > r.start_hour)
+  }
 
   async function handleSubmit() {
     setLoading(true)
@@ -270,14 +286,18 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
               <div className="space-y-3">
                 <p className="text-mist text-sm">Start time</p>
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                  {HOURS.map(h => (
-                    <button key={h} onClick={() => setSelHour(h)}
-                      className={cn("py-2 border rounded-sm text-xs transition-all",
-                        selHour===h ? "border-gold bg-gold/5 text-gold" : "border-studio-border text-mist hover:border-gold/40"
-                      )}>
-                      {h < 12 ? `${h}am` : h===12 ? "12pm" : `${h-12}pm`}
-                    </button>
-                  ))}
+                  {HOURS.map(h => {
+                    const booked = isSlotBooked(h)
+                    return (
+                      <button key={h} onClick={() => !booked && setSelHour(h)} disabled={booked}
+                        className={cn("py-2 border rounded-sm text-xs transition-all",
+                          booked ? "border-studio-border/30 text-mist/20 cursor-not-allowed line-through" :
+                          selHour===h ? "border-gold bg-gold/5 text-gold" : "border-studio-border text-mist hover:border-gold/40"
+                        )}>
+                        {h < 12 ? `${h}am` : h===12 ? "12pm" : `${h-12}pm`}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}

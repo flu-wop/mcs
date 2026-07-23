@@ -239,6 +239,7 @@ export default function StudioPage() {
   const [rateId,          setRateId]          = useState<string|null>(null)
   const [date,            setDate]            = useState<Date|null>(null)
   const [timeSlot,        setTimeSlot]        = useState<string|null>(null)
+  const [bookedRanges,    setBookedRanges]     = useState<{start_hour:number; rate_hours:number}[]>([])
   const [projectNotes,    setProjectNotes]    = useState("")
   const [discountCode,    setDiscountCode]    = useState("")
   const [discountApplied, setDiscountApplied] = useState<number|null>(null)
@@ -303,6 +304,31 @@ export default function StudioPage() {
       ? selectedRate.price / selectedRate.perHour
       : null
   }, [selectedRate, hourlyQty])
+
+  // Fetch already-booked ranges whenever the date or room changes
+  useEffect(() => {
+    if (!date || !room) { setBookedRanges([]); return }
+    const dateStr = date.toISOString().slice(0, 10)
+    fetch(`/api/availability?room=${room}&date=${dateStr}`)
+      .then(res => res.json())
+      .then(data => setBookedRanges(data.booked ?? []))
+      .catch(() => setBookedRanges([]))
+  }, [date, room])
+
+  function slotToHour(slot: string) {
+    const [time, ampm] = slot.split(" ")
+    const h = parseInt(time.split(":")[0], 10)
+    if (ampm === "PM" && h !== 12) return h + 12
+    if (ampm === "AM" && h === 12) return 0
+    return h
+  }
+
+  function isSlotBooked(slot: string) {
+    const hours = rateHours || 1
+    const start = slotToHour(slot)
+    const end = start + hours
+    return bookedRanges.some(r => start < r.start_hour + r.rate_hours && end > r.start_hour)
+  }
 
   function applyCode() {
     const code = discountCode.trim().toUpperCase()
@@ -817,17 +843,21 @@ export default function StudioPage() {
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <Label className="mb-3 block">Preferred Date</Label>
-                      <MiniCalendar selected={date} onSelect={setDate} />
+                      <MiniCalendar selected={date} onSelect={(d) => { setDate(d); setTimeSlot(null) }} />
                     </div>
                     <div>
                       <Label className="mb-3 block">Start Time</Label>
                       <div className="grid grid-cols-2 gap-2">
-                        {TIME_SLOTS.map(slot => (
-                          <button key={slot} onClick={() => setTimeSlot(slot)}
-                            className={cn("p-3 border text-sm rounded-sm transition-all text-left",
-                              timeSlot===slot ? "border-gold bg-gold/10 text-gold" : "border-studio-border text-mist hover:border-gold/40 hover:text-cream"
-                            )}>{slot}</button>
-                        ))}
+                        {TIME_SLOTS.map(slot => {
+                          const booked = isSlotBooked(slot)
+                          return (
+                            <button key={slot} onClick={() => !booked && setTimeSlot(slot)} disabled={booked}
+                              className={cn("p-3 border text-sm rounded-sm transition-all text-left",
+                                booked ? "border-studio-border/30 text-mist/20 cursor-not-allowed line-through" :
+                                timeSlot===slot ? "border-gold bg-gold/10 text-gold" : "border-studio-border text-mist hover:border-gold/40 hover:text-cream"
+                              )}>{slot}</button>
+                          )
+                        })}
                       </div>
                       {date && (
                         <div className="mt-4 p-3 border border-studio-border/40 bg-studio-card rounded-sm">

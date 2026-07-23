@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 import { initDB } from "@/lib/db"
 import { rateLimit, clientIp } from "@/lib/rate-limit"
+import { getBookedRanges, hasConflict } from "@/lib/availability"
 
 const DISCOUNT_CODES: Record<string, number> = {
   REGULAR30: 0.30,
@@ -30,6 +31,17 @@ export async function POST(req: NextRequest) {
     /* ── Validate required fields ── */
     if (!engineerName || !room || !rateId || !date || !clientName || !clientEmail) {
       return NextResponse.json({ error: "Missing required booking fields" }, { status: 400 })
+    }
+
+    // Reject if this slot overlaps an existing pending/confirmed booking for the room —
+    // the UI greys these out already, this is the defense-in-depth check that can't be bypassed.
+    await initDB()
+    const existing = await getBookedRanges(room, date)
+    if (hasConflict(existing, Number(startHour), Number(rateHours) || 1)) {
+      return NextResponse.json(
+        { error: "That time slot was just booked by someone else. Please choose another." },
+        { status: 409 }
+      )
     }
 
     /* ── Apply discount server-side ── */

@@ -6,6 +6,7 @@ import { NextResponse } from "next/server"
 import Stripe           from "stripe"
 import { initDB }       from "@/lib/db"
 import { rateLimit, clientIp } from "@/lib/rate-limit"
+import { getBookedRanges, hasConflict } from "@/lib/availability"
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? "https://midcitysound.com"
@@ -26,6 +27,16 @@ export async function POST(req: Request) {
     // Basic validation
     if (!room || !rateLabel || !ratePrice || !date || startHour == null || !clientName || !clientEmail) {
       return NextResponse.json({ error: "Missing required booking fields" }, { status: 400 })
+    }
+
+    // Reject if this slot overlaps an existing pending/confirmed booking for the room —
+    // the UI greys these out already, this is the defense-in-depth check that can't be bypassed.
+    const existing = await getBookedRanges(room, date)
+    if (hasConflict(existing, Number(startHour), Number(rateHours) || 1)) {
+      return NextResponse.json(
+        { error: "That time slot was just booked by someone else. Please choose another." },
+        { status: 409 }
+      )
     }
 
     // Apply discount server-side
