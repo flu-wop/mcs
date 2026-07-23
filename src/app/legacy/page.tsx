@@ -80,7 +80,7 @@ const TIMELINE = [
     city:  "New Orleans & Beyond",
     icon:  Mic2,
     title: "A Career of Legendary Collaborations",
-    body:  "Over his career, Donald has produced, written, recorded and worked with Van Morrison, Taj Mahal, Dr. John, Bill Medley, Bobby Rush, Art Neville, Ivan Neville, Cyril Neville, James Andrews, Irvin Mayfield, Lee Sklar, Shane Theriot, and Doug Belote — among many others. Now signed to Kobalt Music, with Kobalt handling publishing administration, he continues to collaborate with great artists from New Orleans and around the world.",
+    body:  "Over his career, Donald has produced, written, recorded and worked with Van Morrison, Taj Mahal, Dr. John, Bill Medley, Bobby Rush, Art, Ivan, & Cyril Neville, James Andrews, Irvin Mayfield, Lee Sklar, Shane Theriot, and Doug Belote — among many others. Now signed to Kobalt Music, with Kobalt handling publishing administration, he continues to collaborate with great artists from New Orleans and around the world.",
     tags:  ["Van Morrison", "Taj Mahal", "Art Neville", "Ivan Neville", "Cyril Neville", "Bill Medley", "Kobalt Music"],
   },
   {
@@ -89,7 +89,7 @@ const TIMELINE = [
     city:  "Mid City, New Orleans",
     icon:  Award,
     title: "Mid City Sound Studios",
-    body:  "Donald founded Mid City Sound Studios in New Orleans — a world-class recording space built on decades of award-winning craft. The studio is a creative home for local legends, touring artists, and the next generation of creators. He is also the creator and producer of Street Beat: Drumming Below Sea Level, a documentary celebrating New Orleans drumming culture.",
+    body:  "Donald founded Mid City Sound Studios in New Orleans — world class recording spaces built on decades of award-winning craft. The studio is a creative home for local legends, touring artists, and the next generation of creators. He is also the creator and producer of Street Beat: Drumming Below Sea Level, a documentary celebrating New Orleans drumming culture.",
     tags:  ["Mid City Sound", "Studio", "Street Beat", "Documentary"],
   },
 ]
