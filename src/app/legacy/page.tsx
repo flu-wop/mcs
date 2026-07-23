@@ -15,7 +15,7 @@ import { Separator }      from "@/components/ui/separator"
 
 export const metadata: Metadata = {
   title:       "Legacy — Donald Markowitz",
-  description: "The career of Donald Markowitz — Academy Award-winning co-writer of '(I've Had) The Time of My Life' from Dirty Dancing, Grammy-nominated producer, and founder of Mid City Sound Studios in New Orleans.",
+  description: "The career of Donald Markowitz — Academy Award-winning co-writer of '(I've Had) The Time of My Life' from Dirty Dancing, Grammy nominated songwriter-producer, and founder of Mid City Sound Studios in New Orleans.",
 }
 
 /* ─── Verified timeline ── */
@@ -53,8 +53,8 @@ const TIMELINE = [
     city:  "Los Angeles, CA",
     icon:  Film,
     title: "Hollywood — Film & Television",
-    body:  "After winning the Oscar, Donald relocated to Los Angeles where he spent many years writing songs and scores for film and television. His credits include work on Highlander II: The Quickening and a sustained career in Hollywood production. James Taylor, Shawn Colvin, and Nicolette Larson sang on his records during this era.",
-    tags:  ["Film Scoring", "Television", "Hollywood", "James Taylor", "Shawn Colvin"],
+    body:  "After winning the Oscar, Donald relocated to Los Angeles where he spent many years writing songs and scores for film and television. He was signed to Disney Music as a staff songwriter, contributing to numerous projects during his time there, and built a sustained career in Hollywood production. James Taylor, Shawn Colvin, and Nicolette Larson sang on his records during this era.",
+    tags:  ["Film Scoring", "Television", "Hollywood", "Disney Music", "James Taylor", "Shawn Colvin"],
   },
   {
     year:  "2011",
@@ -80,8 +80,8 @@ const TIMELINE = [
     city:  "New Orleans & Beyond",
     icon:  Mic2,
     title: "A Career of Legendary Collaborations",
-    body:  "Over his career, Donald has produced, written, recorded and worked with Van Morrison, Taj Mahal, Dr. John, Bill Medley, Bobby Rush, Art Neville, Ivan Neville, James Andrews, Irvin Mayfield, Lee Sklar, Shane Theriot, and Doug Belote — among many others. Now signed to Kobalt Music, he continues to collaborate with great artists from New Orleans and around the world.",
-    tags:  ["Van Morrison", "Taj Mahal", "Art Neville", "Ivan Neville", "Bill Medley", "Kobalt Music"],
+    body:  "Over his career, Donald has produced, written, recorded and worked with Van Morrison, Taj Mahal, Dr. John, Bill Medley, Bobby Rush, Art Neville, Ivan Neville, Cyril Neville, James Andrews, Irvin Mayfield, Lee Sklar, Shane Theriot, and Doug Belote — among many others. Now signed to Kobalt Music, with Kobalt handling publishing administration, he continues to collaborate with great artists from New Orleans and around the world.",
+    tags:  ["Van Morrison", "Taj Mahal", "Art Neville", "Ivan Neville", "Cyril Neville", "Bill Medley", "Kobalt Music"],
   },
   {
     year:  "Now",
@@ -148,9 +148,9 @@ export default function LegacyPage() {
               and the Golden Globe Award for Best Original Song.
             </p>
             <p className="text-mist text-sm leading-relaxed">
-              A Grammy-nominated producer, Donald has collaborated with Van Morrison, Taj Mahal,
-              Dr. John, Bobby Rush, Art Neville, Bill Medley, and dozens more. He is the
-              founder of Mid City Sound Studios and the creator of the documentary
+              A Grammy nominated songwriter-producer, Donald has produced and/or written with:
+              Van Morrison, Taj Mahal, Dr. John, Bobby Rush, Cyril Neville, Bill Medley, and
+              dozens more. He is the founder of Mid City Sound Studios and the creator of the documentary
               <em> Street Beat: Drumming Below Sea Level</em>.
             </p>
 
