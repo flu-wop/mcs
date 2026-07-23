@@ -1,5 +1,6 @@
 import Link  from "next/link";
 import { Instagram, Twitter, Youtube, Mail, ExternalLink } from "lucide-react";
+import { BuiltBySignature } from "./BuiltBySignature";
 
 const SITE_LINKS = [
   { label: "Home",     href: "/" },
@@ -113,6 +114,8 @@ export function Footer() {
           <p className="text-mist/30 text-xs">A Mid City Sound Production</p>
         </div>
       </div>
+
+      <BuiltBySignature />
     </footer>
   );
 }
