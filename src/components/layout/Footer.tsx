@@ -7,7 +7,7 @@ const SITE_LINKS = [
   { label: "Legacy",   href: "/legacy" },
   { label: "Groove",   href: "/groove" },
   { label: "Projects", href: "/projects" },
-  { label: "Merch",    href: "/merch" },
+  { label: "Merch",    href: "/merch/brand/mcs" },
   { label: "Contact",  href: "/contact" },
 ];
 
