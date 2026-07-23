@@ -4,6 +4,7 @@ import Stripe from "stripe"
 import { initDB } from "@/lib/db"
 import { rateLimit, clientIp } from "@/lib/rate-limit"
 import { getBookedRanges, hasConflict } from "@/lib/availability"
+import { ENGINEER_PAGE_RATE_CENTS } from "@/lib/engineers"
 
 const DISCOUNT_CODES: Record<string, number> = {
   REGULAR30: 0.30,
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
         quantity: 1,
       }],
       metadata: {
+        source: "mcs-engineer-booking",
         engineerName, engineerSlug,
         room, rateLabel,
         rateHours:  String(rateHours),
@@ -90,12 +92,14 @@ export async function POST(req: NextRequest) {
     /* ── Save pending booking to Turso ── */
     const db = await initDB()
     const id = crypto.randomUUID()
+    const payoutAmountCents = Number(rateHours) * ENGINEER_PAGE_RATE_CENTS
     await db.execute({
       sql: `INSERT INTO bookings
               (id, room, rate_label, rate_hours, rate_price,
                date, start_hour, client_name, client_email,
-               client_notes, status, stripe_session_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+               client_notes, status, stripe_session_id,
+               engineer_slug, payout_rate_cents, payout_amount_cents)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       args: [
         id,
         room,
@@ -109,6 +113,9 @@ export async function POST(req: NextRequest) {
         clientNotes ?? "",
         "pending",
         session.id,
+        engineerSlug,
+        ENGINEER_PAGE_RATE_CENTS,
+        payoutAmountCents,
       ],
     })
 

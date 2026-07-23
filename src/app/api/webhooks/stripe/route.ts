@@ -48,6 +48,11 @@ export async function POST(req: Request) {
       try { await fulfillStudioBooking(session) }
       catch (err) { console.error("[stripe-webhook] Booking fulfillment failed:", err) }
     }
+
+    if (source === "mcs-engineer-booking") {
+      try { await fulfillEngineerBooking(session) }
+      catch (err) { console.error("[stripe-webhook] Engineer booking fulfillment failed:", err) }
+    }
   }
 
   return NextResponse.json({ received: true })
@@ -107,6 +112,53 @@ async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
     clientName:  m.clientName,
     clientEmail: m.clientEmail,
     clientNotes: m.clientNotes ?? "",
+  })
+}
+
+/* ─── Engineer booking fulfillment ───────────────────────────────────────── */
+// Unlike studio bookings, the engineer-checkout route already inserts the row
+// (status "pending") at checkout-session creation time, so payment success just
+// needs to flip status -> "confirmed" and send the same confirmation email/ics.
+
+async function fulfillEngineerBooking(session: Stripe.Checkout.Session) {
+  await initDB()
+
+  const existing = await getDB().execute({
+    sql: `SELECT * FROM bookings WHERE stripe_session_id = ?`,
+    args: [session.id],
+  })
+  if (existing.rows.length === 0) {
+    console.error(`[stripe-webhook] No pending engineer booking found for session ${session.id}`)
+    return
+  }
+  const row = existing.rows[0] as unknown as {
+    id: string; room: string; rate_label: string; rate_hours: number; rate_price: number
+    date: string; start_hour: number; client_name: string; client_email: string
+    client_notes: string; status: string
+  }
+
+  // Idempotency: Stripe retries webhook delivery — don't re-send email on a retry.
+  if (row.status === "confirmed") {
+    console.log(`[stripe-webhook] Engineer booking already confirmed for session ${session.id}, skipping`)
+    return
+  }
+
+  await getDB().execute({
+    sql: `UPDATE bookings SET status = 'confirmed' WHERE stripe_session_id = ?`,
+    args: [session.id],
+  })
+
+  await sendBookingEmails({
+    id:          row.id,
+    room:        row.room,
+    rateLabel:   row.rate_label,
+    rateHours:   row.rate_hours,
+    ratePrice:   row.rate_price,
+    date:        row.date,
+    startHour:   row.start_hour,
+    clientName:  row.client_name,
+    clientEmail: row.client_email,
+    clientNotes: row.client_notes ?? "",
   })
 }
 

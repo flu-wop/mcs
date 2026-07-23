@@ -4,7 +4,7 @@
 
 import Link from "next/link"
 import { getDB, initDB } from "@/lib/db"
-import { Package, Calendar, ArrowRight } from "lucide-react"
+import { Package, Calendar, ArrowRight, DollarSign } from "lucide-react"
 
 export const dynamic = 'force-dynamic'
 
@@ -12,14 +12,16 @@ export default async function AdminHomePage() {
   await initDB()
   const db = getDB()
 
-  const [ordersResult, bookingsResult] = await Promise.all([
+  const [ordersResult, bookingsResult, payoutsResult] = await Promise.all([
     db.execute("SELECT COUNT(*) as count, COALESCE(SUM(total_paid), 0) as revenue FROM merch_orders"),
     db.execute("SELECT COUNT(*) as count FROM bookings"),
+    db.execute("SELECT COALESCE(SUM(payout_amount_cents), 0) as owed FROM bookings WHERE payout_status = 'unpaid' AND engineer_slug IS NOT NULL"),
   ])
 
   const orderCount   = Number(ordersResult.rows[0].count)
   const orderRevenue = Number(ordersResult.rows[0].revenue) / 100
   const bookingCount = Number(bookingsResult.rows[0].count)
+  const owedTotal     = Number(payoutsResult.rows[0].owed) / 100
 
   const sections = [
     {
@@ -33,6 +35,12 @@ export default async function AdminHomePage() {
       icon: Calendar,
       label: "Studio Bookings",
       stat: `${bookingCount} booking${bookingCount === 1 ? '' : 's'}`,
+    },
+    {
+      href: "/admin/payouts",
+      icon: DollarSign,
+      label: "Engineer Payouts",
+      stat: `$${owedTotal.toFixed(2)} owed`,
     },
   ]
 

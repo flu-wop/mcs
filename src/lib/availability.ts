@@ -9,11 +9,20 @@ export interface BookedRange {
   rate_hours: number
 }
 
-/** All pending/confirmed bookings for a room on a given date, as [start, end) hour ranges. */
+/**
+ * All pending/confirmed bookings for a room on a given date, as [start, end) hour ranges.
+ * A "pending" row only holds its slot for 30 minutes from creation — long enough to cover
+ * an active Stripe Checkout session, but short enough that an abandoned cart doesn't
+ * permanently block the slot from real bookings. Confirmed bookings always hold.
+ */
 export async function getBookedRanges(room: string, date: string): Promise<BookedRange[]> {
   const result = await getDB().execute({
     sql: `SELECT start_hour, rate_hours FROM bookings
-          WHERE room = ? AND date = ? AND status IN ('pending', 'confirmed')`,
+          WHERE room = ? AND date = ?
+            AND (
+              status = 'confirmed'
+              OR (status = 'pending' AND created_at > datetime('now', '-30 minutes'))
+            )`,
     args: [room, date],
   })
   return result.rows as unknown as BookedRange[]

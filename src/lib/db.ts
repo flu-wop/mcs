@@ -81,5 +81,21 @@ export async function initDB() {
     // Column already exists — fine, this just means the migration already ran.
   }
 
+  // Migration: engineer payout tracking, added after bookings already existed in production.
+  // engineer_slug: which engineer worked the session — set automatically for engineer-page
+  //   bookings, null for generic /studio bookings until an admin assigns one.
+  // payout_rate_cents: $40/hr (4000) for engineer-page bookings, $30/hr (3000) once an
+  //   admin assigns an engineer to a generic booking.
+  // payout_amount_cents: rate_hours * payout_rate_cents, computed once at insert/assignment time.
+  // payout_status: 'unpaid' | 'paid' — flipped weekly from /admin/payouts.
+  for (const stmt of [
+    `ALTER TABLE bookings ADD COLUMN engineer_slug TEXT`,
+    `ALTER TABLE bookings ADD COLUMN payout_rate_cents INTEGER`,
+    `ALTER TABLE bookings ADD COLUMN payout_amount_cents INTEGER`,
+    `ALTER TABLE bookings ADD COLUMN payout_status TEXT NOT NULL DEFAULT 'unpaid'`,
+  ]) {
+    try { await client.execute(stmt) } catch { /* column already exists */ }
+  }
+
   return client
 }
