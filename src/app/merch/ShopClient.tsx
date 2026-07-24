@@ -23,11 +23,37 @@ interface ShopClientProps {
 
 // ─── Filter + sort logic ──────────────────────────────────────────────────────
 
-// Pinned to always appear first in the default "featured" sort/carousel,
-// ahead of even other MVP/launch products — a manual placement request,
-// not tied to any product attribute like mvp/inStock, so it lives here
-// explicitly rather than as a data-driven rule.
-const PINNED_FIRST_ID = '6a553c87566692467d039225' // We Make Records Tee
+// Manual placement in the default "featured" sort/carousel — not tied to
+// any product attribute (mvp/inStock/etc.), so it lives here explicitly
+// as a data-driven exception list rather than a rule.
+//
+// Lower number = earlier. Items not listed here fall through to the
+// normal mvp-then-alphabetical sort, then get spliced in around the
+// manually-placed ones at their target index.
+const MANUAL_POSITION: Record<string, number> = {
+  '6a553c87566692467d039225': 0, // We Make Records Tee — always first
+  '6a625715318a95514d01730b': 3, // We Make Records Back Tee — near the top,
+                                  // but index 3 (not 1) so it's not sitting
+                                  // right next to the original and reading
+                                  // as a duplicate at a glance
+}
+
+// Splices manually-positioned items into their target index, in ascending
+// target order, pulling each from wherever it landed naturally first.
+// Using explicit index (not a comparator) so "position 3" means "4th card"
+// regardless of how many other items shift around it.
+function applyManualPositions<T extends { id: string }>(items: T[]): T[] {
+  const result = [...items]
+  const ids = Object.keys(MANUAL_POSITION).sort((a, b) => MANUAL_POSITION[a] - MANUAL_POSITION[b])
+  for (const id of ids) {
+    const from = result.findIndex(p => p.id === id)
+    if (from === -1) continue
+    const [item] = result.splice(from, 1)
+    const target = Math.min(MANUAL_POSITION[id], result.length)
+    result.splice(target, 0, item)
+  }
+  return result
+}
 
 function applyFilters(
   products: MerchProduct[],
@@ -55,14 +81,15 @@ function applyFilters(
     case 'price-desc': result = [...result].sort((a, b) => b.price - a.price); break
     case 'name':       result = [...result].sort((a, b) => a.name.localeCompare(b.name)); break
     default:
-      // "featured" — pinned product first, then MVP products, then alphabetical
+      // "featured" — MVP products first (alphabetical within that group),
+      // then everyone else alphabetical, then manually-placed items get
+      // spliced into their fixed positions on top of that.
       result = [...result].sort((a, b) => {
-        if (a.id === PINNED_FIRST_ID) return -1
-        if (b.id === PINNED_FIRST_ID) return 1
         if (a.mvp && !b.mvp) return -1
         if (!a.mvp && b.mvp) return 1
         return a.name.localeCompare(b.name)
       })
+      result = applyManualPositions(result)
   }
   return result
 }
@@ -85,14 +112,10 @@ export default function ShopClient({
   const search = searchParams.get('search') ?? initialSearch
   const sort   = (searchParams.get('sort')   as SortOption)          ?? initialSort
 
-  // MVP products for the featured carousel (always unfiltered) — pinned
-  // product first, same placement rule as the main grid below.
+  // MVP products for the featured carousel (always unfiltered) — same
+  // manual placement rule as the main grid below.
   const mvpProducts = useMemo(() => {
-    return products.filter(p => p.mvp).sort((a, b) => {
-      if (a.id === PINNED_FIRST_ID) return -1
-      if (b.id === PINNED_FIRST_ID) return 1
-      return 0
-    })
+    return applyManualPositions(products.filter(p => p.mvp))
   }, [products])
 
   // Whether we're in a "filtered" state (hide carousel when filtering)
