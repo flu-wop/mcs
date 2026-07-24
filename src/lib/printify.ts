@@ -2,7 +2,7 @@
 // Printify API client for Mid City Sound Studios merch ecosystem.
 // Replaces the old Printful-based client (lib/printful.ts, removed).
 
-import { PRODUCT_OVERRIDES } from './product-overrides'
+import { PRODUCT_OVERRIDES, IMAGE_POSITION_OVERRIDES } from './product-overrides'
 
 const BASE   = 'https://api.printify.com/v1'
 const TOKEN  = process.env.PRINTIFY_API_TOKEN!
@@ -192,15 +192,31 @@ function resolveVariantOptions(
     .filter((o): o is { id: string; value: string } => o !== null)
 }
 
-// Best-match image for a given variant (falls back to the default product image)
-function resolveVariantImage(variantId: number, images: PrintifyImage[]): string {
-  const match = images.find(img => img.variant_ids.includes(variantId))
+// Best-match image for a given variant. Printify returns multiple images
+// per variant (front, back, context shots, etc.) with no guaranteed order —
+// in practice "front" tends to come first. Products whose design only
+// appears on the back need that respected explicitly, or the front
+// (blank, for a back-only print) always wins by array position instead of
+// by what actually shows the design. preferredPosition is opt-in per
+// product via IMAGE_POSITION_OVERRIDES below.
+function resolveVariantImage(
+  variantId: number,
+  images: PrintifyImage[],
+  preferredPosition?: string
+): string {
+  const forVariant = images.filter(img => img.variant_ids.includes(variantId))
+  if (preferredPosition) {
+    const preferred = forVariant.find(img => img.position === preferredPosition)
+    if (preferred) return preferred.src
+  }
+  const match = forVariant[0]
   const fallback = images.find(img => img.is_default) ?? images[0]
   return (match ?? fallback)?.src ?? ''
 }
 
 function enrichVariant(v: PrintifyRawVariant, product: PrintifyRawProduct): PrintifyVariantDetail {
   const { formatted } = formatPrice(v.price)
+  const preferredPosition = IMAGE_POSITION_OVERRIDES[product.id]
   return {
     variantId: v.id,
     productId: product.id,
@@ -209,7 +225,7 @@ function enrichVariant(v: PrintifyRawVariant, product: PrintifyRawProduct): Prin
     sku: v.sku,
     isAvailable: v.is_enabled && v.is_available,
     options: resolveVariantOptions(v, product.options),
-    imageUrl: resolveVariantImage(v.id, product.images),
+    imageUrl: resolveVariantImage(v.id, product.images, preferredPosition),
   }
 }
 
@@ -226,7 +242,11 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
   const lowestCents = prices.length > 0 ? Math.min(...prices) : 0
   const { price, formatted } = formatPrice(lowestCents)
 
-  const defaultImage = p.images.find(img => img.is_default) ?? p.images[0]
+  const preferredPosition = IMAGE_POSITION_OVERRIDES[p.id]
+  const positionMatch = preferredPosition
+    ? p.images.find(img => img.position === preferredPosition)
+    : undefined
+  const defaultImage = positionMatch ?? p.images.find(img => img.is_default) ?? p.images[0]
 
   return {
     id: p.id,

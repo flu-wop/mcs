@@ -40,7 +40,30 @@ export const PRODUCT_OVERRIDES: Record<string, { brand: Brand; type: ProductType
   '6a2c6b22aa0cfe0a810b8f90': { brand: 'mcs',        type: 'tee' },     // Mid City Sound Crescent Wave Tee
 }
 
-// ─── Gallery overrides ─────────────────────────────────────────────────────
+// ─── Image position overrides ───────────────────────────────────────────────
+//
+// Printify returns every mockup image for a variant (front, back, context
+// shots) with no guaranteed order — resolveVariantImage() picks whichever
+// comes first, which in practice is "front". That's wrong for a design
+// that's only printed on the back: the front mockup is blank, so the site
+// shows a shirt with no design at all until this is set.
+//
+// This only fixes which image the SITE shows. It does nothing about which
+// mockups are actually selected in Printify's Mockup Library — if no
+// "Back" mockup was checked there for a product, no image with
+// position: "back" will ever come back from the API, and this override
+// has nothing to prefer. Check the mockup selection in Printify's
+// dashboard first (Mockup Library → that product → make sure a Back
+// angle is checked, not just Front colors), then list the product here.
+//
+// Printify's `position` values are typically "front", "back", "left",
+// "right", "context", etc. — check the actual value returned for a given
+// product if unsure (log `product.images` once) rather than assuming.
+export const IMAGE_POSITION_OVERRIDES: Record<string, string> = {
+  '6a553c87566692467d039225': 'back', // We Make Records Tee (BACK ONLY)
+}
+
+
 //
 // The product detail page normally shows one thumbnail per available
 // size/finish combo, deduped by image — the right default for most
