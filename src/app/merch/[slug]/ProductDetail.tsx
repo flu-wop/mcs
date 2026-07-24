@@ -7,6 +7,7 @@ import type { MerchProduct } from '@/lib/printify'
 import { useCart } from '@/components/merch/CartProvider'
 import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 import { GALLERY_OVERRIDES } from '@/lib/product-overrides'
+import { colorHex, isLightColor } from '@/lib/color-swatches'
 
 const BRAND_LABELS: Record<string, string> = {
   mcs: 'Mid City Sound', djm: 'Donald Markowitz', streetbeat: 'Streetbeat', squiggle: 'Lil Squiggle',
@@ -49,19 +50,19 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
       .filter((c): c is string => !!c && !seen.has(c) && (seen.add(c), true))
   }, [variants])
 
-  // One representative thumbnail per color — this is what the gallery renders
-  // when the product has color variants, so clicking a picture *is* the color picker.
-  const colorThumbs = useMemo(() => {
+  // One entry per color, carrying every image position Printify returned
+  // for that color (front, back, etc.) — not just one representative photo.
+  const colorInfo = useMemo(() => {
     return colors.map(color => {
       const colorVariants = variants.filter(v => optionValue(v, 'color') === color)
-      const match = colorVariants.find(v => v.imageUrl) ?? colorVariants[0]
+      const withImages = colorVariants.find(v => Object.keys(v.imagesByPosition).length > 0) ?? colorVariants[0]
       return {
         color,
-        url: match?.imageUrl || product.thumbnailUrl,
+        images: withImages?.imagesByPosition ?? {},
         available: colorVariants.some(v => v.isAvailable),
       }
     })
-  }, [colors, variants, product.thumbnailUrl])
+  }, [colors, variants])
 
   // Fallback gallery for products with no color variants at all (e.g. posters, stickers) —
   // just cycles through whatever distinct images exist, unless a specific product has
@@ -78,9 +79,18 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   )
   const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0])
   const [activeImage, setActiveImage]     = useState(0)
+  const [activeSide, setActiveSide]       = useState<string | undefined>(undefined)
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
+
+  const currentColorImages = colorInfo.find(c => c.color === selectedColor)?.images ?? {}
+  // Prefer 'front' as the default side shown, but fall back to whatever
+  // position actually exists (a back-only product has no front image).
+  const sides = Object.keys(currentColorImages)
+  const resolvedSide = activeSide && currentColorImages[activeSide] ? activeSide
+    : currentColorImages.front ? 'front'
+    : sides[0]
 
   const isSizeAvailable = useCallback((size: string) => {
     return variants.some(v =>
@@ -105,7 +115,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   const canAddToCart = !!selectedVariant?.isAvailable
 
   const displayImage = colors.length > 1
-    ? (colorThumbs.find(t => t.color === selectedColor)?.url ?? product.thumbnailUrl)
+    ? (currentColorImages[resolvedSide ?? ''] ?? product.thumbnailUrl)
     : (plainGallery[activeImage] ?? product.thumbnailUrl)
 
   const handleAddToCart = useCallback(() => {
@@ -138,7 +148,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           {!imgError && displayImage ? (
             <Image
               src={displayImage}
-              alt={product.name}
+              alt={`${product.name}${resolvedSide ? ` — ${resolvedSide}` : ''}`}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -155,26 +165,30 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           )}
         </div>
 
-        {/* Thumbnails double as the color picker when the product has colors */}
-        {colors.length > 1 ? (
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-1" role="group" aria-label="Select color">
-            {colorThumbs.map(({ color, url }) => (
+        {/* Front / Back toggle — only shown when a color actually has both */}
+        {colors.length > 0 && sides.length > 1 && (
+          <div className="flex gap-2 mt-3" role="group" aria-label="Select photo side">
+            {sides.map(side => (
               <button
-                key={color}
-                onClick={() => setSelectedColor(color)}
-                aria-pressed={selectedColor === color}
-                aria-label={color}
-                title={color}
+                key={side}
+                onClick={() => setActiveSide(side)}
+                aria-pressed={resolvedSide === side}
                 className={[
-                  'relative w-16 h-16 shrink-0 border overflow-hidden bg-[#111111] transition-colors',
-                  selectedColor === color ? 'border-[#D4AF77]/70' : 'border-[#D4AF77]/12 hover:border-[#A89880]/40',
+                  'px-3 py-1.5 text-[9px] tracking-[0.14em] uppercase',
+                  "font-['DM_Sans'] border transition-colors capitalize",
+                  resolvedSide === side
+                    ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                    : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
                 ].join(' ')}
               >
-                <Image src={url} alt={color} fill className="object-cover" sizes="64px" />
+                {side}
               </button>
             ))}
           </div>
-        ) : plainGallery.length > 1 ? (
+        )}
+
+        {/* Non-color products (posters, stickers) still use a plain thumbnail strip */}
+        {colors.length === 0 && plainGallery.length > 1 && (
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
             {plainGallery.map((url, i) => (
               <button
@@ -189,12 +203,45 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
               </button>
             ))}
           </div>
-        ) : null}
+        )}
 
-        {colors.length > 1 && selectedColor && (
-          <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a] font-['DM_Sans'] mt-2">
-            {selectedColor}
-          </p>
+        {/* Color swatches — compact grid, wraps instead of scrolling */}
+        {colors.length > 1 && (
+          <div className="mt-4" role="group" aria-label="Select color">
+            <div className="flex flex-wrap gap-2">
+              {colorInfo.map(({ color, available }) => {
+                const hex = colorHex(color)
+                const light = isLightColor(color)
+                const selected = selectedColor === color
+                return (
+                  <button
+                    key={color}
+                    onClick={() => { setSelectedColor(color); setActiveSide(undefined) }}
+                    disabled={!available}
+                    aria-pressed={selected}
+                    aria-label={color}
+                    title={available ? color : `${color} (sold out)`}
+                    className={[
+                      'relative w-8 h-8 rounded-full transition-all',
+                      light ? 'border border-[#3a3a3a]/40' : 'border border-transparent',
+                      selected ? 'ring-2 ring-[#D4AF77] ring-offset-2 ring-offset-[#0d0d0d]' : '',
+                      !available ? 'opacity-25 cursor-not-allowed' : 'hover:scale-110',
+                    ].join(' ')}
+                    style={{ backgroundColor: hex }}
+                  >
+                    {!available && (
+                      <span className="absolute inset-0 flex items-center justify-center text-[9px] text-[#F5EDD8]">✕</span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+            {selectedColor && (
+              <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a] font-['DM_Sans'] mt-2">
+                {selectedColor}
+              </p>
+            )}
+          </div>
         )}
       </div>
 

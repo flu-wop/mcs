@@ -66,6 +66,7 @@ export interface PrintifyVariantDetail {
   isAvailable: boolean
   options: { id: string; value: string }[]   // e.g. [{id:'colors',value:'White'},{id:'sizes',value:'S'}]
   imageUrl: string
+  imagesByPosition: Record<string, string>   // e.g. { front: '...', back: '...' } — whatever positions Printify actually returned for this variant
 }
 
 // Enriched product shape used across the app
@@ -214,6 +215,23 @@ function resolveVariantImage(
   return (match ?? fallback)?.src ?? ''
 }
 
+// All images for a given variant, keyed by Printify's own position string
+// (typically 'front', 'back', and sometimes angle/context shots). Lets the
+// UI show front + back together instead of the single "best" image.
+function resolveVariantImagesByPosition(
+  variantId: number,
+  images: PrintifyImage[]
+): Record<string, string> {
+  const forVariant = images.filter(img => img.variant_ids.includes(variantId))
+  const byPosition: Record<string, string> = {}
+  for (const img of forVariant) {
+    // Printify can return more than one shot per position (e.g. two
+    // "front" context angles) — first one wins, doesn't overwrite.
+    if (!byPosition[img.position]) byPosition[img.position] = img.src
+  }
+  return byPosition
+}
+
 function enrichVariant(v: PrintifyRawVariant, product: PrintifyRawProduct): PrintifyVariantDetail {
   const { formatted } = formatPrice(v.price)
   const preferredPosition = IMAGE_POSITION_OVERRIDES[product.id]
@@ -226,6 +244,7 @@ function enrichVariant(v: PrintifyRawVariant, product: PrintifyRawProduct): Prin
     isAvailable: v.is_enabled && v.is_available,
     options: resolveVariantOptions(v, product.options),
     imageUrl: resolveVariantImage(v.id, product.images, preferredPosition),
+    imagesByPosition: resolveVariantImagesByPosition(v.id, product.images),
   }
 }
 
