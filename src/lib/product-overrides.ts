@@ -60,7 +60,12 @@ export const PRODUCT_OVERRIDES: Record<string, { brand: Brand; type: ProductType
 // "right", "context", etc. — check the actual value returned for a given
 // product if unsure (log `product.images` once) rather than assuming.
 export const IMAGE_POSITION_OVERRIDES: Record<string, string> = {
-  '6a553c87566692467d039225': 'back', // We Make Records Tee (BACK ONLY)
+  // (empty — no product currently needs this. Confirm in Printify's own
+  // image data, not from a product name, before adding one back: "We Make
+  // Records Tee" briefly had a 'back' entry here based on its old
+  // "(BACK ONLY)" name, but its default front image already showed the
+  // design correctly — forcing 'back' broke the grid thumbnail instead of
+  // fixing anything.)
 }
 
 
