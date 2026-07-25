@@ -14,7 +14,7 @@ import { verifySessionToken, ADMIN_SESSION_COOKIE } from "@/lib/admin-session"
 
 const PUBLIC_PATHS = ["/admin/login", "/api/admin/login"]
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const password = process.env.ADMIN_PASSWORD
 
   if (!password) {
@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   }
 
   const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value
-  if (verifySessionToken(token)) {
+  if (await verifySessionToken(token)) {
     return NextResponse.next()
   }
 
