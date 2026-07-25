@@ -1,6 +1,6 @@
 // src/app/admin/orders/page.tsx
 // Admin dashboard — all merch orders from Turso.
-// Access at /admin/orders — protected by src/middleware.ts (HTTP Basic Auth)
+// Access at /admin/orders — protected by src/middleware.ts (admin session cookie)
 
 import { getDB, initDB } from "@/lib/db"
 import { Badge }         from "@/components/ui/badge"

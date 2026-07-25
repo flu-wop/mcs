@@ -1,7 +1,7 @@
 // src/app/api/admin/revalidate/route.ts
 //
 // Covered by src/middleware.ts (matcher includes /api/admin/:path*) —
-// same HTTP Basic Auth as everything else under /admin, no separate
+// same admin session cookie as everything else under /admin, no separate
 // auth logic here.
 //
 // The merch catalog is cached for 1 hour (see lib/printify.ts pfGet,

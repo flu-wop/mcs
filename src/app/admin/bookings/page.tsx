@@ -1,12 +1,13 @@
 // src/app/admin/bookings/page.tsx
 // Admin dashboard — all studio bookings from Turso.
-// Access at /admin/bookings — protected by src/middleware.ts (HTTP Basic Auth)
+// Access at /admin/bookings — protected by src/middleware.ts (admin session cookie)
 
 import { getDB, initDB }   from "@/lib/db"
 import { Badge }        from "@/components/ui/badge"
 import { Separator }    from "@/components/ui/separator"
 import Link             from "next/link"
 import { Calendar, Download } from "lucide-react"
+import { DeleteBookingButton } from "@/components/admin/DeleteBookingButton"
 
 interface Booking {
   id:           string
@@ -149,6 +150,9 @@ export default async function AdminBookingsPage() {
                       {b.stripe_session_id.slice(0, 18)}…
                     </a>
                   )}
+                  <div className="pt-1 flex justify-end">
+                    <DeleteBookingButton bookingId={b.id} clientName={b.client_name} />
+                  </div>
                 </div>
               </div>
             ))}

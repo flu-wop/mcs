@@ -1,10 +1,11 @@
 // src/app/admin/page.tsx
 // Admin landing page — links to /admin/orders and /admin/bookings.
-// Protected by src/middleware.ts (HTTP Basic Auth), same as its children.
+// Protected by src/middleware.ts (admin session cookie), same as its children.
 
 import Link from "next/link"
 import { getDB, initDB } from "@/lib/db"
-import { Package, Calendar, ArrowRight, DollarSign } from "lucide-react"
+import { Package, Calendar, ArrowRight, DollarSign, Film } from "lucide-react"
+import { LogoutButton } from "@/components/admin/LogoutButton"
 
 export const dynamic = 'force-dynamic'
 
@@ -42,13 +43,24 @@ export default async function AdminHomePage() {
       label: "Engineer Payouts",
       stat: `$${owedTotal.toFixed(2)} owed`,
     },
+    {
+      href: "/admin/streetbeat",
+      icon: Film,
+      label: "Street Beat Sales",
+      stat: "Live from Stripe",
+    },
   ]
 
   return (
     <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
       <div className="mx-auto max-w-3xl">
-        <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
-        <h1 className="font-display text-4xl text-cream mb-10">Mid City Sound</h1>
+        <div className="flex items-start justify-between mb-10">
+          <div>
+            <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
+            <h1 className="font-display text-4xl text-cream">Mid City Sound</h1>
+          </div>
+          <LogoutButton />
+        </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
           {sections.map(({ href, icon: Icon, label, stat }) => (
