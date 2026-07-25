@@ -260,6 +260,19 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           {product.type}
         </p>
 
+        {product.brand === 'mcs' && (
+          <a
+            href="https://dahiddengem.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-1 w-fit text-[10px] tracking-[0.1em] uppercase
+              text-[#5a4c3a] hover:text-[#D4AF77] font-['DM_Sans'] transition-colors mb-4 -mt-2"
+          >
+            Designed by <span className="text-[#A89880] group-hover:text-[#D4AF77] transition-colors">Hidden Gem</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        )}
+
         <div className="flex items-center gap-3 mb-6">
           <span className="font-['Cormorant_Garamond'] text-[#D4AF77] text-2xl">
             ${price.toFixed(2)}
