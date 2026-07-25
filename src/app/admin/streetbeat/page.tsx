@@ -3,9 +3,12 @@
 // Stripe directly and never persisted (see flu-wop/streetbeat's access.ts).
 // Since Streetbeat shares this same Stripe account, we can pull real sales
 // straight from Stripe's API instead of building a whole new data pipeline.
-// Sessions are tagged with metadata.source = "streetbeat-purchase" at
-// checkout time so they don't get mixed in with MCS's own bookings/merch
-// activity on the same account.
+// Sessions created after the metadata fix are tagged with
+// metadata.source = "streetbeat-purchase" so they don't get mixed in with
+// MCS's own bookings/merch activity on the same account. Sessions from
+// before that fix (or any future edge case) are also caught via a fallback
+// match on success_url containing "streetbeat.video", since Streetbeat's
+// checkout always redirects there and MCS's own sessions never do.
 // Protected by src/middleware.ts (admin session cookie).
 
 import Stripe from "stripe"
@@ -33,7 +36,10 @@ async function getStreetbeatSales(): Promise<Sale[]> {
   const sessions = await stripe.checkout.sessions.list({ limit: 100 })
 
   return sessions.data
-    .filter(s => s.metadata?.source === "streetbeat-purchase" && s.payment_status === "paid")
+    .filter(s =>
+      s.payment_status === "paid" &&
+      (s.metadata?.source === "streetbeat-purchase" || s.success_url?.includes("streetbeat.video"))
+    )
     .map(s => ({
       id:     s.id,
       email:  s.customer_details?.email ?? s.customer_email ?? null,
