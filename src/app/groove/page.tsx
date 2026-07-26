@@ -1,7 +1,7 @@
 // src/app/groove/page.tsx
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Shield, Download, Music2, CreditCard, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -16,6 +16,12 @@ export default function GroovePage() {
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState<string | null>(null)
   const audioRef              = useRef<HTMLAudioElement>(null)
+
+  // Native <audio> has no volume HTML attribute — it defaults to full volume,
+  // which came on too loud. Set it low as soon as the element is available.
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = 0.2
+  }, [])
 
   // Hard-stop preview at 30 seconds
   function handleTimeUpdate() {

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const STATS = [
   { value: "40+",  label: "Years in Music" },
   { value: "1",    label: "Academy Award\nWinner" },
-  { value: "NOLA", label: "Mid City, New Orleans" },
+  { value: "Mid City", label: "New Orleans" },
 ]
 
 const SERVICES = [
