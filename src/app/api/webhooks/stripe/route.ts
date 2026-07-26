@@ -15,6 +15,7 @@ import type { PrintifyOrderRecipient } from "@/lib/printify"
 import { getDB, initDB }            from "@/lib/db"
 import { sendBookingEmails }     from "@/lib/booking-email"
 import { sendMerchOrderEmails }  from "@/lib/merch-email"
+import { alertFulfillmentFailure } from "@/lib/fulfillment-alert"
 import { randomUUID }            from "crypto"
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
@@ -41,17 +42,26 @@ export async function POST(req: Request) {
 
     if (source === "mcs-merch") {
       try { await fulfillMerchOrder(session) }
-      catch (err) { console.error("[stripe-webhook] Merch fulfillment failed:", err) }
+      catch (err) {
+        console.error("[stripe-webhook] Merch fulfillment failed:", err)
+        await alertFulfillmentFailure({ source: "mcs-merch", sessionId: session.id, error: err })
+      }
     }
 
     if (source === "mcs-studio-booking") {
       try { await fulfillStudioBooking(session) }
-      catch (err) { console.error("[stripe-webhook] Booking fulfillment failed:", err) }
+      catch (err) {
+        console.error("[stripe-webhook] Booking fulfillment failed:", err)
+        await alertFulfillmentFailure({ source: "mcs-studio-booking", sessionId: session.id, error: err })
+      }
     }
 
     if (source === "mcs-engineer-booking") {
       try { await fulfillEngineerBooking(session) }
-      catch (err) { console.error("[stripe-webhook] Engineer booking fulfillment failed:", err) }
+      catch (err) {
+        console.error("[stripe-webhook] Engineer booking fulfillment failed:", err)
+        await alertFulfillmentFailure({ source: "mcs-engineer-booking", sessionId: session.id, error: err })
+      }
     }
   }
 
@@ -244,6 +254,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   } catch (err) {
     printifyError = err instanceof Error ? err.message : String(err)
     console.error("[stripe-webhook] Printify order creation failed:", printifyError)
+    await alertFulfillmentFailure({ source: "mcs-merch (printify)", sessionId: session.id, error: err })
   }
 
   const orderId = randomUUID()
@@ -309,6 +320,10 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
       sql: `UPDATE merch_orders SET email_error = ? WHERE id = ?`,
       args: [emailError, orderId],
     })
+    // This failure means BOTH the customer receipt and the internal
+    // midcitysound1 notification failed to send — worth its own alert
+    // attempt even though it uses the same Resend service that just failed.
+    await alertFulfillmentFailure({ source: "mcs-merch (email)", sessionId: session.id, error: err })
   }
 
   // Surface failures to the webhook's own error log/return path too, even
