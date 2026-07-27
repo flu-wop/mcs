@@ -1,17 +1,16 @@
 // src/app/admin/streetbeat/page.tsx
-// Streetbeat has no database of its own — purchases are verified against
-// Stripe directly and never persisted (see flu-wop/streetbeat's access.ts).
-// Since Streetbeat shares this same Stripe account, we can pull real sales
-// straight from Stripe's API instead of building a whole new data pipeline.
-// Sessions created after the metadata fix are tagged with
-// metadata.source = "streetbeat-purchase" so they don't get mixed in with
-// MCS's own bookings/merch activity on the same account. Sessions from
-// before that fix (or any future edge case) are also caught via a fallback
-// match on success_url containing "streetbeat.video", since Streetbeat's
-// checkout always redirects there and MCS's own sessions never do.
+// Two sources merged into one view:
+//   1. Live Stripe — real-time source of truth for anything sold through
+//      the current checkout (see note below on the account-switch caveat)
+//   2. legacy_purchases (Turso, shared with MCS's database) — everything
+//      Stripe's live search can no longer see: the imported Squarespace-era
+//      purchases, plus anything from before Streetbeat switched to its own
+//      dedicated Stripe account (that old data still lives in the OLD
+//      account, invisible to a search against the new one's key)
 // Protected by src/middleware.ts (admin session cookie).
 
 import Stripe from "stripe"
+import { getDB, initDB } from "@/lib/db"
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" })
@@ -24,9 +23,10 @@ interface Sale {
   email: string | null
   amount: number
   date: string
+  source: "stripe" | "legacy"
 }
 
-async function getStreetbeatSales(): Promise<Sale[]> {
+async function getStripeSales(): Promise<Sale[]> {
   const stripe = getStripe()
   // Note: fetches the 100 most recent Checkout Sessions on the account and
   // filters by metadata client-side — Stripe's list API doesn't support
@@ -45,8 +45,22 @@ async function getStreetbeatSales(): Promise<Sale[]> {
       email:  s.customer_details?.email ?? s.customer_email ?? null,
       amount: s.amount_total ?? 0,
       date:   new Date(s.created * 1000).toISOString(),
+      source: "stripe" as const,
     }))
-    .sort((a, b) => b.date.localeCompare(a.date))
+}
+
+async function getLegacySales(): Promise<Sale[]> {
+  await initDB()
+  const result = await getDB().execute(
+    `SELECT order_ref, email, amount_cents, purchased_at FROM legacy_purchases ORDER BY purchased_at DESC`
+  )
+  return result.rows.map(r => ({
+    id:     `legacy-${r.order_ref}`,
+    email:  r.email as string,
+    amount: Number(r.amount_cents ?? 0),
+    date:   new Date(r.purchased_at as string).toISOString(),
+    source: "legacy" as const,
+  }))
 }
 
 function fmt(cents: number) {
@@ -54,7 +68,8 @@ function fmt(cents: number) {
 }
 
 export default async function AdminStreetbeatPage() {
-  const sales = await getStreetbeatSales()
+  const [stripeSales, legacySales] = await Promise.all([getStripeSales(), getLegacySales()])
+  const sales = [...stripeSales, ...legacySales].sort((a, b) => b.date.localeCompare(a.date))
   const total = sales.reduce((sum, s) => sum + s.amount, 0)
 
   return (
@@ -63,8 +78,7 @@ export default async function AdminStreetbeatPage() {
         <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
         <h1 className="font-display text-4xl text-cream mb-2">Street Beat Sales</h1>
         <p className="text-mist/50 text-sm mb-10">
-          Pulled live from Stripe — Street Beat has no database of its own, so this list is the
-          source of truth. {sales.length} sale{sales.length === 1 ? "" : "s"} · {fmt(total)} total
+          Live Stripe + imported/legacy purchases combined. {sales.length} sale{sales.length === 1 ? "" : "s"} · {fmt(total)} total
         </p>
 
         {sales.length === 0 ? (
@@ -76,6 +90,7 @@ export default async function AdminStreetbeatPage() {
                 <tr className="border-b border-studio-border bg-studio-charcoal text-mist/60 text-xs uppercase tracking-wide">
                   <th className="text-left px-4 py-3 font-normal">Date</th>
                   <th className="text-left px-4 py-3 font-normal">Email</th>
+                  <th className="text-left px-4 py-3 font-normal">Source</th>
                   <th className="text-right px-4 py-3 font-normal">Amount</th>
                 </tr>
               </thead>
@@ -86,6 +101,13 @@ export default async function AdminStreetbeatPage() {
                       {new Date(s.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
                     <td className="px-4 py-3">{s.email ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-sm border ${
+                        s.source === "stripe" ? "border-green-500/30 text-green-400" : "border-mist/30 text-mist/60"
+                      }`}>
+                        {s.source === "stripe" ? "Live" : "Legacy"}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-right text-gold">{fmt(s.amount)}</td>
                   </tr>
                 ))}
