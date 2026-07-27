@@ -10,9 +10,8 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // ─── Brand Color Palette ───────────────────────────────────────────
       colors: {
-        // Deep dark backgrounds
+        // ─── Core Brand (locked) ─────────────────────────────────────
         studio: {
           black:   "#090909",
           charcoal:"#111111",
@@ -20,59 +19,93 @@ const config: Config = {
           card:    "#1C1C1C",
           border:  "#2A2A2A",
         },
-        // Gold accent — headlines, CTAs, hover states
         gold: {
           light:   "#E8C97A",
           DEFAULT: "#D4AF77",
           dark:    "#B8935A",
           muted:   "#9A7B50",
         },
-        // Neutral text
-        cream:   "#F5EDD8",
-        mist:    "#A89880",
+        cream: "#F5EDD8",
+        mist:  "#A89880",
+
+        // ─── Semantic tokens (for components) ────────────────────────
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
       },
-      // ─── Typography ────────────────────────────────────────────────────
+
       fontFamily: {
         sans:    ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Georgia", "serif"],
         mono:    ["var(--font-mono)", "monospace"],
       },
-      // ─── Custom spacing & sizing ───────────────────────────────────────
+
       spacing: {
         "18": "4.5rem",
         "22": "5.5rem",
       },
-      // ─── Animation ─────────────────────────────────────────────────────
+
       keyframes: {
         "fade-up": {
-          "0%":   { opacity: "0", transform: "translateY(24px)" },
+          "0%": { opacity: "0", transform: "translateY(24px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "fade-in": {
-          "0%":   { opacity: "0" },
+          "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
-        "shimmer": {
-          "0%":   { backgroundPosition: "-200% 0" },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
         "accordion-down": {
           from: { height: "0" },
-          to:   { height: "var(--radix-accordion-content-height)" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to:   { height: "0" },
+          to: { height: "0" },
         },
       },
+
       animation: {
-        "fade-up":        "fade-up 0.7s ease-out forwards",
-        "fade-in":        "fade-in 0.5s ease-out forwards",
-        "shimmer":        "shimmer 2.5s linear infinite",
+        "fade-up": "fade-up 0.7s ease-out forwards",
+        "fade-in": "fade-in 0.5s ease-out forwards",
+        shimmer: "shimmer 2.5s linear infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up":   "accordion-up 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
-      // ─── Border radius matching shadcn convention ──────────────────────
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
