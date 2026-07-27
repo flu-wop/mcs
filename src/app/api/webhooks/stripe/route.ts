@@ -234,7 +234,14 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
     country:    shipping.address.country ?? "US",
     zip:        shipping.address.postal_code ?? "",
     email:      customer.email ?? undefined,
-    phone:      customer.phone ?? undefined,
+    // Printify requires this field to be present. phone_number_collection is now
+    // enabled at checkout, so this should almost always be real — but if it's
+    // ever missing for any reason (an in-flight session from before that was
+    // enabled, a payment method that doesn't carry phone, etc.), fall back to a
+    // placeholder rather than let the whole order fail Printify validation.
+    // A missing phone number is a minor shipping inconvenience; a merch order
+    // that never gets created after a real charge is a much worse outcome.
+    phone:      customer.phone ?? "000-000-0000",
   }
 
   const printifyItems = cartItems.map(item => ({
@@ -263,8 +270,8 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   await getDB().execute({
     sql: `INSERT INTO merch_orders
             (id, stripe_session_id, customer_name, customer_email, shipping_address,
-             items, total_paid, discount_code, status, printify_order_id, printify_error)
-          VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+             items, total_paid, discount_code, status, printify_order_id, printify_error, cart_id)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
     args: [
       orderId,
       session.id,
@@ -280,13 +287,21 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
       printifyOrderId ? "submitted" : "printify_failed",
       printifyOrderId,
       printifyError,
+      cartId ?? null,
     ],
   })
 
   // Cart data is now safely copied into merch_orders.items — the pending
   // row was only ever needed to get past Stripe's metadata size limit.
   // Legacy sessions (old cartItems metadata format) never had one to begin with.
-  if (cartId) {
+  //
+  // Only delete on success. merch_orders.items only stores {name, variantName,
+  // quantity, price} — NOT productId/variantId, so if Printify failed, this
+  // pending_carts row is the only remaining copy of the real Printify product/
+  // variant IDs needed to retry the order later. Deleting it unconditionally
+  // meant a failed order could never actually be retried, only recreated by
+  // hand in Printify's dashboard.
+  if (cartId && printifyOrderId) {
     await getDB().execute({
       sql: `DELETE FROM pending_carts WHERE id = ?`,
       args: [cartId],

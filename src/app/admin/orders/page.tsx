@@ -6,6 +6,7 @@ import { getDB, initDB } from "@/lib/db"
 import { Badge }         from "@/components/ui/badge"
 import { Separator }     from "@/components/ui/separator"
 import { Package, AlertTriangle } from "lucide-react"
+import { RetryPrintifyButton } from "@/components/admin/RetryPrintifyButton"
 
 interface MerchOrderRow {
   id:                 string
@@ -144,9 +145,12 @@ export default async function AdminOrdersPage() {
                     </div>
 
                     {printifyFailed && o.printify_error && (
-                      <p className="text-red-400/80 text-xs italic border-t border-red-500/20 pt-2 mt-2">
-                        Printify: {o.printify_error} — create this order manually in Printify.
-                      </p>
+                      <div className="border-t border-red-500/20 pt-2 mt-2 space-y-1.5">
+                        <p className="text-red-400/80 text-xs italic">
+                          Printify: {o.printify_error} — create this order manually in Printify.
+                        </p>
+                        <RetryPrintifyButton orderId={o.id} />
+                      </div>
                     )}
                     {emailFailed && (
                       <p className="text-red-400/80 text-xs italic border-t border-red-500/20 pt-2 mt-2">

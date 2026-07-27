@@ -135,6 +135,14 @@ export async function POST(req: Request) {
         allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'NL', 'SE', 'JP'],
       },
 
+      // Printify requires a phone number on the shipping address (address_to.phone)
+      // to create an order — without this, Printify order creation fails validation
+      // AFTER the customer has already been charged. Stripe does not collect phone
+      // by default; this must be explicitly enabled.
+      phone_number_collection: {
+        enabled: true,
+      },
+
       // Sales tax collection — NOT enabled yet. This is separate from any tax
       // Printify charges you on production cost (that's Printify's own tax
       // obligation, unrelated to what a customer owes their state).

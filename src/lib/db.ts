@@ -93,6 +93,9 @@ export async function initDB() {
     `ALTER TABLE bookings ADD COLUMN payout_rate_cents INTEGER`,
     `ALTER TABLE bookings ADD COLUMN payout_amount_cents INTEGER`,
     `ALTER TABLE bookings ADD COLUMN payout_status TEXT NOT NULL DEFAULT 'unpaid'`,
+    // Links a failed order back to its preserved pending_carts row (real
+    // Printify product/variant IDs) so a retry mechanism can find it.
+    `ALTER TABLE merch_orders ADD COLUMN cart_id TEXT`,
   ]) {
     try { await client.execute(stmt) } catch { /* column already exists */ }
   }
