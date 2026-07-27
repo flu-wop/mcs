@@ -7,6 +7,7 @@ import { Badge }         from "@/components/ui/badge"
 import { Separator }     from "@/components/ui/separator"
 import { Package, AlertTriangle } from "lucide-react"
 import { RetryPrintifyButton } from "@/components/admin/RetryPrintifyButton"
+import { MarkResolvedButton } from "@/components/admin/MarkResolvedButton"
 
 interface MerchOrderRow {
   id:                 string
@@ -149,7 +150,10 @@ export default async function AdminOrdersPage() {
                         <p className="text-red-400/80 text-xs italic">
                           Printify: {o.printify_error} — create this order manually in Printify.
                         </p>
-                        <RetryPrintifyButton orderId={o.id} />
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <RetryPrintifyButton orderId={o.id} />
+                          <MarkResolvedButton orderId={o.id} />
+                        </div>
                       </div>
                     )}
                     {emailFailed && (
