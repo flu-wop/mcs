@@ -97,8 +97,7 @@
   /* Form focus states */
   input:focus, textarea:focus, select:focus {
     outline: none;
-    ring: 2px;
-    ring-color: var(--color-gold);
+    box-shadow: 0 0 0 2px var(--color-gold);
   }
 }
 
