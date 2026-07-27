@@ -69,7 +69,17 @@ function fmt(cents: number) {
 
 export default async function AdminStreetbeatPage() {
   const [stripeSales, legacySales] = await Promise.all([getStripeSales(), getLegacySales()])
-  const sales = [...stripeSales, ...legacySales].sort((a, b) => b.date.localeCompare(a.date))
+
+  // Dedupe: a legacy row whose order_ref happens to be a real Stripe session
+  // ID already present in the live results (e.g. a purchase manually
+  // recovered into legacy_purchases after an account switch, but still
+  // findable live via MCS's own separate key) would otherwise double-count
+  // the same real purchase. Prefer the live result, which has more complete
+  // data straight from Stripe.
+  const liveIds = new Set(stripeSales.map(s => s.id))
+  const dedupedLegacy = legacySales.filter(s => !liveIds.has(s.id.replace(/^legacy-/, "")))
+
+  const sales = [...stripeSales, ...dedupedLegacy].sort((a, b) => b.date.localeCompare(a.date))
   const total = sales.reduce((sum, s) => sum + s.amount, 0)
 
   return (
