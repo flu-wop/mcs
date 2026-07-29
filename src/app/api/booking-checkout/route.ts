@@ -48,7 +48,6 @@ export async function POST(req: Request) {
     const finalPrice  = Math.round(ratePrice * (1 - discountPct))
 
     const session = await getStripe().checkout.sessions.create({
-      payment_method_types: ["card"],
       mode:                 "payment",
       line_items: [{
         price_data: {
@@ -77,11 +76,6 @@ export async function POST(req: Request) {
         discountCode: discountCode ?? "",
       },
       customer_email: clientEmail,
-      custom_text: {
-        submit: {
-          message: "Your booking is subject to studio manager confirmation within 24 hours.",
-        },
-      },
       success_url: `${BASE_URL}/studio/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${BASE_URL}/studio`,
     })

@@ -83,7 +83,6 @@ export async function POST(req: Request) {
     })
 
     const session = await getStripe().checkout.sessions.create({
-      payment_method_types: ['card'],
       mode: 'payment',
 
       line_items: pricedItems.map(({ item, finalPrice }) => ({
@@ -161,13 +160,6 @@ export async function POST(req: Request) {
         cartId,
         source: 'mcs-merch',
         discountCode: discountPct > 0 ? discountCode!.toUpperCase() : '',
-      },
-
-      // Branding
-      custom_text: {
-        submit: {
-          message: 'Ships from New Orleans via Printify · Usually 3–7 business days',
-        },
       },
 
       success_url: `${BASE_URL}/merch/success?session_id={CHECKOUT_SESSION_ID}`,
