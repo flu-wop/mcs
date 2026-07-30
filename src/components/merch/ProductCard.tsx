@@ -224,9 +224,24 @@ export default function ProductCard({
 
         {/* Type */}
         <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a]
-          font-['DM_Sans'] mb-3">
+          font-['DM_Sans'] mb-1">
           {product.type}
         </p>
+
+        {/* Hidden Gem design credit — MCS-brand products only, same treatment as the product detail page */}
+        {product.brand === 'mcs' && (
+          <a
+            href="https://dahiddengem.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="group/credit inline-flex items-center gap-1 w-fit text-[9px] tracking-[0.08em] uppercase
+              text-[#5a4c3a] hover:text-[#D4AF77] font-['DM_Sans'] transition-colors mb-3"
+          >
+            Designed by <span className="text-[#A89880] group-hover/credit:text-[#D4AF77] transition-colors">Hidden Gem</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        )}
 
         {/* Size quick-select: buttons for small sets (apparel S–5XL), a dropdown
             for anything larger (posters can have 20+ genuinely distinct sizes —
