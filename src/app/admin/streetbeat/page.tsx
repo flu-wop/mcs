@@ -12,8 +12,16 @@
 import Stripe from "stripe"
 import { getDB, initDB } from "@/lib/db"
 
+// Streetbeat sells through its own dedicated Stripe account, separate from
+// MCS's. Live sales since that account split are invisible to a search
+// against MCS's key — this MUST use STREETBEAT_STRIPE_SECRET_KEY. Falls
+// back to the old MCS key (with a visible warning banner) so the page
+// doesn't hard-crash if the new env var hasn't been set yet.
+const usingFallbackKey = !process.env.STREETBEAT_STRIPE_SECRET_KEY
+
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" })
+  const key = process.env.STREETBEAT_STRIPE_SECRET_KEY ?? process.env.STRIPE_SECRET_KEY!
+  return new Stripe(key, { apiVersion: "2026-04-22.dahlia" })
 }
 
 export const dynamic = 'force-dynamic'
@@ -90,6 +98,16 @@ export default async function AdminStreetbeatPage() {
         <p className="text-mist/50 text-sm mb-10">
           Live Stripe + imported/legacy purchases combined. {sales.length} sale{sales.length === 1 ? "" : "s"} · {fmt(total)} total
         </p>
+
+        {usingFallbackKey && (
+          <div className="mb-8 border border-red-500/40 bg-red-500/10 rounded-sm px-4 py-3">
+            <p className="text-red-400 text-xs leading-relaxed">
+              <strong className="font-medium">STREETBEAT_STRIPE_SECRET_KEY is not set.</strong>{" "}
+              Falling back to MCS&apos;s Stripe key — live Streetbeat sales made through Streetbeat&apos;s
+              own dedicated Stripe account will NOT show up below. Set the env var in Vercel and redeploy.
+            </p>
+          </div>
+        )}
 
         {sales.length === 0 ? (
           <p className="text-mist/40 text-sm">No Street Beat purchases yet.</p>
