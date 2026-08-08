@@ -112,35 +112,28 @@ export default async function AdminStreetbeatPage() {
         {sales.length === 0 ? (
           <p className="text-mist/40 text-sm">No Street Beat purchases yet.</p>
         ) : (
-          <div className="border border-studio-border rounded-sm overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-studio-border bg-studio-charcoal text-mist/60 text-xs uppercase tracking-wide">
-                  <th className="text-left px-4 py-3 font-normal">Date</th>
-                  <th className="text-left px-4 py-3 font-normal">Email</th>
-                  <th className="text-left px-4 py-3 font-normal">Source</th>
-                  <th className="text-right px-4 py-3 font-normal">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sales.map(s => (
-                  <tr key={s.id} className="border-b border-studio-border/40 last:border-0 text-mist">
-                    <td className="px-4 py-3">
+          <div className="space-y-2">
+            {sales.map(s => (
+              <div
+                key={s.id}
+                className="border border-studio-border rounded-sm bg-studio-charcoal px-4 py-3 flex items-center justify-between gap-4"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-mist/60 text-[11px] whitespace-nowrap">
                       {new Date(s.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </td>
-                    <td className="px-4 py-3">{s.email ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      <span className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-sm border ${
-                        s.source === "stripe" ? "border-green-500/30 text-green-400" : "border-mist/30 text-mist/60"
-                      }`}>
-                        {s.source === "stripe" ? "Live" : "Legacy"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right text-gold">{fmt(s.amount)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </span>
+                    <span className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-sm border shrink-0 ${
+                      s.source === "stripe" ? "border-green-500/30 text-green-400" : "border-mist/30 text-mist/60"
+                    }`}>
+                      {s.source === "stripe" ? "Live" : "Legacy"}
+                    </span>
+                  </div>
+                  <p className="text-cream text-sm truncate">{s.email ?? "—"}</p>
+                </div>
+                <p className="text-gold text-sm font-medium shrink-0">{fmt(s.amount)}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>
