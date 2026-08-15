@@ -11,7 +11,6 @@ const NAV_LINKS = [
   { label: "Home",     href: "/" },
   { label: "Studio",   href: "/studio" },
   { label: "Legacy",   href: "/legacy" },
-  { label: "Groove",   href: "/groove" },
   { label: "Projects", href: "/projects" },
   { label: "Merch",    href: "/merch/brand/mcs" },
   { label: "Contact",  href: "/contact" },
