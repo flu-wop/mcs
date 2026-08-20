@@ -80,6 +80,8 @@ export interface MaterialOption {
   priceFormatted: string
   variants: PrintifyVariantDetail[]
   inStock: boolean
+  thumbnailUrl: string
+  backImageUrl?: string        // for the grid card's hover front→back crossfade
 }
 
 // Enriched product shape used across the app
@@ -91,6 +93,7 @@ export interface MerchProduct {
   brand: Brand
   type: ProductType
   thumbnailUrl: string
+  backImageUrl?: string        // product-level "back" mockup, if Printify returned one — used for the grid card's hover crossfade
   price: number               // lowest enabled variant price as float
   priceFormatted: string      // "$36.00"
   variantCount: number
@@ -281,6 +284,13 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
     : undefined
   const defaultImage = positionMatch ?? p.images.find(img => img.is_default) ?? p.images[0]
 
+  // "Back" mockup for the grid card's hover crossfade. Only set when Printify
+  // actually returned a distinct back-facing shot for this product AND it's
+  // not the same image already shown as the front (a product with only one
+  // photo checked in its Mockup Library would otherwise crossfade to itself).
+  const backImage = p.images.find(img => img.position === 'back')
+  const backImageUrl = (backImage && backImage.src !== defaultImage?.src) ? backImage.src : undefined
+
   return {
     id: p.id,
     slug,
@@ -289,6 +299,7 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
     brand,
     type,
     thumbnailUrl: defaultImage?.src ?? '',
+    backImageUrl,
     price,
     priceFormatted: formatted,
     variantCount: p.variants.length,
@@ -332,6 +343,8 @@ function applyMaterialGroups(products: MerchProduct[]): MerchProduct[] {
         priceFormatted: p.priceFormatted,
         variants: p.variants ?? [],
         inStock: p.inStock,
+        thumbnailUrl: p.thumbnailUrl,
+        backImageUrl: p.backImageUrl,
       })
       if (p.id !== anchorId) consumedIds.add(p.id)
     }

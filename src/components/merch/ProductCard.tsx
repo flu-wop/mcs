@@ -94,6 +94,8 @@ export default function ProductCard({
   const activeVariants = activeMaterial?.variants ?? variants
   const activePrice = activeMaterial?.priceFormatted ?? product.priceFormatted
   const activeInStock = activeMaterial?.inStock ?? product.inStock
+  const activeThumbnail = activeMaterial?.thumbnailUrl ?? product.thumbnailUrl
+  const activeBackImage = activeMaterial?.backImageUrl ?? product.backImageUrl
 
   // Group variants by size for quick-select — dedupe to one button per unique
   // size (not one per variant — a variant exists per color x size combo, so
@@ -206,17 +208,40 @@ export default function ProductCard({
         className="relative block aspect-square overflow-hidden bg-[#0d0d0d]"
       >
         {!imgError ? (
-          <Image
-            src={product.thumbnailUrl}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-103"
-            sizes={featured
-              ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-              : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
-            }
-            onError={() => setImgError(true)}
-          />
+          <>
+            <Image
+              src={activeThumbnail}
+              alt={product.name}
+              fill
+              className={[
+                'object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.04]',
+                activeBackImage ? 'group-hover:opacity-0' : '',
+              ].join(' ')}
+              sizes={featured
+                ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
+              }
+              onError={() => setImgError(true)}
+            />
+            {/* Back-of-shirt crossfade — only rendered when Printify actually
+                returned a distinct back mockup for this product/material.
+                Products without one (posters, stickers, single-photo items)
+                keep the plain static image above, unchanged. */}
+            {activeBackImage && (
+              <Image
+                src={activeBackImage}
+                alt={`${product.name} — back`}
+                fill
+                aria-hidden="true"
+                className="object-cover opacity-0 scale-[1.04] transition-[opacity,transform]
+                  duration-500 group-hover:opacity-100 group-hover:scale-100"
+                sizes={featured
+                  ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                  : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
+                }
+              />
+            )}
+          </>
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
             <span className="text-3xl opacity-20">◈</span>
