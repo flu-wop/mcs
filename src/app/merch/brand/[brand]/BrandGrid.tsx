@@ -23,7 +23,14 @@ export default function BrandGrid({ products, accent }: { products: MerchProduct
         case 'price-asc':  return a.price - b.price
         case 'price-desc': return b.price - a.price
         case 'name':        return a.name.localeCompare(b.name)
-        default:             return (b.mvp ? 1 : 0) - (a.mvp ? 1 : 0)
+        default: {
+          // "featured" — multi-material products first (same priority as
+          // the main /merch grid), then MVP, then everyone else.
+          const aMulti = (a.materials?.length ?? 0) > 1
+          const bMulti = (b.materials?.length ?? 0) > 1
+          if (aMulti !== bMulti) return aMulti ? -1 : 1
+          return (b.mvp ? 1 : 0) - (a.mvp ? 1 : 0)
+        }
       }
     })
     return result

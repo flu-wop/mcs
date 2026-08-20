@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: "Studio",   href: "/studio" },
   { label: "Legacy",   href: "/legacy" },
   { label: "Projects", href: "/projects" },
-  { label: "Merch",    href: "/merch/brand/mcs" },
+  { label: "Merch",    href: "/merch" },
   { label: "Contact",  href: "/contact" },
 ] as const;
 

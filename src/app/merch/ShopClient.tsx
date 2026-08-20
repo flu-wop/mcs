@@ -81,10 +81,16 @@ function applyFilters(
     case 'price-desc': result = [...result].sort((a, b) => b.price - a.price); break
     case 'name':       result = [...result].sort((a, b) => a.name.localeCompare(b.name)); break
     default:
-      // "featured" — MVP products first (alphabetical within that group),
-      // then everyone else alphabetical, then manually-placed items get
-      // spliced into their fixed positions on top of that.
+      // "featured" — multi-material products (Heavyweight/Classic Cotton
+      // choice) surface first so the new option doesn't get buried behind
+      // MVP launch items or plain alphabetical order; MVP products next,
+      // everyone else alphabetical after that. Manually-placed items still
+      // get spliced into their fixed positions on top of all of this.
       result = [...result].sort((a, b) => {
+        const aMulti = (a.materials?.length ?? 0) > 1
+        const bMulti = (b.materials?.length ?? 0) > 1
+        if (aMulti && !bMulti) return -1
+        if (!aMulti && bMulti) return 1
         if (a.mvp && !b.mvp) return -1
         if (!a.mvp && b.mvp) return 1
         return a.name.localeCompare(b.name)
