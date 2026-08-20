@@ -38,6 +38,26 @@ export const PRODUCT_OVERRIDES: Record<string, { brand: Brand; type: ProductType
   '6a2ddd5c73ad2eacae0f16ad': { brand: 'mcs',        type: 'mug' },     // Mid City Sound Crescent Mug
   '6a2c6cc8a4bf9acfe901c035': { brand: 'mcs',        type: 'tee' },     // Mid City Sound Wave Tee
   '6a2c6b22aa0cfe0a810b8f90': { brand: 'mcs',        type: 'tee' },     // Mid City Sound Crescent Wave Tee
+
+  // Classic-cotton (Gildan) fit alternatives, added Aug 2026 alongside the
+  // existing Shaka Wear heavyweight tees. None of these titles carry a
+  // "[brand:type]" prefix, so without an override they all silently fall
+  // back to brand:'mcs' — wrong for the two Street Beat ones and the DJM
+  // one. "Gildan Time of My Life '87" also has no literal word "tee" in
+  // its title, so parseType() was defaulting it to 'accessory' too (same
+  // gap the original, non-Gildan "Time of My Life '87" needed an override
+  // for below).
+  '6a84f485bb97b3e319039a2a': { brand: 'streetbeat', type: 'tee' },     // Gildan Street Beat Pocket Tee
+  '6a84f1e800fdd1b9090da791': { brand: 'streetbeat', type: 'tee' },     // Gildan Street Beat Drumming Tee
+  '6a849d4bfac6f24309057a5d': { brand: 'djm',        type: 'tee' },     // Gildan Time of My Life '87
+  '6a849bf854baac230906609c': { brand: 'mcs',        type: 'tee' },     // Gildan We Make Records Tee — KEEP.
+  // '6a849b4a6cbe98faa208a0e1' is an accidental duplicate of the line above
+  // (same slug, same price, same 439 variants, created ~3 min earlier —
+  // Aug 18 2026 17:50 UTC vs 17:52 UTC). Not listed here on purpose: it
+  // already falls back to brand:'mcs'/type:'tee' correctly via title
+  // parsing, so leaving it out doesn't break its display, but it should
+  // be deleted in the Printify dashboard to stop it showing as a
+  // duplicate card on /merch and to free up its colliding slug.
 }
 
 // ─── Image position overrides ───────────────────────────────────────────────
