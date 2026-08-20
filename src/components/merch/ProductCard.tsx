@@ -83,6 +83,18 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { addItem, openDrawer } = useCart()
 
+  // Material selection — only relevant for products in a material group
+  // (see lib/material-groups.ts). Defaults to materials[0], the anchor's
+  // own material, so the card's initial state matches what showSchema/SEO
+  // already assumes about this product.
+  const hasMaterials = (product.materials?.length ?? 0) > 1
+  const [selectedMaterialIdx, setSelectedMaterialIdx] = useState(0)
+  const activeMaterial = hasMaterials ? product.materials![selectedMaterialIdx] : null
+  const activeProductId = activeMaterial?.productId ?? product.id
+  const activeVariants = activeMaterial?.variants ?? variants
+  const activePrice = activeMaterial?.priceFormatted ?? product.priceFormatted
+  const activeInStock = activeMaterial?.inStock ?? product.inStock
+
   // Group variants by size for quick-select — dedupe to one button per unique
   // size (not one per variant — a variant exists per color x size combo, so
   // without this a 9-color tee would render the same size 9 times over),
@@ -91,7 +103,7 @@ export default function ProductCard({
   // first — often 2XL — instead of something sensible like M or L).
   const sizeVariants = (() => {
     const seen = new Set<string>()
-    const deduped = (variants ?? []).filter(v => {
+    const deduped = (activeVariants ?? []).filter(v => {
       if (!v.isAvailable) return false
       const size = optionValue(v, 'size')
       if (!size || seen.has(size)) return false
@@ -102,7 +114,7 @@ export default function ProductCard({
   })()
 
   const defaultVariant = (() => {
-    if (!sizeVariants.length) return variants?.[0] ?? null
+    if (!sizeVariants.length) return activeVariants?.[0] ?? null
     const sizes = sizeVariants.map(v => optionValue(v, 'size') ?? '')
     const preferred = defaultSize(sizes)
     return sizeVariants.find(v => optionValue(v, 'size') === preferred)
@@ -115,6 +127,37 @@ export default function ProductCard({
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
+  // Switching material changes the whole variant set (different Printify
+  // product), so a size selected on Heavyweight has no meaning on Classic
+  // Cotton — reset to that material's own default rather than carrying over
+  // a stale/mismatched selection.
+  const handleMaterialChange = useCallback((idx: number) => {
+    setSelectedMaterialIdx(idx)
+    const nextVariants = product.materials?.[idx]?.variants ?? []
+    const seen = new Set<string>()
+    const nextSizeVariants = sortSizes(
+      nextVariants.filter(v => {
+        if (!v.isAvailable) return false
+        const size = optionValue(v, 'size')
+        if (!size || seen.has(size)) return false
+        seen.add(size)
+        return true
+      }),
+      v => optionValue(v, 'size') ?? ''
+    )
+    if (nextSizeVariants.length > 6) {
+      setSelectedVariant(null)
+      return
+    }
+    const sizes = nextSizeVariants.map(v => optionValue(v, 'size') ?? '')
+    const preferred = defaultSize(sizes)
+    setSelectedVariant(
+      nextSizeVariants.find(v => optionValue(v, 'size') === preferred)
+        ?? nextSizeVariants[0]
+        ?? null
+    )
+  }, [product.materials])
+
   const borderClass = BRAND_BORDER[product.brand] ?? BRAND_BORDER.mcs
   const tagClass    = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
 
@@ -122,14 +165,14 @@ export default function ProductCard({
     // If the dropdown is showing (a real size choice exists) and nothing's
     // been picked yet, don't silently add some arbitrary size.
     if (sizeVariants.length > 6 && !selectedVariant) return
-    const variant = selectedVariant ?? variants?.[0]
+    const variant = selectedVariant ?? activeVariants?.[0]
     if (!variant) return
 
     addItem({
       variantId:    variant.variantId,
-      productId:    product.id,
+      productId:    activeProductId,
       slug:         product.slug,
-      name:         product.name,
+      name:         activeMaterial ? `${product.name} — ${activeMaterial.material}` : product.name,
       variantName:  variant.name,
       brand:        product.brand,
       type:         product.type,
@@ -141,7 +184,7 @@ export default function ProductCard({
     setAdded(true)
     openDrawer()
     setTimeout(() => setAdded(false), 2000)
-  }, [addItem, openDrawer, product, selectedVariant, variants, sizeVariants])
+  }, [addItem, openDrawer, product, selectedVariant, activeVariants, activeProductId, activeMaterial, sizeVariants])
 
   return (
     <article
@@ -191,8 +234,8 @@ export default function ProductCard({
           </span>
         )}
 
-        {/* Sold out badge */}
-        {!product.inStock && (
+        {/* Sold out badge — reflects whichever material is currently selected */}
+        {!activeInStock && (
           <span className="absolute top-2.5 left-2.5 z-10 bg-[#111111] text-[#A89880]
             border border-[#A89880]/30 text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5">
             Sold Out
@@ -208,7 +251,7 @@ export default function ProductCard({
       </Link>
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
-      <div className={`flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08 ${!product.inStock ? 'opacity-60' : ''}`}>
+      <div className={`flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08 ${!activeInStock ? 'opacity-60' : ''}`}>
 
         {/* Name */}
         <Link href={`/merch/${product.slug}`} className="group/name">
@@ -241,6 +284,30 @@ export default function ProductCard({
             Designed by <span className="text-[#A89880] group-hover/credit:text-[#D4AF77] transition-colors">Hidden Gem</span>
             <span aria-hidden="true">↗</span>
           </a>
+        )}
+
+        {/* Material quick-select — only rendered for products with more than
+            one blank (see lib/material-groups.ts). Sits above Size since
+            picking it determines which product's sizes/price apply. */}
+        {hasMaterials && (
+          <div className="flex flex-wrap gap-1 mb-2" role="group" aria-label="Select material">
+            {product.materials!.map((m, idx) => (
+              <button
+                key={m.productId}
+                onClick={() => handleMaterialChange(idx)}
+                aria-pressed={selectedMaterialIdx === idx}
+                className={[
+                  'text-[9px] tracking-[0.08em] uppercase px-2 py-1',
+                  "font-['DM_Sans'] border transition-colors",
+                  selectedMaterialIdx === idx
+                    ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                    : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                ].join(' ')}
+              >
+                {m.material}
+              </button>
+            ))}
+          </div>
         )}
 
         {/* Size quick-select: buttons for small sets (apparel S–5XL), a dropdown
@@ -301,7 +368,7 @@ export default function ProductCard({
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
           <span className="font-['Cormorant_Garamond'] text-[#D4AF77]
             text-lg leading-none">
-            {product.priceFormatted || (
+            {activePrice || (
               selectedVariant
                 ? `$${parseFloat(selectedVariant.retailPrice).toFixed(2)}`
                 : '—'
@@ -310,8 +377,8 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            disabled={(!variants && !product.price) || !product.inStock || (sizeVariants.length > 6 && !selectedVariant)}
-            aria-label={product.inStock ? `Add ${product.name} to cart` : `${product.name} is sold out`}
+            disabled={(!activeVariants && !product.price) || !activeInStock || (sizeVariants.length > 6 && !selectedVariant)}
+            aria-label={activeInStock ? `Add ${product.name} to cart` : `${product.name} is sold out`}
             className={[
               'text-[9px] tracking-[0.14em] uppercase px-3 py-2',
               'font-[\'DM_Sans\'] border transition-all duration-150',
@@ -319,10 +386,10 @@ export default function ProductCard({
               added
                 ? 'border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
                 : 'border-[#D4AF77]/20 text-[#A89880] hover:border-[#D4AF77]/60 hover:text-[#D4AF77]',
-              ((!variants && !product.price) || !product.inStock || (sizeVariants.length > 6 && !selectedVariant)) ? 'opacity-30 cursor-not-allowed' : '',
+              ((!activeVariants && !product.price) || !activeInStock || (sizeVariants.length > 6 && !selectedVariant)) ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
-            {!product.inStock ? 'Sold Out' : added ? '✓ Added' : '+ Add'}
+            {!activeInStock ? 'Sold Out' : added ? '✓ Added' : '+ Add'}
           </button>
         </div>
       </div>

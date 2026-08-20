@@ -21,9 +21,21 @@ const BRAND_TAG_COLOR: Record<string, string> = {
 
 export default function ProductDetail({ product }: { product: MerchProduct }) {
   const { addItem, openDrawer } = useCart()
+
+  // Material selection — only relevant for products in a material group
+  // (see lib/material-groups.ts). Defaults to materials[0], same anchor
+  // material the page's own metadata/price was generated from server-side.
+  const hasMaterials = (product.materials?.length ?? 0) > 1
+  const [selectedMaterialIdx, setSelectedMaterialIdx] = useState(0)
+  const activeMaterial = hasMaterials ? product.materials![selectedMaterialIdx] : null
+  const activeProductId = activeMaterial?.productId ?? product.id
+
   // Keep ALL variants, not just available ones — out-of-stock sizes/colors
   // should show up disabled, not vanish, so people know an option exists.
-  const variants = useMemo(() => product.variants ?? [], [product.variants])
+  const variants = useMemo(
+    () => activeMaterial?.variants ?? product.variants ?? [],
+    [activeMaterial, product.variants]
+  )
 
   const sizes  = useMemo(() => {
     const seen = new Set<string>()
@@ -84,6 +96,41 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
   const [added, setAdded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
+  // Switching material changes the whole variant set (a different Printify
+  // product), so a color/size/gallery position picked for Heavyweight has
+  // no meaning on Classic Cotton — reset gallery + selections to that
+  // material's own defaults rather than carrying over a stale selection.
+  const handleMaterialChange = useCallback((idx: number) => {
+    setSelectedMaterialIdx(idx)
+    const nextVariants = product.materials?.[idx]?.variants ?? []
+
+    const seenSize = new Set<string>()
+    const nextSizes = sortSizes(
+      nextVariants
+        .map(v => optionValue(v, 'size'))
+        .filter((s): s is string => !!s && !seenSize.has(s) && (seenSize.add(s), true)),
+      s => s
+    )
+    const seenAvailSize = new Set<string>()
+    const nextAvailableSizes = sortSizes(
+      nextVariants
+        .filter(v => v.isAvailable)
+        .map(v => optionValue(v, 'size'))
+        .filter((s): s is string => !!s && !seenAvailSize.has(s) && (seenAvailSize.add(s), true)),
+      s => s
+    )
+    const seenColor = new Set<string>()
+    const nextColors = nextVariants
+      .filter(v => v.isAvailable)
+      .map(v => optionValue(v, 'color'))
+      .filter((c): c is string => !!c && !seenColor.has(c) && (seenColor.add(c), true))
+
+    setSelectedSize(nextSizes.length > 10 ? undefined : defaultSize(nextAvailableSizes.length ? nextAvailableSizes : nextSizes))
+    setSelectedColor(nextColors[0])
+    setActiveImage(0)
+    setActiveSide(undefined)
+  }, [product.materials])
+
   const currentColorImages = colorInfo.find(c => c.color === selectedColor)?.images ?? {}
   // Prefer 'front' as the default side shown, but fall back to whatever
   // position actually exists (a back-only product has no front image).
@@ -122,9 +169,9 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     if (!selectedVariant || !selectedVariant.isAvailable) return
     addItem({
       variantId:    selectedVariant.variantId,
-      productId:    product.id,
+      productId:    activeProductId,
       slug:         product.slug,
-      name:         product.name,
+      name:         activeMaterial ? `${product.name} — ${activeMaterial.material}` : product.name,
       variantName:  selectedVariant.name,
       brand:        product.brand,
       type:         product.type,
@@ -135,7 +182,7 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
     setAdded(true)
     openDrawer()
     setTimeout(() => setAdded(false), 2000)
-  }, [addItem, openDrawer, product, selectedVariant, qty])
+  }, [addItem, openDrawer, product, selectedVariant, qty, activeProductId, activeMaterial])
 
   const tagClass = BRAND_TAG_COLOR[product.brand] ?? BRAND_TAG_COLOR.mcs
   const price = selectedVariant ? parseFloat(selectedVariant.retailPrice) : product.price
@@ -277,13 +324,42 @@ export default function ProductDetail({ product }: { product: MerchProduct }) {
           <span className="font-['Cormorant_Garamond'] text-[#D4AF77] text-2xl">
             ${price.toFixed(2)}
           </span>
-          {!product.inStock && (
+          {!(activeMaterial?.inStock ?? product.inStock) && (
             <span className="text-[9px] tracking-[0.12em] uppercase px-2 py-0.5
               border border-[#A89880]/30 text-[#A89880] font-['DM_Sans']">
               Sold Out
             </span>
           )}
         </div>
+
+        {/* Material select — only rendered for products with more than one
+            blank (see lib/material-groups.ts). Sits above Size since
+            picking it determines which product's sizes/colors/price apply. */}
+        {hasMaterials && (
+          <div className="mb-6">
+            <p className="text-[9px] tracking-[0.14em] uppercase text-[#5a4c3a] font-['DM_Sans'] mb-2">
+              Material
+            </p>
+            <div className="flex flex-wrap gap-1.5" role="group" aria-label="Select material">
+              {product.materials!.map((m, idx) => (
+                <button
+                  key={m.productId}
+                  onClick={() => handleMaterialChange(idx)}
+                  aria-pressed={selectedMaterialIdx === idx}
+                  className={[
+                    'text-[9px] tracking-[0.1em] uppercase px-3 py-1.5',
+                    "font-['DM_Sans'] border transition-colors",
+                    selectedMaterialIdx === idx
+                      ? 'border-[#D4AF77]/60 text-[#D4AF77]'
+                      : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                  ].join(' ')}
+                >
+                  {m.material} · {m.priceFormatted}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Size select */}
         {sizes.length > 1 && (

@@ -3,6 +3,7 @@
 // Replaces the old Printful-based client (lib/printful.ts, removed).
 
 import { PRODUCT_OVERRIDES, IMAGE_POSITION_OVERRIDES } from './product-overrides'
+import { PRODUCT_TO_GROUP } from './material-groups'
 
 const BASE   = 'https://api.printify.com/v1'
 const TOKEN  = process.env.PRINTIFY_API_TOKEN!
@@ -69,6 +70,18 @@ export interface PrintifyVariantDetail {
   imagesByPosition: Record<string, string>   // e.g. { front: '...', back: '...' } — whatever positions Printify actually returned for this variant
 }
 
+// One shirt-material option within a materialGroup (see material-groups.ts) —
+// same design, different blank/price. The MerchProduct's own top-level
+// price/variants/inStock always mirror materials[0] (the anchor/default).
+export interface MaterialOption {
+  material: string             // "Heavyweight" / "Classic Cotton"
+  productId: string
+  price: number
+  priceFormatted: string
+  variants: PrintifyVariantDetail[]
+  inStock: boolean
+}
+
 // Enriched product shape used across the app
 export interface MerchProduct {
   id: string
@@ -85,6 +98,7 @@ export interface MerchProduct {
   variants?: PrintifyVariantDetail[]
   description: string         // raw HTML from Printify (basic <p> tags — safe to render)
   inStock: boolean            // true if at least one variant is enabled + available
+  materials?: MaterialOption[] // present only when this product is the anchor of a material group
 }
 
 export interface PrintifyOrderRecipient {
@@ -285,6 +299,53 @@ function enrichProduct(p: PrintifyRawProduct): MerchProduct {
   }
 }
 
+// ─── Material grouping ─────────────────────────────────────────────────────────
+//
+// Collapses same-design/different-blank product pairs (see material-groups.ts)
+// into one card: the group's anchor product gains a `materials` array, and
+// every other member is dropped from the returned list so it never renders
+// as a second, duplicate-looking card. Runs after enrichProduct() so it
+// operates on the already-formatted MerchProduct shape.
+function applyMaterialGroups(products: MerchProduct[]): MerchProduct[] {
+  const byId = new Map(products.map(p => [p.id, p]))
+  const consumedIds = new Set<string>()   // non-anchor members to drop from the output
+  const anchorMaterials = new Map<string, MaterialOption[]>()
+
+  for (const [, group] of new Map(
+    products
+      .map(p => PRODUCT_TO_GROUP.get(p.id))
+      .filter((g): g is NonNullable<typeof g> => !!g)
+      .map(g => [g, g] as const) // dedupe groups by reference
+  )) {
+    const anchorId = group.members[0].productId
+    const anchor = byId.get(anchorId)
+    if (!anchor) continue // anchor not visible/found — leave group untouched
+
+    const materials: MaterialOption[] = []
+    for (const member of group.members) {
+      const p = byId.get(member.productId)
+      if (!p) continue // member not visible in this fetch (e.g. unpublished) — skip it, don't break the group
+      materials.push({
+        material: member.material,
+        productId: p.id,
+        price: p.price,
+        priceFormatted: p.priceFormatted,
+        variants: p.variants ?? [],
+        inStock: p.inStock,
+      })
+      if (p.id !== anchorId) consumedIds.add(p.id)
+    }
+    if (materials.length > 1) anchorMaterials.set(anchorId, materials)
+  }
+
+  return products
+    .filter(p => !consumedIds.has(p.id))
+    .map(p => {
+      const materials = anchorMaterials.get(p.id)
+      return materials ? { ...p, materials } : p
+    })
+}
+
 // ─── HTTP helpers ─────────────────────────────────────────────────────────────
 
 async function pfGet(path: string) {
@@ -322,9 +383,11 @@ export async function getProducts(): Promise<MerchProduct[]> {
   const data = await pfGet(`/shops/${SHOP_ID}/products.json?limit=50`)
   const raw: PrintifyRawProduct[] = data.data ?? []
 
-  return raw
+  const enriched = raw
     .filter(p => p.visible)
     .map(enrichProduct)
+
+  return applyMaterialGroups(enriched)
 }
 
 // Fetch one product by Printify product id
