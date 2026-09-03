@@ -58,13 +58,12 @@ export default function FunnelDashboard() {
   }, [fetchFunnel])
 
   return (
-    <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
+    <div className="pt-10 px-6 pb-20">
       <div className="mx-auto max-w-6xl">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
           <div>
-            <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
             <h1 className="font-display text-4xl text-cream">Funnel Analytics</h1>
             {data && (
               <p className="text-mist text-[11px] mt-1">

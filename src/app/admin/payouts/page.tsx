@@ -36,9 +36,8 @@ export default async function AdminPayoutsPage() {
   const bookings = result.rows as unknown as PayoutBooking[]
 
   return (
-    <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
+    <div className="pt-10 px-6 pb-20">
       <div className="mx-auto max-w-5xl">
-        <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
         <h1 className="font-display text-4xl text-cream mb-10">Engineer Payouts</h1>
         <PayoutsClient bookings={bookings} />
       </div>

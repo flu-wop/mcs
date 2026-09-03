@@ -91,9 +91,8 @@ export default async function AdminStreetbeatPage() {
   const total = sales.reduce((sum, s) => sum + s.amount, 0)
 
   return (
-    <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
+    <div className="pt-10 px-6 pb-20">
       <div className="mx-auto max-w-3xl">
-        <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
         <h1 className="font-display text-4xl text-cream mb-2">Street Beat Sales</h1>
         <p className="text-mist/50 text-sm mb-10">
           Live Stripe + imported/legacy purchases combined. {sales.length} sale{sales.length === 1 ? "" : "s"} · {fmt(total)} total

@@ -5,7 +5,6 @@
 import Link from "next/link"
 import { getDB, initDB } from "@/lib/db"
 import { Package, Calendar, ArrowRight, DollarSign, Film, Activity, BarChart3 } from "lucide-react"
-import { LogoutButton } from "@/components/admin/LogoutButton"
 
 export const dynamic = 'force-dynamic'
 
@@ -64,14 +63,11 @@ export default async function AdminHomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
+    <div className="pt-10 px-6 pb-20">
       <div className="mx-auto max-w-3xl">
-        <div className="flex items-start justify-between mb-10">
-          <div>
-            <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
-            <h1 className="font-display text-4xl text-cream">Mid City Sound</h1>
-          </div>
-          <LogoutButton />
+        <div className="mb-10">
+          <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
+          <h1 className="font-display text-4xl text-cream">Mid City Sound</h1>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">

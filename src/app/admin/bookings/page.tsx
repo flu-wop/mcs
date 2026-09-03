@@ -62,13 +62,12 @@ export default async function AdminBookingsPage() {
     .reduce((sum, b) => sum + b.rate_price, 0)
 
   return (
-    <div className="min-h-screen bg-studio-black pt-20 px-6 pb-20">
+    <div className="pt-10 px-6 pb-20">
       <div className="mx-auto max-w-6xl">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-[10px] tracking-widest uppercase text-gold/60 mb-1">Admin</p>
             <h1 className="font-display text-4xl text-cream">Studio Bookings</h1>
           </div>
           <a
