@@ -3,11 +3,9 @@
 // Access at /admin/bookings — protected by src/middleware.ts (admin session cookie)
 
 import { getDB, initDB }   from "@/lib/db"
-import { Badge }        from "@/components/ui/badge"
 import { Separator }    from "@/components/ui/separator"
-import Link             from "next/link"
-import { Calendar, Download } from "lucide-react"
-import { DeleteBookingButton } from "@/components/admin/DeleteBookingButton"
+import { Download } from "lucide-react"
+import { BookingsFilterList } from "@/components/admin/BookingsFilterList"
 
 interface Booking {
   id:           string
@@ -23,25 +21,6 @@ interface Booking {
   status:       string
   stripe_session_id: string | null
   created_at:   string
-}
-
-function formatDate(dateStr: string) {
-  const [y, m, d] = dateStr.split("-").map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
-    weekday: "short", month: "short", day: "numeric", year: "numeric",
-  })
-}
-
-function formatTime(h: number) {
-  if (h < 12) return `${h}:00 AM`
-  if (h === 12) return "12:00 PM"
-  return `${h - 12}:00 PM`
-}
-
-function statusColor(status: string) {
-  if (status === "confirmed") return "default"
-  if (status === "pending")   return "secondary"
-  return "outline"
 }
 
 // Force dynamic rendering — this page requires Turso at runtime
@@ -95,68 +74,7 @@ export default async function AdminBookingsPage() {
 
         <Separator className="mb-8 bg-studio-border/40" />
 
-        {bookings.length === 0 ? (
-          <div className="text-center py-24">
-            <Calendar className="w-10 h-10 text-mist/20 mx-auto mb-4" />
-            <p className="text-mist/40 text-sm">No bookings yet.</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {bookings.map(b => (
-              <div
-                key={b.id}
-                className="border border-studio-border bg-studio-charcoal rounded-sm p-5 grid md:grid-cols-[1fr_auto] gap-4"
-              >
-                <div className="space-y-2">
-                  {/* Client + status */}
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <p className="text-cream font-medium text-sm">{b.client_name}</p>
-                    <Badge variant={statusColor(b.status)} className="text-[10px] uppercase tracking-wide">
-                      {b.status}
-                    </Badge>
-                    <span className="text-gold text-xs font-display">Studio {b.room}</span>
-                  </div>
-
-                  {/* Date + time + session */}
-                  <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-mist">
-                    <span>{formatDate(b.date)}</span>
-                    <span>{formatTime(b.start_hour)} — {formatTime(b.start_hour + b.rate_hours)}</span>
-                    <span>{b.rate_label}</span>
-                    <span className="text-gold">${(b.rate_price / 100).toFixed(0)}</span>
-                  </div>
-
-                  {/* Email + notes */}
-                  <div className="text-xs text-mist/60 space-y-0.5">
-                    <a href={`mailto:${b.client_email}`} className="hover:text-gold transition-colors">
-                      {b.client_email}
-                    </a>
-                    {b.client_notes && (
-                      <p className="text-mist/40 italic">"{b.client_notes}"</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Meta */}
-                <div className="text-right text-[10px] text-mist/30 space-y-1">
-                  <p>Booked {new Date(b.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
-                  {b.stripe_session_id && (
-                    <a
-                      href={`https://dashboard.stripe.com/payments/${b.stripe_session_id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-gold transition-colors font-mono"
-                    >
-                      {b.stripe_session_id.slice(0, 18)}…
-                    </a>
-                  )}
-                  <div className="pt-1 flex justify-end">
-                    <DeleteBookingButton bookingId={b.id} clientName={b.client_name} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <BookingsFilterList bookings={bookings} />
       </div>
     </div>
   )
