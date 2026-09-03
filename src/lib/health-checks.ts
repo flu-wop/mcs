@@ -136,7 +136,24 @@ export async function checkPrintify(): Promise<CheckResult> {
   }
 }
 
-// ---- 3. API Usage ----
+// ---- 3. Analytics Pixels ----
+// Not required infra like Stripe/Turso/Resend — this reports which of the
+// three funnel-tracking pixels (see src/lib/analytics.ts) are wired up,
+// not whether anything is broken. "warn" (never "error") when none are set.
+export function checkAnalyticsPixels(): Record<string, CheckResult> {
+  const vars = {
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: !!process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_META_PIXEL_ID: !!process.env.NEXT_PUBLIC_META_PIXEL_ID,
+    NEXT_PUBLIC_TIKTOK_PIXEL_ID: !!process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
+  }
+  const results: Record<string, CheckResult> = {}
+  for (const [key, present] of Object.entries(vars)) {
+    results[key] = { status: present ? "ok" : "warn", detail: present ? "set" : "not set" }
+  }
+  return results
+}
+
+// ---- 4. API Usage ----
 // No self-tracked api_calls table exists in MCS yet (unlike Epoch Skin) —
 // rather than block the panel on a schema change, report what's directly
 // knowable today: Resend's own send count via domains.list() doesn't expose

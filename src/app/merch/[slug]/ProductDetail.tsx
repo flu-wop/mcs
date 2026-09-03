@@ -1,13 +1,14 @@
 'use client'
 // app/merch/[slug]/ProductDetail.tsx
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import type { MerchProduct } from '@/lib/printify'
 import { useCart } from '@/components/merch/CartProvider'
 import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 import { GALLERY_OVERRIDES } from '@/lib/product-overrides'
 import { colorHex, isLightColor } from '@/lib/color-swatches'
+import { track } from '@/lib/analytics'
 
 const BRAND_LABELS: Record<string, string> = {
   mcs: 'Mid City Sound', djm: 'Donald Markowitz', streetbeat: 'Streetbeat', squiggle: 'Lil Squiggle',
@@ -21,6 +22,15 @@ const BRAND_TAG_COLOR: Record<string, string> = {
 
 export default function ProductDetail({ product }: { product: MerchProduct }) {
   const { addItem, openDrawer } = useCart()
+
+  useEffect(() => {
+    track('view_item', {
+      funnel: 'merch',
+      item_id: product.id,
+      item_name: product.name,
+      brand: product.brand,
+    })
+  }, [product.id, product.name, product.brand])
 
   // Material selection — only relevant for products in a material group
   // (see lib/material-groups.ts). Defaults to materials[0], same anchor

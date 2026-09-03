@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       room, rateId, rateLabel, rateHours, ratePrice,
       date, startHour,
       clientName, clientEmail, clientNotes,
-      discountCode,
+      discountCode, funnelSessionId,
     } = body
 
     /* ── Validate required fields ── */
@@ -84,6 +84,7 @@ export async function POST(req: NextRequest) {
         clientNotes: clientNotes ?? "",
         discountCode: discountCode ?? "",
         bookingType: "engineer",
+        funnel_session_id: funnelSessionId ?? "unknown",
       },
       success_url: `${baseUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${baseUrl}/book/${engineerSlug}`,

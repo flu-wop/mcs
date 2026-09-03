@@ -73,6 +73,23 @@ export async function initDB() {
       created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
     )
   `)
+  // Funnel analytics — session-scoped, not user-identified. session_id is a
+  // per-browser-tab UUID from src/lib/analytics.ts, not tied to any account.
+  // data_json.funnel distinguishes the two funnels ("booking" | "merch")
+  // sharing this one table. See src/app/api/track/route.ts and
+  // src/app/api/admin/funnel/route.ts.
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS funnel_events (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id  TEXT    NOT NULL,
+      event_type  TEXT    NOT NULL,
+      data_json   TEXT,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_funnel_session ON funnel_events(session_id)`)
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_funnel_event_type ON funnel_events(event_type)`)
+  await client.execute(`CREATE INDEX IF NOT EXISTS idx_funnel_created ON funnel_events(created_at)`)
   // Migration: email_error column was added after merch_orders already existed
   // in production — CREATE TABLE IF NOT EXISTS won't retroactively add it.
   try {

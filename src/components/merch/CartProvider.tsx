@@ -25,6 +25,7 @@ import {
   type CartState,
 } from '@/lib/cart'
 import { applyDiscount, type DiscountResult } from '@/lib/discount-codes'
+import { track, getSessionId } from '@/lib/analytics'
 
 // ─── Context ─────────────────────────────────────────────────────────────────
 
@@ -87,7 +88,16 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     return () => { document.body.style.overflow = '' }
   }, [state.isOpen])
 
-  const addItem    = useCallback((item: CartItem) => dispatch({ type: 'ADD_ITEM', payload: item }), [])
+  const addItem    = useCallback((item: CartItem) => {
+    dispatch({ type: 'ADD_ITEM', payload: item })
+    track('add_to_cart', {
+      funnel: 'merch',
+      item_id: String(item.variantId),
+      item_name: item.name,
+      price_cents: Math.round(item.price * 100),
+      quantity: item.quantity,
+    })
+  }, [])
   const removeItem = useCallback((variantId: number) => dispatch({ type: 'REMOVE_ITEM', payload: { variantId } }), [])
   const updateQty  = useCallback((variantId: number, quantity: number) => dispatch({ type: 'UPDATE_QTY', payload: { variantId, quantity } }), [])
   const clear      = useCallback(() => dispatch({ type: 'CLEAR' }), [])
@@ -124,11 +134,20 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     return new Promise<void>((resolve, reject) => {
       startCheckout(async () => {
         setCheckoutError(null)
+        track('begin_checkout', {
+          funnel: 'merch',
+          value: cartTotal(state.items),
+          item_count: cartCount(state.items),
+        })
         try {
           const res = await fetch('/api/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: state.items, discountCode: discountCode.trim() || undefined }),
+            body: JSON.stringify({
+              items: state.items,
+              discountCode: discountCode.trim() || undefined,
+              funnelSessionId: getSessionId(),
+            }),
           })
           const data = await res.json().catch(() => ({}))
           if (!res.ok || !data.url) {

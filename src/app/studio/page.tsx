@@ -33,6 +33,7 @@ import { Label }     from "@/components/ui/label"
 import { Textarea }  from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { cn }        from "@/lib/utils"
+import { track, getSessionId } from "@/lib/analytics"
 
 /* ═══════════════════════════════════════════════════════════════════════════ */
 /* DATA                                                                        */
@@ -271,6 +272,10 @@ export default function StudioPage() {
     }
   }, [])
 
+  useEffect(() => {
+    track("view_item", { funnel: "booking", item_category: "studio_booking" })
+  }, [])
+
   const selectedRate = useMemo(() => {
     const all: typeof RECORDING_RATES = [...RECORDING_RATES, ...MIXING_RATES as any]
     return all.find(r => r.id === rateId) ?? null
@@ -346,6 +351,11 @@ export default function StudioPage() {
   async function handlePayment() {
     setLoading(true)
     setPayError(null)
+    track("begin_checkout", {
+      funnel: "booking",
+      service: selectedRate?.label ?? "",
+      rate_cents: finalPrice,
+    })
     try {
       const res = await fetch("/api/booking-checkout", {
         method: "POST",
@@ -362,6 +372,7 @@ export default function StudioPage() {
           clientEmail:  form.email,
           clientNotes:  [projectNotes, form.phone ? `Phone: ${form.phone}` : ""].filter(Boolean).join("\n"),
           discountCode: discountApplied ? discountCode.trim().toUpperCase() : "",
+          funnelSessionId: getSessionId(),
         }),
       })
       const data = await res.json()

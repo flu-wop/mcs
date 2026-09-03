@@ -6,7 +6,7 @@
 import { NextResponse } from "next/server"
 import {
   checkEnvVars, checkStripe, checkStreetbeatStripe, checkLastWebhookActivity,
-  checkResend, checkTurso, checkPrintify, checkApiUsage,
+  checkResend, checkTurso, checkPrintify, checkApiUsage, checkAnalyticsPixels,
 } from "@/lib/health-checks"
 
 export const dynamic = "force-dynamic"
@@ -27,6 +27,7 @@ export async function GET() {
     envVars,
     webhookHealth: { stripe, streetbeatStripe, lastWebhook, resend, turso, printify },
     apiUsage,
+    analyticsPixels: checkAnalyticsPixels(),
     checkedAt: new Date().toISOString(),
   })
 }

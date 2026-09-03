@@ -1,14 +1,21 @@
 // src/app/studio/success/page.tsx
 "use client"
 
+import { Suspense }       from "react"
+import { useSearchParams } from "next/navigation"
 import Link               from "next/link"
 import { CheckCircle2 }   from "lucide-react"
 import { Button }         from "@/components/ui/button"
 import { Badge }          from "@/components/ui/badge"
+import { TrackPurchase }  from "@/components/analytics/TrackPurchase"
 
-export default function StudioSuccessPage() {
+function StudioSuccessContent() {
+  const params = useSearchParams()
+  const sessionId = params.get("session_id")
+
   return (
     <div className="pt-16 min-h-screen bg-studio-black flex items-center justify-center px-6">
+      <TrackPurchase funnel="booking" stripeSessionId={sessionId} />
       <div className="max-w-md w-full text-center space-y-7">
 
         <div className="w-20 h-20 border border-gold/40 rounded-full flex items-center justify-center mx-auto">
@@ -52,5 +59,17 @@ export default function StudioSuccessPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function StudioSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="pt-16 min-h-screen bg-studio-black flex items-center justify-center">
+        <p className="text-mist text-sm tracking-widest uppercase">Loading…</p>
+      </div>
+    }>
+      <StudioSuccessContent />
+    </Suspense>
   )
 }

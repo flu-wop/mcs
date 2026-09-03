@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const {
       room, rateId, rateLabel, rateHours, ratePrice,
       date, startHour, clientName, clientEmail, clientNotes,
-      discountCode,
+      discountCode, funnelSessionId,
     } = body
 
     // Basic validation
@@ -74,6 +74,7 @@ export async function POST(req: Request) {
         clientEmail,
         clientNotes: clientNotes ?? "",
         discountCode: discountCode ?? "",
+        funnel_session_id: funnelSessionId ?? "unknown",
       },
       customer_email: clientEmail,
       success_url: `${BASE_URL}/studio/success?session_id={CHECKOUT_SESSION_ID}`,

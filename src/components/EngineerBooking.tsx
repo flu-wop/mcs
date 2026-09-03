@@ -12,6 +12,7 @@ import { Badge }     from "@/components/ui/badge"
 import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { cn }        from "@/lib/utils"
+import { track, getSessionId } from "@/lib/analytics"
 
 const DISCOUNT_CODES: Record<string, number> = {
   REGULAR30: 0.30,
@@ -101,6 +102,10 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
       .catch(() => setBookedRanges([]))
   }, [selDate, room])
 
+  useEffect(() => {
+    track("view_item", { funnel: "booking", item_category: "engineer_booking", engineer_slug: config.slug })
+  }, [config.slug])
+
   function isSlotBooked(startHour: number) {
     const hours = effectiveHours || 1
     const end = startHour + hours
@@ -110,6 +115,12 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
   async function handleSubmit() {
     setLoading(true)
     setPayError(null)
+    track("begin_checkout", {
+      funnel: "booking",
+      service: selectedRate?.label ?? "",
+      rate_cents: finalPrice,
+      engineer_slug: config.slug,
+    })
     try {
       const res = await fetch("/api/engineer-checkout", {
         method:  "POST",
@@ -128,6 +139,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
           clientEmail:  clientInfo.email,
           clientNotes:  clientInfo.notes,
           discountCode: discountCode.trim().toUpperCase(),
+          funnelSessionId: getSessionId(),
         }),
       })
       const data = await res.json()

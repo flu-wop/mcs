@@ -4,6 +4,7 @@ import Link            from "next/link"
 import Stripe          from "stripe"
 import { CheckCircle2, Calendar, Clock, User, Music2 } from "lucide-react"
 import { Button }      from "@/components/ui/button"
+import { TrackPurchase } from "@/components/analytics/TrackPurchase"
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!)
@@ -29,6 +30,7 @@ export default async function BookSuccess({
 
   return (
     <div className="bg-studio-black min-h-screen pt-16">
+      <TrackPurchase funnel="booking" stripeSessionId={session.id} value={(session.amount_total ?? 0) / 100} />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_20%,rgba(212,175,119,0.05),transparent)]" />
 
       <div className="relative mx-auto max-w-lg px-6 py-20 text-center space-y-8">

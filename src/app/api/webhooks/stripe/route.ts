@@ -21,6 +21,26 @@ import { randomUUID }            from "crypto"
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!
 
+// Authoritative purchase record for funnel analytics — the client never logs
+// its own "purchase" event to Turso (see src/lib/analytics.ts); this webhook
+// is the source of truth since it only fires once payment actually succeeds.
+async function logPurchaseEvent(
+  funnelSessionId: string | undefined,
+  funnel: "booking" | "merch",
+  data: Record<string, unknown>
+) {
+  try {
+    await initDB()
+    await getDB().execute({
+      sql: `INSERT INTO funnel_events (session_id, event_type, data_json) VALUES (?, ?, ?)`,
+      args: [funnelSessionId ?? "unknown", "purchase", JSON.stringify({ funnel, ...data })],
+    })
+  } catch (err) {
+    // Never let analytics logging break fulfillment.
+    console.error("[stripe-webhook] Failed to log purchase funnel event:", err)
+  }
+}
+
 export async function POST(req: Request) {
   const body = await req.text()
   const sig  = req.headers.get("stripe-signature")
@@ -123,6 +143,12 @@ async function fulfillStudioBooking(session: Stripe.Checkout.Session) {
     clientEmail: m.clientEmail,
     clientNotes: m.clientNotes ?? "",
   })
+
+  await logPurchaseEvent(m.funnel_session_id, "booking", {
+    rate_label: m.rateLabel,
+    amount_total: session.amount_total,
+    booking_type: "studio",
+  })
 }
 
 /* ─── Engineer booking fulfillment ───────────────────────────────────────── */
@@ -169,6 +195,13 @@ async function fulfillEngineerBooking(session: Stripe.Checkout.Session) {
     clientName:  row.client_name,
     clientEmail: row.client_email,
     clientNotes: row.client_notes ?? "",
+  })
+
+  await logPurchaseEvent(session.metadata?.funnel_session_id, "booking", {
+    rate_label: row.rate_label,
+    amount_total: session.amount_total,
+    booking_type: "engineer",
+    engineer_slug: session.metadata?.engineerSlug,
   })
 }
 
@@ -289,6 +322,11 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
       printifyError,
       cartId ?? null,
     ],
+  })
+
+  await logPurchaseEvent(session.metadata?.funnel_session_id, "merch", {
+    amount_total: totalPaid,
+    item_count: cartItems.reduce((sum, i) => sum + i.quantity, 0),
   })
 
   // Cart data is now safely copied into merch_orders.items — the pending

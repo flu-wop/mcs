@@ -4,7 +4,7 @@
 
 import Link from "next/link"
 import { getDB, initDB } from "@/lib/db"
-import { Package, Calendar, ArrowRight, DollarSign, Film, Activity } from "lucide-react"
+import { Package, Calendar, ArrowRight, DollarSign, Film, Activity, BarChart3 } from "lucide-react"
 import { LogoutButton } from "@/components/admin/LogoutButton"
 
 export const dynamic = 'force-dynamic'
@@ -54,6 +54,12 @@ export default async function AdminHomePage() {
       icon: Activity,
       label: "System Health",
       stat: "Env vars · webhooks · usage",
+    },
+    {
+      href: "/admin/funnel",
+      icon: BarChart3,
+      label: "Funnel Analytics",
+      stat: "Booking + merch drop-off, last 30 days",
     },
   ]
 

@@ -20,6 +20,7 @@ type HealthData = {
     printify: CheckResult
   }
   apiUsage: CheckResult
+  analyticsPixels: Record<string, CheckResult>
   checkedAt: string
 }
 
@@ -150,6 +151,12 @@ export default function SystemDashboard() {
             <Card title="Webhook Health">
               {(Object.keys(data.webhookHealth) as (keyof HealthData["webhookHealth"])[]).map(key => (
                 <Row key={key} label={WEBHOOK_LABELS[key]} r={data.webhookHealth[key]} />
+              ))}
+            </Card>
+
+            <Card title="Analytics Pixels">
+              {Object.entries(data.analyticsPixels).map(([key, r]) => (
+                <Row key={key} label={key} r={r} />
               ))}
             </Card>
           </div>

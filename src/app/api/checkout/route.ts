@@ -26,8 +26,8 @@ export async function POST(req: Request) {
     const ok = await rateLimit(`checkout:${clientIp(req)}`, 10, 600) // 10 per 10 min
     if (!ok) return NextResponse.json({ error: 'Too many requests — try again shortly.' }, { status: 429 })
 
-    const body = await req.json() as { items: CartItem[]; discountCode?: string }
-    const { items, discountCode } = body
+    const body = await req.json() as { items: CartItem[]; discountCode?: string; funnelSessionId?: string }
+    const { items, discountCode, funnelSessionId } = body
 
     if (!items?.length) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
@@ -160,6 +160,7 @@ export async function POST(req: Request) {
         cartId,
         source: 'mcs-merch',
         discountCode: discountPct > 0 ? discountCode!.toUpperCase() : '',
+        funnel_session_id: funnelSessionId ?? 'unknown',
       },
 
       success_url: `${BASE_URL}/merch/success?session_id={CHECKOUT_SESSION_ID}`,

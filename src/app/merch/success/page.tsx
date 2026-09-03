@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useCart } from '@/components/merch/CartProvider'
+import { TrackPurchase } from '@/components/analytics/TrackPurchase'
 
 function SuccessContent() {
   const params    = useSearchParams()
@@ -20,6 +21,7 @@ function SuccessContent() {
 
   return (
     <main className="min-h-screen bg-[#090909] flex items-center justify-center px-6">
+      <TrackPurchase funnel="merch" stripeSessionId={sessionId} />
       <div className="max-w-md w-full text-center">
         <div className="mb-8 flex justify-center">
           <div className="w-16 h-16 border border-[#D4AF77]/30 flex items-center justify-center">
