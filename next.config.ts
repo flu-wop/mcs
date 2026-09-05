@@ -22,6 +22,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/book/richie", destination: "/book/rich", permanent: true },
+      { source: "/contact/richie", destination: "/book/rich", permanent: true },
+    ]
+  },
   async headers() {
     return [{
       source: "/(.*)",

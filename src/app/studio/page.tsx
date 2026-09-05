@@ -442,255 +442,8 @@ export default function StudioPage() {
           </div>
         </div>
       </section>
-
       {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 2. STUDIO ROOMS                                                      */}
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 px-6 border-b border-studio-border/40 bg-studio-charcoal">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">The Rooms</Badge>
-            <h2 className="font-display text-4xl md:text-5xl text-cream">Three rooms. One sound.</h2>
-            <p className="text-mist text-sm mt-3 max-w-md mx-auto">
-              Mid City Sound features three purpose-built environments — each with professional gear and its own character.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-
-            {/* Studio A */}
-            <div className="border border-gold/20 bg-studio-card rounded-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
-                <div className="w-8 h-8 border border-gold/30 rounded-sm flex items-center justify-center">
-                  <Mic2 className="w-4 h-4 text-gold/70" />
-                </div>
-                <div>
-                  <p className="text-cream font-medium text-sm">Studio A</p>
-                  <p className="text-[10px] tracking-widest uppercase text-gold/60">Control / Vocal Room</p>
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <p className="text-mist text-sm leading-relaxed">
-                  A dedicated vocal booth environment built for precision tracking and control. Donald's personal guitar collection lines the walls — decades of instruments, each with its own story.
-                </p>
-                <ul className="space-y-2">
-                  {[
-                    "Dedicated vocal booth",
-                    "Universal Audio Apollo interface",
-                    "Neumann U87 microphone",
-                    "Mac Pro workstation",
-                    "MIDI piano / controller (main desk)",
-                    "Donald's personal guitar collection",
-                  ].map(item => (
-                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Studio B */}
-            <div className="border border-studio-border bg-studio-card rounded-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
-                <div className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center">
-                  <Drum className="w-4 h-4 text-gold/60" />
-                </div>
-                <div>
-                  <p className="text-cream font-medium text-sm">Studio B</p>
-                  <p className="text-[10px] tracking-widest uppercase text-mist/60">Live Room</p>
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <p className="text-mist text-sm leading-relaxed">
-                  A cozy, warm live room built for ensemble tracking. Drums and piano are professionally miked and ready. All signals run through the Apollo for a consistent, high-quality signal chain.
-                </p>
-                <ul className="space-y-2">
-                  {[
-                    "Full drum kit — professionally miked",
-                    "Upright piano — professionally miked",
-                    "Mac Pro workstation",
-                    "Bass & electric guitar amplifiers",
-                    "Shure digital vocal microphone",
-                    "Tascam mixer → Universal Audio Apollo (4 inputs)",
-                    "MIDI controller",
-                  ].map(item => (
-                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Studio C — Irvin Mayfield's Office */}
-            <div className="border border-studio-border bg-studio-card rounded-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
-                <div className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center">
-                  <Music2 className="w-4 h-4 text-gold/60" />
-                </div>
-                <div>
-                  <p className="text-cream font-medium text-sm">Studio C</p>
-                  <p className="text-[10px] tracking-widest uppercase text-mist/60">Irvin Mayfield's Office</p>
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <p className="text-mist text-sm leading-relaxed">
-                  Studio C is the private office and creative space of Grammy Award-winning trumpeter and New Orleans cultural ambassador Irvin Mayfield. Available for select sessions and collaborations by arrangement.
-                </p>
-                <ul className="space-y-2">
-                  {[
-                    "Private creative office",
-                    "Mac Pro workstation",
-		    "Irvin's personal guitar collection",
-                    "Available by arrangement",
-                    "Ideal for small ensemble work",
-                  ].map(item => (
-                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
-                      <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* iCal / Availability note */}
-          <div className="mt-6 border border-studio-border/40 bg-studio-dark rounded-sm p-4 flex items-start gap-3">
-            <Calendar className="w-4 h-4 text-gold/50 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-cream text-sm font-medium">Real-time availability</p>
-              <p className="text-mist text-xs leading-relaxed mt-0.5">
-                Live calendar sync powered by iCloud Calendar — coming soon. For now, request your preferred date in the booking form below and we'll confirm within 24 hours.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 3. RATES & PACKAGES                                                  */}
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      <section id="rates" className="py-20 px-6 border-b border-studio-border/40 bg-studio-black">
-        <div className="mx-auto max-w-6xl">
-
-          {/* Discount banner */}
-          <div className="mb-12 border border-gold/30 bg-gold/5 rounded-sm p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
-            <div className="flex items-start gap-3">
-              <Tag className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-              <div>
-                <p className="text-cream font-medium text-sm">Regular client discounts available</p>
-                <p className="text-mist text-xs mt-0.5">
-                  Returning clients and referrals receive 30% off all sessions.
-                  Enter your discount code at checkout — ask us how to qualify.
-                </p>
-              </div>
-            </div>
-            <button onClick={() => bookingRef.current?.scrollIntoView({ behavior: "smooth" })}
-              className="shrink-0 text-[11px] font-medium tracking-widest uppercase px-4 py-2 border border-gold/50 text-gold hover:bg-gold hover:text-studio-black transition-all rounded-sm">
-              Book Now
-            </button>
-          </div>
-
-          {/* Recording rates */}
-          <div className="mb-14">
-            <div className="flex items-center gap-3 mb-6">
-              <Mic2 className="w-4 h-4 text-gold/60" />
-              <h2 className="font-display text-3xl text-cream">Recording Sessions</h2>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {RECORDING_RATES.map(rate => (
-                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6 transition-all",
-                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
-                )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
-                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">{rate.duration}</p>
-                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
-                  <div className="flex items-baseline gap-2 mb-1">
-                    <p className="font-display text-3xl text-gold">{fmt(rate.price)}</p>
-                    <p className="text-mist text-xs">{fmt(rate.perHour)}/hr</p>
-                  </div>
-                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
-                  <Separator className="mb-4" />
-                  <ul className="space-y-1.5">
-                    {rate.includes.map(inc => (
-                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mixing rates */}
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <Music2 className="w-4 h-4 text-gold/60" />
-              <h2 className="font-display text-3xl text-cream">Mixing Services</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-              {MIXING_RATES.slice(0,3).map(rate => (
-                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
-                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
-                )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
-                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">Mixing</p>
-                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
-                  <p className="font-display text-3xl text-gold mb-4">{fmt(rate.price)}</p>
-                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
-                  <Separator className="mb-4" />
-                  <ul className="space-y-1.5">
-                    {rate.includes.map(inc => (
-                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {MIXING_RATES.slice(3).map(rate => (
-                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
-                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
-                )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Best Deal</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
-                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">
-                    {"id" in rate && rate.id === "mix-atmos" ? "Spatial Audio" : "Bundle"}
-                  </p>
-                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <p className="font-display text-3xl text-gold">{fmt(rate.price)}</p>
-                    {"regularPrice" in rate && rate.regularPrice && (
-                      <div className="flex items-center gap-1.5">
-                        <Tag className="w-3 h-3 text-gold/50" />
-                        <span className="text-mist text-xs"><span className="text-gold/80 font-medium">{fmt(rate.regularPrice)}</span>{" "}with regular client discount</span>
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
-                  <Separator className="mb-4" />
-                  <ul className="space-y-1.5">
-                    {rate.includes.map(inc => (
-                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 4. BOOKING FORM — multi-step (appears AFTER rates per brief)         */}
+      {/* 2. BOOKING FORM — multi-step (moved to top per updated brief)       */}
       {/* ════════════════════════════════════════════════════════════════════ */}
       <section id="booking-form" className="py-20 px-6 border-b border-studio-border/40 bg-studio-charcoal" ref={bookingRef}>
         <div className="mx-auto max-w-4xl">
@@ -993,7 +746,253 @@ export default function StudioPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 6. CANCELLATION POLICY                                               */}
+      {/* 3. STUDIO ROOMS                                                      */}
+      {/* ════════════════════════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-b border-studio-border/40 bg-studio-black">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">The Rooms</Badge>
+            <h2 className="font-display text-4xl md:text-5xl text-cream">Three rooms. One sound.</h2>
+            <p className="text-mist text-sm mt-3 max-w-md mx-auto">
+              Mid City Sound features three purpose-built environments — each with professional gear and its own character.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+
+            {/* Studio A */}
+            <div className="border border-gold/20 bg-studio-card rounded-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
+                <div className="w-8 h-8 border border-gold/30 rounded-sm flex items-center justify-center">
+                  <Mic2 className="w-4 h-4 text-gold/70" />
+                </div>
+                <div>
+                  <p className="text-cream font-medium text-sm">Studio A</p>
+                  <p className="text-[10px] tracking-widest uppercase text-gold/60">Control / Vocal Room</p>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-mist text-sm leading-relaxed">
+                  A dedicated vocal booth environment built for precision tracking and control. Donald's personal guitar collection lines the walls — decades of instruments, each with its own story.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "Dedicated vocal booth",
+                    "Universal Audio Apollo interface",
+                    "Neumann U87 microphone",
+                    "Mac Pro workstation",
+                    "MIDI piano / controller (main desk)",
+                    "Donald's personal guitar collection",
+                  ].map(item => (
+                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Studio B */}
+            <div className="border border-studio-border bg-studio-card rounded-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
+                <div className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center">
+                  <Drum className="w-4 h-4 text-gold/60" />
+                </div>
+                <div>
+                  <p className="text-cream font-medium text-sm">Studio B</p>
+                  <p className="text-[10px] tracking-widest uppercase text-mist/60">Live Room</p>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-mist text-sm leading-relaxed">
+                  A cozy, warm live room built for ensemble tracking. Drums and piano are professionally miked and ready. All signals run through the Apollo for a consistent, high-quality signal chain.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "Full drum kit — professionally miked",
+                    "Upright piano — professionally miked",
+                    "Mac Pro workstation",
+                    "Bass & electric guitar amplifiers",
+                    "Shure digital vocal microphone",
+                    "Tascam mixer → Universal Audio Apollo (4 inputs)",
+                    "MIDI controller",
+                  ].map(item => (
+                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Studio C — Irvin Mayfield's Office */}
+            <div className="border border-studio-border bg-studio-card rounded-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-studio-border bg-studio-dark flex items-center gap-3">
+                <div className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center">
+                  <Music2 className="w-4 h-4 text-gold/60" />
+                </div>
+                <div>
+                  <p className="text-cream font-medium text-sm">Studio C</p>
+                  <p className="text-[10px] tracking-widest uppercase text-mist/60">Irvin Mayfield's Office</p>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-mist text-sm leading-relaxed">
+                  Studio C is the private office and creative space of Grammy Award-winning trumpeter and New Orleans cultural ambassador Irvin Mayfield. Available for select sessions and collaborations by arrangement.
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    "Private creative office",
+                    "Mac Pro workstation",
+		    "Irvin's personal guitar collection",
+                    "Available by arrangement",
+                    "Ideal for small ensemble work",
+                  ].map(item => (
+                    <li key={item} className="flex items-center gap-2.5 text-xs text-cream/80">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* iCal / Availability note */}
+          <div className="mt-6 border border-studio-border/40 bg-studio-dark rounded-sm p-4 flex items-start gap-3">
+            <Calendar className="w-4 h-4 text-gold/50 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-cream text-sm font-medium">Real-time availability</p>
+              <p className="text-mist text-xs leading-relaxed mt-0.5">
+                Live calendar sync powered by iCloud Calendar — coming soon. For now, request your preferred date in the booking form below and we'll confirm within 24 hours.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════════ */}
+      {/* 4. RATES & PACKAGES                                                  */}
+      {/* ════════════════════════════════════════════════════════════════════ */}
+      <section id="rates" className="py-20 px-6 border-b border-studio-border/40 bg-studio-charcoal">
+        <div className="mx-auto max-w-6xl">
+
+          {/* Discount banner */}
+          <div className="mb-12 border border-gold/30 bg-gold/5 rounded-sm p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+            <div className="flex items-start gap-3">
+              <Tag className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+              <div>
+                <p className="text-cream font-medium text-sm">Regular client discounts available</p>
+                <p className="text-mist text-xs mt-0.5">
+                  Returning clients and referrals receive 30% off all sessions.
+                  Enter your discount code at checkout — ask us how to qualify.
+                </p>
+              </div>
+            </div>
+            <button onClick={() => bookingRef.current?.scrollIntoView({ behavior: "smooth" })}
+              className="shrink-0 text-[11px] font-medium tracking-widest uppercase px-4 py-2 border border-gold/50 text-gold hover:bg-gold hover:text-studio-black transition-all rounded-sm">
+              Book Now
+            </button>
+          </div>
+
+          {/* Recording rates */}
+          <div className="mb-14">
+            <div className="flex items-center gap-3 mb-6">
+              <Mic2 className="w-4 h-4 text-gold/60" />
+              <h2 className="font-display text-3xl text-cream">Recording Sessions</h2>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {RECORDING_RATES.map(rate => (
+                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6 transition-all",
+                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
+                )}>
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">{rate.duration}</p>
+                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <p className="font-display text-3xl text-gold">{fmt(rate.price)}</p>
+                    <p className="text-mist text-xs">{fmt(rate.perHour)}/hr</p>
+                  </div>
+                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
+                  <Separator className="mb-4" />
+                  <ul className="space-y-1.5">
+                    {rate.includes.map(inc => (
+                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mixing rates */}
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <Music2 className="w-4 h-4 text-gold/60" />
+              <h2 className="font-display text-3xl text-cream">Mixing Services</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              {MIXING_RATES.slice(0,3).map(rate => (
+                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
+                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
+                )}>
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">Mixing</p>
+                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
+                  <p className="font-display text-3xl text-gold mb-4">{fmt(rate.price)}</p>
+                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
+                  <Separator className="mb-4" />
+                  <ul className="space-y-1.5">
+                    {rate.includes.map(inc => (
+                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {MIXING_RATES.slice(3).map(rate => (
+                <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
+                  "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
+                )}>
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Best Deal</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">
+                    {"id" in rate && rate.id === "mix-atmos" ? "Spatial Audio" : "Bundle"}
+                  </p>
+                  <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <p className="font-display text-3xl text-gold">{fmt(rate.price)}</p>
+                    {"regularPrice" in rate && rate.regularPrice && (
+                      <div className="flex items-center gap-1.5">
+                        <Tag className="w-3 h-3 text-gold/50" />
+                        <span className="text-mist text-xs"><span className="text-gold/80 font-medium">{fmt(rate.regularPrice)}</span>{" "}with regular client discount</span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-mist text-xs leading-relaxed mb-4">{rate.desc}</p>
+                  <Separator className="mb-4" />
+                  <ul className="space-y-1.5">
+                    {rate.includes.map(inc => (
+                      <li key={inc} className="flex items-center gap-2 text-xs text-mist/80">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold/40 shrink-0" />{inc}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════════════ */}
+      {/* 5. CANCELLATION POLICY                                               */}
       {/* ════════════════════════════════════════════════════════════════════ */}
       <section className="py-12 px-6 border-b border-studio-border/40 bg-studio-charcoal">
         <div className="mx-auto max-w-3xl">
@@ -1007,7 +1006,7 @@ export default function StudioPage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════════════ */}
-      {/* 7. FINAL CTA                                                         */}
+      {/* 6. FINAL CTA                                                         */}
       {/* ════════════════════════════════════════════════════════════════════ */}
       <section className="py-16 px-6 relative overflow-hidden bg-studio-black">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_50%,rgba(212,175,119,0.04),transparent)]" />

@@ -1,18 +1,18 @@
-// src/app/book/richie/page.tsx
+// src/app/book/rich/page.tsx
 import type { Metadata } from "next"
 import { EngineerBooking } from "@/components/EngineerBooking"
 import type { EngineerConfig } from "@/components/EngineerBooking"
 
 export const metadata: Metadata = {
-  title: "Book with Richie Mayfield | Mid City Sound Studios",
-  description: "Book a studio session with Richie Mayfield at Mid City Sound Studios in New Orleans.",
+  title: "Book with Rich Mayfield | Mid City Sound Studios",
+  description: "Book a studio session with Rich Mayfield at Mid City Sound Studios in New Orleans.",
 }
 
 const config: EngineerConfig = {
-  name:            "Richie Mayfield",
-  slug:            "richie",
-  role:            "Studio Musician / Intern",
-  bio:             "Richie Mayfield is a studio musician and intern at Mid City Sound, bringing fresh energy and versatility to every session.",
+  name:            "Rich Mayfield",
+  slug:            "rich",
+  role:            "Studio Musician",
+  bio:             "Rich Mayfield is a studio musician at Mid City Sound, bringing fresh energy and versatility to every session.",
   room:            "B",
   allowRoomSwitch: true,
   linktreeUrl: "#", // ← replace with actual linktree/social URL
@@ -23,6 +23,6 @@ const config: EngineerConfig = {
   ],
 }
 
-export default function RichieBookingPage() {
+export default function RichBookingPage() {
   return <EngineerBooking config={config} />
 }

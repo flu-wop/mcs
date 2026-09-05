@@ -2,8 +2,8 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // CONTACT PAGE  (route: /contact)
 //
-// Form submits to /api/contact (placeholder) which sends an email via
-// Resend or SendGrid. Wire up the API route with your email credentials.
+// Form submits to /api/contact, which sends via Resend (rate limited,
+// see src/lib/rate-limit.ts). See src/app/api/contact/route.ts.
 // ─────────────────────────────────────────────────────────────────────────────
 
 "use client"
@@ -37,6 +37,7 @@ export default function ContactPage() {
   })
   const [sent,    setSent]    = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error,   setError]   = useState<string | null>(null)
 
   function update(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -44,30 +45,21 @@ export default function ContactPage() {
 
   async function handleSubmit() {
     setLoading(true)
-    /*
-      ─── EMAIL INTEGRATION POINT ───────────────────────────────────────────
-      Replace this with a real API call:
-
-        await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        })
-
-      Create /app/api/contact/route.ts using Resend:
-        import { Resend } from "resend"
-        const resend = new Resend(process.env.RESEND_API_KEY)
-        await resend.emails.send({
-          from: "noreply@midcitysound.com",
-          to:   "midcitysound1@gmail.com",
-          subject: `New inquiry: ${form.inquiry}`,
-          html: `<p>From: ${form.name} (${form.email})</p><p>${form.message}</p>`,
-        })
-      ─────────────────────────────────────────────────────────────────────
-    */
-    await new Promise((r) => setTimeout(r, 1200))
-    setLoading(false)
-    setSent(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || "Something went wrong.")
+      setSent(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't send your message. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const valid = form.name && form.email && form.message
@@ -160,7 +152,7 @@ export default function ContactPage() {
                 { name: "E.T. Deaux",       role: "Sound Engineer / Producer",        href: "/book/et" },
                 { name: "Jesse",            role: "Studio Engineer",                  href: "/book/jesse" },
                 { name: "Rodja",            role: "Studio Engineer",                  href: "/book/rodja" },
-                { name: "Richie Mayfield",  role: "Studio Musician / Intern",         href: "/book/richie" },
+                { name: "Rich Mayfield",    role: "Studio Musician",                  href: "/book/rich" },
               ].map(({ name, role, href }) => (
                 <div key={name} className="flex flex-col">
                   {href ? (
@@ -243,6 +235,10 @@ export default function ContactPage() {
                   className="h-40"
                 />
               </div>
+
+              {error && (
+                <p className="text-red-400 text-xs">{error}</p>
+              )}
 
               <Button
                 onClick={handleSubmit}

@@ -250,7 +250,7 @@ export default function ProjectsPage() {
       {/* ── Pitch CTA ── */}
       <section className="py-20 px-6 border-t border-studio-border">
         <div className="mx-auto max-w-xl text-center">
-          <h2 className="font-display text-3xl text-cream mb-4">
+          <h2 className="font-display text-4xl md:text-5xl text-cream mb-4">
             Have a project in mind?
           </h2>
           <p className="text-mist text-sm mb-8">
