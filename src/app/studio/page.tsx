@@ -728,11 +728,11 @@ export default function StudioPage() {
                           <p className="text-xs text-red-300 leading-relaxed">{payError}</p>
                         </div>
                       )}
-                      <Button onClick={handlePayment} disabled={loading} className="w-full" size="lg">
+                      <Button onClick={handlePayment} disabled={loading} className="w-full text-xs sm:text-sm" size="lg">
                         {loading ? (
                           <span className="flex items-center gap-2"><div className="w-4 h-4 border-2 border-studio-black/30 border-t-studio-black rounded-full animate-spin" />Processing payment…</span>
                         ) : (
-                          <><CreditCard className="w-4 h-4" />Pay {fmt(finalPrice)} — Reserve Studio Time</>
+                          <span className="truncate"><CreditCard className="w-4 h-4 inline mr-2 -mt-0.5" />Pay {fmt(finalPrice)} — Reserve Studio Time</span>
                         )}
                       </Button>
                     </div>
