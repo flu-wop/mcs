@@ -149,7 +149,6 @@ export default function ContactPage() {
                 { name: "Flu",              role: "Studio Manager / Head of Production", href: "/book/flu" },
                 { name: "Irvin Mayfield",   role: "Musician",                         href: "/bio/irvin-mayfield" },
                 { name: "Knox Ketchum",     role: "Sound Engineer",                   href: "/book/knox" },
-                { name: "E.T. Deaux",       role: "Sound Engineer / Producer",        href: "/book/et" },
                 { name: "Jesse",            role: "Studio Engineer",                  href: "/book/jesse" },
                 { name: "Rodja",            role: "Studio Engineer",                  href: "/book/rodja" },
                 { name: "Rich Mayfield",    role: "Studio Musician",                  href: "/book/rich" },

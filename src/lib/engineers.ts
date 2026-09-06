@@ -18,7 +18,6 @@ export const ENGINEERS: Engineer[] = [
   { slug: "rodja",  name: "Rodja" },
   { slug: "rich", name: "Rich Mayfield" },
   { slug: "knox",   name: "Knox Ketchum" },
-  { slug: "et",     name: "E.T. Deaux" },
 ]
 
 export function engineerName(slug: string | null): string {
