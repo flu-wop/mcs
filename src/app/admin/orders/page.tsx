@@ -59,7 +59,7 @@ export default async function AdminOrdersPage() {
               className={`border rounded-sm p-5 bg-studio-charcoal ${alert ? 'border-red-500/50' : 'border-studio-border'}`}
             >
               <p className="text-mist text-[10px] uppercase tracking-widest mb-1">{label}</p>
-              <p className={`font-display text-3xl ${alert ? 'text-red-400' : 'text-gold'}`}>{val}</p>
+              <p className={`font-display text-2xl sm:text-3xl truncate ${alert ? 'text-red-400' : 'text-gold'}`}>{val}</p>
             </div>
           ))}
         </div>

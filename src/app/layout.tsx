@@ -4,8 +4,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
-import { Navbar }   from "@/components/layout/Navbar";
-import { Footer }   from "@/components/layout/Footer";
+import { ConditionalChrome } from "@/components/layout/ConditionalChrome";
 import { Toaster }  from "@/components/ui/toaster";
 import CartProvider from "@/components/merch/CartProvider";
 
@@ -68,11 +67,11 @@ export default function RootLayout({
       */}
       <body className="bg-studio-black text-cream antialiased">
         <CartProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <ConditionalChrome>
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </ConditionalChrome>
           <Toaster />
         </CartProvider>
 
