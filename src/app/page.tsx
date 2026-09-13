@@ -23,7 +23,6 @@ import { Badge }      from "@/components/ui/badge"
 import { Separator }  from "@/components/ui/separator"
 
 export const metadata: Metadata = {
-  title: "Home",
   description:
     "Mid City Sound Studios — a New Orleans recording studio built on decades of award-winning legacy. Book studio time, mixing, mastering, and more.",
 }
