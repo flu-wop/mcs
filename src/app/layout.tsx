@@ -3,6 +3,7 @@
 
 import type { Metadata } from "next";
 import Script from "next/script";
+import "@flu-wop/design-system/styles.css";
 import "./globals.css";
 import { ConditionalChrome } from "@/components/layout/ConditionalChrome";
 import { Toaster }  from "@/components/ui/toaster";
@@ -59,7 +60,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" data-theme="studio">
       {/*
         Font Note:
         Google Fonts are loaded via @import in globals.css (Cormorant Garamond + DM Sans).
