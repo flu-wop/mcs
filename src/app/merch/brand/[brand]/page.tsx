@@ -35,7 +35,7 @@ export default async function BrandPage({ params }: PageProps) {
   const products = allProducts.filter(p => p.brand === brand.id)
 
   return (
-    <div className="min-h-screen bg-[#090909]">
+    <div className="min-h-screen bg-surface">
       {/* ── Brand hero ───────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden border-b px-6 sm:px-10 py-16 sm:py-24"
@@ -58,7 +58,7 @@ export default async function BrandPage({ params }: PageProps) {
         <Link
           href="/merch"
           className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.14em] uppercase
-            text-[#5a4c3a] hover:text-[#A89880] transition-colors font-['DM_Sans'] mb-6"
+            text-[#5a4c3a] hover:text-ink-muted transition-colors font-['DM_Sans'] mb-6"
         >
           ← All Products
         </Link>
@@ -71,7 +71,7 @@ export default async function BrandPage({ params }: PageProps) {
         </p>
 
         <h1
-          className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8] leading-[1.04] max-w-lg"
+          className="font-['Cormorant_Garamond'] font-light text-ink leading-[1.04] max-w-lg"
           style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
         >
           {brand.label}
@@ -81,7 +81,7 @@ export default async function BrandPage({ params }: PageProps) {
           {brand.tagline}
         </p>
 
-        <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-wide text-[#A89880] font-['DM_Sans']">
+        <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-wide text-ink-muted font-['DM_Sans']">
           {brand.description}
         </p>
 
@@ -91,9 +91,9 @@ export default async function BrandPage({ params }: PageProps) {
             <Link
               key={b.id}
               href={`/merch/brand/${b.slug}`}
-              className="text-[10px] tracking-[0.14em] uppercase text-[#A89880]
-                border-b border-[#A89880]/20 pb-px hover:text-[#F5EDD8]
-                hover:border-[#A89880]/50 transition-colors font-['DM_Sans']"
+              className="text-[10px] tracking-[0.14em] uppercase text-ink-muted
+                border-b border-mist/20 pb-px hover:text-ink
+                hover:border-mist/50 transition-colors font-['DM_Sans']"
             >
               {b.shortLabel}
             </Link>

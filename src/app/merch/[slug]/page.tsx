@@ -57,12 +57,12 @@ export default async function ProductPage({ params }: PageProps) {
   const related = getRelated(allProducts, product)
 
   return (
-    <div className="min-h-screen bg-[#090909]">
+    <div className="min-h-screen bg-surface">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <Link
           href="/merch"
           className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.14em] uppercase
-            text-[#5a4c3a] hover:text-[#D4AF77] transition-colors font-['DM_Sans'] mb-8"
+            text-[#5a4c3a] hover:text-accent-text transition-colors font-['DM_Sans'] mb-8"
         >
           ← All Products
         </Link>
@@ -70,11 +70,11 @@ export default async function ProductPage({ params }: PageProps) {
         <ProductDetail product={product} />
 
         {related.length > 0 && (
-          <section className="mt-20 pt-10 border-t border-[#D4AF77]/10">
-            <p className="text-[10px] tracking-[0.2em] uppercase text-[#D4AF77] font-['DM_Sans'] mb-1">
+          <section className="mt-20 pt-10 border-t border-accent/10">
+            <p className="text-[10px] tracking-[0.2em] uppercase text-accent-text font-['DM_Sans'] mb-1">
               You May Also Like
             </p>
-            <h2 className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8] text-2xl mb-6">
+            <h2 className="font-['Cormorant_Garamond'] font-light text-ink text-2xl mb-6">
               More from {product.brand === related[0]?.brand ? 'this brand' : 'the shop'}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">

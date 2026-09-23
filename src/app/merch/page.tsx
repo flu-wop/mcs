@@ -60,7 +60,7 @@ export default async function MerchPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#090909]">
+    <main className="min-h-screen bg-surface">
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <ShopHero />
@@ -87,7 +87,7 @@ export default async function MerchPage({ searchParams }: PageProps) {
 function ShopHero() {
   return (
     <section
-      className="relative overflow-hidden border-b border-[#D4AF77]/10"
+      className="relative overflow-hidden border-b border-accent/10"
       aria-label="Shop hero"
     >
       {/* Ember-glow atmosphere + grain — ties into Fire on the Bayou's
@@ -112,27 +112,27 @@ function ShopHero() {
         <span
           aria-hidden="true"
           className="pointer-events-none absolute -top-4 right-0 select-none
-            font-['Cormorant_Garamond'] font-semibold leading-none text-[#D4AF77]/[0.035]"
+            font-['Cormorant_Garamond'] font-semibold leading-none text-accent-text/[0.035]"
           style={{ fontSize: 'clamp(80px, 18vw, 220px)', letterSpacing: '-0.04em' }}
         >
           MERCH
         </span>
 
-        <p className="mb-4 text-[10px] tracking-[0.22em] uppercase text-[#D4AF77] font-['DM_Sans']">
+        <p className="mb-4 text-[10px] tracking-[0.22em] uppercase text-accent-text font-['DM_Sans']">
           Mid City Sound Studios · New Orleans
         </p>
 
         <h1
-          className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8] leading-[1.04] max-w-lg"
+          className="font-['Cormorant_Garamond'] font-light text-ink leading-[1.04] max-w-lg"
           style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}
         >
           Wear the{' '}
-          <em className="italic text-[#D4AF77]">culture.</em>
+          <em className="italic text-accent-text">culture.</em>
           <br />
           Own the sound.
         </h1>
 
-        <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-wide text-[#A89880] font-['DM_Sans']">
+        <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-wide text-ink-muted font-['DM_Sans']">
           Print-on-demand merch from four brands born in the studio.
           Ships from New Orleans via Printify — no inventory, no minimums.
         </p>
@@ -148,9 +148,9 @@ function ShopHero() {
             <a
               key={brand}
               href={`/merch/brand/${brand}`}
-              className="text-[10px] tracking-[0.14em] uppercase text-[#A89880]
-                border-b border-[#A89880]/20 pb-px hover:text-[#D4AF77]
-                hover:border-[#D4AF77]/40 transition-colors font-['DM_Sans']"
+              className="text-[10px] tracking-[0.14em] uppercase text-ink-muted
+                border-b border-mist/20 pb-px hover:text-accent-text
+                hover:border-accent/40 transition-colors font-['DM_Sans']"
             >
               {label}
             </a>
@@ -164,7 +164,7 @@ function ShopHero() {
           not meant to be read — a texture, not a nav. */}
       <div
         aria-hidden="true"
-        className="relative border-t border-[#D4AF77]/10 overflow-hidden py-3"
+        className="relative border-t border-accent/10 overflow-hidden py-3"
       >
         <div className="flex w-max animate-marquee motion-reduce:animate-none">
           {[0, 1].map(i => (
@@ -173,10 +173,10 @@ function ShopHero() {
               className="flex items-center gap-10 pr-10 shrink-0
                 text-[11px] tracking-[0.35em] uppercase text-[#5a4c3a] font-['DM_Sans']"
             >
-              <span>Mid City Sound</span><span className="text-[#D4AF77]/40">◈</span>
-              <span>Donald Markowitz</span><span className="text-[#D4AF77]/40">◈</span>
-              <span>Street Beat</span><span className="text-[#D4AF77]/40">◈</span>
-              <span>Lil Squiggle</span><span className="text-[#D4AF77]/40">◈</span>
+              <span>Mid City Sound</span><span className="text-accent-text/40">◈</span>
+              <span>Donald Markowitz</span><span className="text-accent-text/40">◈</span>
+              <span>Street Beat</span><span className="text-accent-text/40">◈</span>
+              <span>Lil Squiggle</span><span className="text-accent-text/40">◈</span>
             </span>
           ))}
         </div>
@@ -193,11 +193,11 @@ function ShopHero() {
 
 function EditorialBreak() {
   return (
-    <section className="px-6 sm:px-10 py-8 border-b border-[#D4AF77]/10 flex items-center gap-3 flex-wrap">
-      <span className="font-['Cormorant_Garamond'] italic text-[#D4AF77] text-xl sm:text-2xl">
+    <section className="px-6 sm:px-10 py-8 border-b border-accent/10 flex items-center gap-3 flex-wrap">
+      <span className="font-['Cormorant_Garamond'] italic text-accent-text text-xl sm:text-2xl">
         Fresh —
       </span>
-      <p className="text-[#A89880] text-[11px] sm:text-xs tracking-wide font-['DM_Sans']">
+      <p className="text-ink-muted text-[11px] sm:text-xs tracking-wide font-['DM_Sans']">
         Every heavyweight tee now also comes in a classic cotton fit. Same design, your call on weight.
       </p>
     </section>

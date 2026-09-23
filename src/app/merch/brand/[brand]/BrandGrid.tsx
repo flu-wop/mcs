@@ -51,8 +51,8 @@ export default function BrandGrid({ products, accent }: { products: MerchProduct
                 'shrink-0 px-3 py-1.5 text-[10px] tracking-[0.14em] uppercase whitespace-nowrap',
                 "font-['DM_Sans'] transition-all duration-150 border",
                 type === chip.value
-                  ? 'text-[#090909]'
-                  : 'border-[#D4AF77]/15 text-[#A89880] hover:border-[#A89880]/40 hover:text-[#F5EDD8]',
+                  ? 'text-studio-black'
+                  : 'border-accent/15 text-ink-muted hover:border-mist/40 hover:text-ink',
               ].join(' ')}
               style={type === chip.value ? { backgroundColor: accent, borderColor: accent } : undefined}
             >
@@ -65,9 +65,9 @@ export default function BrandGrid({ products, accent }: { products: MerchProduct
           value={sort}
           onChange={e => setSort(e.target.value as SortOption)}
           aria-label="Sort products"
-          className="bg-[#111] border border-[#D4AF77]/15 text-[#A89880]
+          className="bg-[#111] border border-accent/15 text-ink-muted
             font-['DM_Sans'] text-[11px] tracking-[0.08em] uppercase px-3 py-2 outline-none cursor-pointer
-            focus:border-[#D4AF77]/40 transition-colors"
+            focus:border-accent/40 transition-colors"
         >
           {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
@@ -85,7 +85,7 @@ export default function BrandGrid({ products, accent }: { products: MerchProduct
         </div>
       ) : (
         <div className="py-20 text-center">
-          <p className="font-['Cormorant_Garamond'] text-xl text-[#A89880] italic mb-2">Nothing here yet.</p>
+          <p className="font-['Cormorant_Garamond'] text-xl text-ink-muted italic mb-2">Nothing here yet.</p>
           <p className="text-[11px] text-[#5a4c3a] font-['DM_Sans']">Try a different type filter.</p>
         </div>
       )}

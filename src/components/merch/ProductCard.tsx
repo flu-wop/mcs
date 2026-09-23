@@ -14,17 +14,17 @@ import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 // ─── Brand accent colours ─────────────────────────────────────────────────────
 
 const BRAND_BORDER: Record<string, string> = {
-  mcs:        'hover:border-[#D4AF77]/50',
+  mcs:        'hover:border-accent/50',
   djm:        'hover:border-[#c8a45a]/50',
   streetbeat: 'hover:border-[#4a7acc]/50',
-  squiggle:   'hover:border-[#1d9e75]/50',
+  squiggle:   'hover:border-success/50',
 }
 
 const BRAND_TAG_COLOR: Record<string, string> = {
-  mcs:        'text-[#D4AF77]  border-[#D4AF77]/20',
+  mcs:        'text-accent-text  border-accent/20',
   djm:        'text-[#c8a45a]  border-[#c8a45a]/20',
   streetbeat: 'text-[#4a7acc]  border-[#4a7acc]/20',
-  squiggle:   'text-[#1d9e75]  border-[#1d9e75]/20',
+  squiggle:   'text-success  border-success/20',
 }
 
 const BRAND_LABELS: Record<string, string> = {
@@ -192,7 +192,7 @@ export default function ProductCard({
     <article
       className={[
         'group relative flex flex-col',
-        'bg-[#111111] border border-[#D4AF77]/12',
+        'bg-surface-alt border border-accent/12',
         'transition-all duration-250',
         borderClass,
         'hover:-translate-y-0.5',
@@ -253,7 +253,7 @@ export default function ProductCard({
 
         {/* MVP badge (hidden when sold out — sold-out badge takes priority) */}
         {product.mvp && product.inStock && (
-          <span className="absolute top-2.5 left-2.5 z-10 bg-[#D4AF77] text-[#090909]
+          <span className="absolute top-2.5 left-2.5 z-10 bg-accent text-studio-black
             text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5 font-medium">
             Launch
           </span>
@@ -261,8 +261,8 @@ export default function ProductCard({
 
         {/* Sold out badge — reflects whichever material is currently selected */}
         {!activeInStock && (
-          <span className="absolute top-2.5 left-2.5 z-10 bg-[#111111] text-[#A89880]
-            border border-[#A89880]/30 text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5">
+          <span className="absolute top-2.5 left-2.5 z-10 bg-surface-alt text-ink-muted
+            border border-mist/30 text-[8px] font-['DM_Sans'] tracking-[0.12em] uppercase px-2 py-0.5">
             Sold Out
           </span>
         )}
@@ -270,20 +270,20 @@ export default function ProductCard({
         {/* Brand tag */}
         <span className={`absolute top-2.5 right-2.5 z-10
           text-[8px] tracking-[0.1em] uppercase px-2 py-0.5
-          font-['DM_Sans'] border bg-[#090909]/75 ${tagClass}`}>
+          font-['DM_Sans'] border bg-surface/75 ${tagClass}`}>
           {BRAND_LABELS[product.brand] ?? product.brand.toUpperCase()}
         </span>
       </Link>
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
-      <div className={`flex flex-col flex-1 p-4 border-t border-[#D4AF77]/08 ${!activeInStock ? 'opacity-60' : ''}`}>
+      <div className={`flex flex-col flex-1 p-4 border-t border-accent/08 ${!activeInStock ? 'opacity-60' : ''}`}>
 
         {/* Name */}
         <Link href={`/merch/${product.slug}`} className="group/name">
           <h3 className={[
-            'font-[\'Cormorant_Garamond\'] font-light text-[#F5EDD8]',
+            'font-[\'Cormorant_Garamond\'] font-light text-ink',
             'leading-tight mb-0.5',
-            'group-hover/name:text-[#D4AF77] transition-colors',
+            'group-hover/name:text-accent-text transition-colors',
             featured ? 'text-lg' : 'text-base',
           ].join(' ')}>
             {product.name}
@@ -304,9 +304,9 @@ export default function ProductCard({
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="group/credit inline-flex items-center gap-1 w-fit text-[9px] tracking-[0.08em] uppercase
-              text-[#5a4c3a] hover:text-[#D4AF77] font-['DM_Sans'] transition-colors mb-3"
+              text-[#5a4c3a] hover:text-accent-text font-['DM_Sans'] transition-colors mb-3"
           >
-            Designed by <span className="text-[#A89880] group-hover/credit:text-[#D4AF77] transition-colors">Hidden Gem</span>
+            Designed by <span className="text-ink-muted group-hover/credit:text-accent-text transition-colors">Hidden Gem</span>
             <span aria-hidden="true">↗</span>
           </a>
         )}
@@ -325,8 +325,8 @@ export default function ProductCard({
                   'text-[9px] tracking-[0.08em] uppercase px-2 py-1',
                   "font-['DM_Sans'] border transition-colors",
                   selectedMaterialIdx === idx
-                    ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                    : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                    ? 'border-accent/60 text-accent-text'
+                    : 'border-accent/12 text-[#5a4c3a] hover:border-mist/30 hover:text-ink-muted',
                 ].join(' ')}
               >
                 {m.material}
@@ -347,17 +347,17 @@ export default function ProductCard({
                 const v = sizeVariants.find(sv => sv.variantId === Number(e.target.value))
                 if (v) setSelectedVariant(v)
               }}
-              className="mb-3 w-full bg-[#0d0d0d] border border-[#D4AF77]/20 text-[#A89880]
+              className="mb-3 w-full bg-[#0d0d0d] border border-accent/20 text-ink-muted
                 text-[10px] tracking-[0.08em] uppercase px-2 py-2 font-['DM_Sans']
-                focus:outline-none focus:border-[#D4AF77]/50"
+                focus:outline-none focus:border-accent/50"
             >
-              <option value="" disabled className="bg-[#111111] text-[#5a4c3a]">
+              <option value="" disabled className="bg-surface-alt text-[#5a4c3a]">
                 Select a size
               </option>
               {sizeVariants.map(v => {
                 const size = optionValue(v, 'size') ?? v.name
                 return (
-                  <option key={v.variantId} value={v.variantId} className="bg-[#111111] text-[#F5EDD8]">
+                  <option key={v.variantId} value={v.variantId} className="bg-surface-alt text-ink">
                     {size}
                   </option>
                 )
@@ -377,8 +377,8 @@ export default function ProductCard({
                       'text-[9px] tracking-[0.1em] uppercase px-2 py-1',
                       'font-[\'DM_Sans\'] border transition-colors min-w-[28px]',
                       isSelected
-                        ? 'border-[#D4AF77]/60 text-[#D4AF77]'
-                        : 'border-[#D4AF77]/12 text-[#5a4c3a] hover:border-[#A89880]/30 hover:text-[#A89880]',
+                        ? 'border-accent/60 text-accent-text'
+                        : 'border-accent/12 text-[#5a4c3a] hover:border-mist/30 hover:text-ink-muted',
                     ].join(' ')}
                   >
                     {size}
@@ -391,7 +391,7 @@ export default function ProductCard({
 
         {/* Price + Add CTA */}
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <span className="font-['Cormorant_Garamond'] text-[#D4AF77]
+          <span className="font-['Cormorant_Garamond'] text-accent-text
             text-lg leading-none">
             {activePrice || (
               selectedVariant
@@ -409,8 +409,8 @@ export default function ProductCard({
               'font-[\'DM_Sans\'] border transition-all duration-150',
               'min-w-[72px] min-h-[36px]',
               added
-                ? 'border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
-                : 'border-[#D4AF77]/20 text-[#A89880] hover:border-[#D4AF77]/60 hover:text-[#D4AF77]',
+                ? 'border-accent text-accent-text bg-accent/08'
+                : 'border-accent/20 text-ink-muted hover:border-accent/60 hover:text-accent-text',
               ((!activeVariants && !product.price) || !activeInStock || (sizeVariants.length > 6 && !selectedVariant)) ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >

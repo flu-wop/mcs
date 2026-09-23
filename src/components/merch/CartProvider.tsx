@@ -53,10 +53,10 @@ export function useCart(): CartContext {
 // ─── Brand colours (for cart item accent) ────────────────────────────────────
 
 const BRAND_ACCENT: Record<string, string> = {
-  mcs:        'border-l-[#D4AF77]',
+  mcs:        'border-l-accent',
   djm:        'border-l-[#c8a45a]',
   streetbeat: 'border-l-[#4a7acc]',
-  squiggle:   'border-l-[#1d9e75]',
+  squiggle:   'border-l-success',
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
@@ -188,21 +188,21 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         aria-label="Shopping cart"
         className={[
           'fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col',
-          'bg-[#0d0d0d] border-l border-[#D4AF77]/15',
+          'bg-[#0d0d0d] border-l border-accent/15',
           'transform transition-transform duration-300 ease-out',
           state.isOpen ? 'translate-x-0' : 'translate-x-full',
         ].join(' ')}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#D4AF77]/10 px-6 py-5">
+        <div className="flex items-center justify-between border-b border-accent/10 px-6 py-5">
           <div>
-            <p className="text-[10px] tracking-[0.2em] text-[#D4AF77] uppercase font-['DM_Sans']">
+            <p className="text-[10px] tracking-[0.2em] text-accent-text uppercase font-['DM_Sans']">
               Mid City Sound
             </p>
-            <h2 className="font-['Cormorant_Garamond'] text-xl font-light text-[#F5EDD8] leading-tight">
+            <h2 className="font-['Cormorant_Garamond'] text-xl font-light text-ink leading-tight">
               Your Cart
               {count > 0 && (
-                <span className="ml-2 font-['DM_Sans'] text-sm text-[#A89880]">
+                <span className="ml-2 font-['DM_Sans'] text-sm text-ink-muted">
                   ({count})
                 </span>
               )}
@@ -210,7 +210,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
           </div>
           <button
             onClick={closeDrawer}
-            className="text-[#A89880] hover:text-[#F5EDD8] transition-colors p-1"
+            className="text-ink-muted hover:text-ink transition-colors p-1"
             aria-label="Close cart"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -224,7 +224,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center pt-12">
-              <p className="font-['Cormorant_Garamond'] text-2xl font-light text-[#A89880] italic mb-2">
+              <p className="font-['Cormorant_Garamond'] text-2xl font-light text-ink-muted italic mb-2">
                 Nothing yet.
               </p>
               <p className="text-xs text-[#5a4c3a] tracking-wider uppercase font-['DM_Sans']">
@@ -232,8 +232,8 @@ export default function CartProvider({ children }: { children: ReactNode }) {
               </p>
               <button
                 onClick={closeDrawer}
-                className="mt-8 text-[10px] tracking-[0.16em] uppercase text-[#D4AF77]
-                  border-b border-[#D4AF77]/30 pb-0.5 font-['DM_Sans'] hover:border-[#D4AF77]
+                className="mt-8 text-[10px] tracking-[0.16em] uppercase text-accent-text
+                  border-b border-accent/30 pb-0.5 font-['DM_Sans'] hover:border-accent
                   transition-colors"
               >
                 Continue shopping →
@@ -253,7 +253,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
 
         {/* Footer */}
         {state.items.length > 0 && (
-          <div className="border-t border-[#D4AF77]/10 px-6 py-5 space-y-4">
+          <div className="border-t border-accent/10 px-6 py-5 space-y-4">
             {appliedDiscount?.valid ? (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
@@ -265,28 +265,28 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs tracking-[0.1em] uppercase text-[#D4AF77] font-['DM_Sans']">
+                  <span className="text-xs tracking-[0.1em] uppercase text-accent-text font-['DM_Sans']">
                     {appliedDiscount.code} applied
                   </span>
-                  <span className="font-['Cormorant_Garamond'] text-base text-[#D4AF77]">
+                  <span className="font-['Cormorant_Garamond'] text-base text-accent-text">
                     −${appliedDiscount.savings.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-[#D4AF77]/10">
-                  <span className="text-xs tracking-[0.1em] uppercase text-[#A89880] font-['DM_Sans']">
+                <div className="flex items-center justify-between pt-1 border-t border-accent/10">
+                  <span className="text-xs tracking-[0.1em] uppercase text-ink-muted font-['DM_Sans']">
                     Total
                   </span>
-                  <span className="font-['Cormorant_Garamond'] text-xl text-[#D4AF77]">
+                  <span className="font-['Cormorant_Garamond'] text-xl text-accent-text">
                     ${appliedDiscount.discountedTotal.toFixed(2)}
                   </span>
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-between">
-                <span className="text-xs tracking-[0.1em] uppercase text-[#A89880] font-['DM_Sans']">
+                <span className="text-xs tracking-[0.1em] uppercase text-ink-muted font-['DM_Sans']">
                   Subtotal
                 </span>
-                <span className="font-['Cormorant_Garamond'] text-xl text-[#D4AF77]">
+                <span className="font-['Cormorant_Garamond'] text-xl text-accent-text">
                   ${total.toFixed(2)}
                 </span>
               </div>
@@ -301,14 +301,14 @@ export default function CartProvider({ children }: { children: ReactNode }) {
                 onChange={(e) => handleDiscountInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); applyDiscountCode() } }}
                 placeholder="DISCOUNT CODE"
-                className="flex-1 min-w-0 bg-transparent border border-[#D4AF77]/15 px-3 py-2
-                  text-[11px] tracking-[0.1em] uppercase text-[#F5EDD8] placeholder:text-[#5a4c3a]
-                  font-['DM_Sans'] focus:outline-none focus:border-[#D4AF77]/40 transition-colors"
+                className="flex-1 min-w-0 bg-transparent border border-accent/15 px-3 py-2
+                  text-[11px] tracking-[0.1em] uppercase text-ink placeholder:text-[#5a4c3a]
+                  font-['DM_Sans'] focus:outline-none focus:border-accent/40 transition-colors"
               />
               <button
                 onClick={applyDiscountCode}
                 className="shrink-0 px-4 text-[10px] tracking-[0.14em] uppercase font-['DM_Sans']
-                  border border-[#D4AF77]/30 text-[#D4AF77] hover:bg-[#D4AF77]/10 transition-colors"
+                  border border-accent/30 text-accent-text hover:bg-accent/10 transition-colors"
               >
                 Apply
               </button>
@@ -323,11 +323,11 @@ export default function CartProvider({ children }: { children: ReactNode }) {
               disabled={isCheckingOut}
               className={[
                 'w-full py-3.5 text-[11px] tracking-[0.18em] uppercase font-[DM_Sans]',
-                'border border-[#D4AF77] text-[#D4AF77]',
+                'border border-accent text-accent-text',
                 'transition-all duration-200',
                 isCheckingOut
                   ? 'opacity-50 cursor-wait'
-                  : 'hover:bg-[#D4AF77]/10 active:scale-[0.99]',
+                  : 'hover:bg-accent/10 active:scale-[0.99]',
               ].join(' ')}
             >
               {isCheckingOut ? 'Redirecting…' : 'Proceed to Checkout →'}
@@ -340,7 +340,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
             <button
               onClick={clear}
               className="w-full text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a]
-                hover:text-[#A89880] transition-colors font-['DM_Sans']"
+                hover:text-ink-muted transition-colors font-['DM_Sans']"
             >
               Clear cart
             </button>
@@ -379,7 +379,7 @@ function CartItemRow({
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="font-['Cormorant_Garamond'] text-sm text-[#F5EDD8] leading-tight truncate">
+        <p className="font-['Cormorant_Garamond'] text-sm text-ink leading-tight truncate">
           {item.name}
         </p>
         <p className="text-[10px] text-[#5a4c3a] font-['DM_Sans'] uppercase tracking-wider mt-0.5">
@@ -387,32 +387,32 @@ function CartItemRow({
         </p>
         <div className="flex items-center justify-between mt-2">
           {/* Qty stepper */}
-          <div className="flex items-center gap-2 border border-[#D4AF77]/15">
+          <div className="flex items-center gap-2 border border-accent/15">
             <button
               onClick={() => onQtyChange(item.quantity - 1)}
-              className="px-2 py-0.5 text-[#A89880] hover:text-[#D4AF77] transition-colors text-sm"
+              className="px-2 py-0.5 text-ink-muted hover:text-accent-text transition-colors text-sm"
               aria-label="Decrease quantity"
             >
               −
             </button>
-            <span className="text-[#F5EDD8] text-xs font-['DM_Sans'] min-w-[16px] text-center">
+            <span className="text-ink text-xs font-['DM_Sans'] min-w-[16px] text-center">
               {item.quantity}
             </span>
             <button
               onClick={() => onQtyChange(item.quantity + 1)}
-              className="px-2 py-0.5 text-[#A89880] hover:text-[#D4AF77] transition-colors text-sm"
+              className="px-2 py-0.5 text-ink-muted hover:text-accent-text transition-colors text-sm"
               aria-label="Increase quantity"
             >
               +
             </button>
           </div>
           <div className="flex items-center gap-3">
-            <span className="font-['Cormorant_Garamond'] text-sm text-[#D4AF77]">
+            <span className="font-['Cormorant_Garamond'] text-sm text-accent-text">
               ${(item.price * item.quantity).toFixed(2)}
             </span>
             <button
               onClick={onRemove}
-              className="text-[#5a4c3a] hover:text-[#A89880] transition-colors"
+              className="text-[#5a4c3a] hover:text-ink-muted transition-colors"
               aria-label={`Remove ${item.name}`}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none"

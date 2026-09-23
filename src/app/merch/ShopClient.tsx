@@ -163,8 +163,8 @@ export default function ShopClient({
           <a
             href={origin.href}
             className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.14em]
-              uppercase text-[#A89880] hover:text-[#D4AF77] transition-colors
-              font-['DM_Sans'] border-b border-[#A89880]/20 hover:border-[#D4AF77]/40 pb-px"
+              uppercase text-ink-muted hover:text-accent-text transition-colors
+              font-['DM_Sans'] border-b border-mist/20 hover:border-accent/40 pb-px"
           >
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2">
@@ -178,21 +178,21 @@ export default function ShopClient({
       {/* ── Featured Carousel ──────────────────────────────────────────────── */}
       {!isFiltering && mvpProducts.length > 0 && (
         <section
-          className="px-6 sm:px-10 py-12 border-b border-[#D4AF77]/10"
+          className="px-6 sm:px-10 py-12 border-b border-accent/10"
           aria-label="MVP launch collection"
         >
           <div className="flex items-baseline justify-between mb-8">
-            <h2 className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8]"
+            <h2 className="font-['Cormorant_Garamond'] font-light text-ink"
               style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)' }}>
               MVP{' '}
-              <em className="italic text-[#D4AF77]">Launch</em>{' '}
+              <em className="italic text-accent-text">Launch</em>{' '}
               Collection
             </h2>
             <a
               href="#all-products"
               onClick={e => { e.preventDefault(); gridRef.current?.scrollIntoView({ behavior: 'smooth' }) }}
-              className="text-[10px] tracking-[0.14em] uppercase text-[#D4AF77]
-                border-b border-[#D4AF77]/30 pb-px hover:border-[#D4AF77]
+              className="text-[10px] tracking-[0.14em] uppercase text-accent-text
+                border-b border-accent/30 pb-px hover:border-accent
                 transition-colors font-['DM_Sans']"
             >
               View all →
@@ -224,17 +224,17 @@ export default function ShopClient({
         aria-label={gridTitle}
       >
         <div className="flex items-baseline justify-between mb-6">
-          <h2 className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8]"
+          <h2 className="font-['Cormorant_Garamond'] font-light text-ink"
             style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.7rem)' }}>
             {isFiltering ? (
               <>
-                <em className="italic text-[#D4AF77]">
+                <em className="italic text-accent-text">
                   {({ all: 'All', mcs: 'Studio', djm: 'Legacy', streetbeat: 'Documentary', squiggle: 'Character' } as Record<string, string>)[brand]}
                 </em>{' '}
                 Products
               </>
             ) : (
-              <>All <em className="italic text-[#D4AF77]">Products</em></>
+              <>All <em className="italic text-accent-text">Products</em></>
             )}
           </h2>
           {filtered.length > 0 && (
@@ -274,11 +274,11 @@ function EmptyState({ onClear }: { onClear: () => void }) {
       <span
         aria-hidden="true"
         className="block mb-4 font-['Cormorant_Garamond'] text-[80px] leading-none
-          text-[#D4AF77]/10 font-light select-none"
+          text-accent-text/10 font-light select-none"
       >
         ◈
       </span>
-      <p className="font-['Cormorant_Garamond'] text-xl font-light text-[#A89880] italic mb-2">
+      <p className="font-['Cormorant_Garamond'] text-xl font-light text-ink-muted italic mb-2">
         Nothing found.
       </p>
       <p className="text-[11px] tracking-[0.1em] uppercase text-[#5a4c3a] font-['DM_Sans'] mb-8">
@@ -287,7 +287,7 @@ function EmptyState({ onClear }: { onClear: () => void }) {
       <button
         onClick={onClear}
         className="text-[10px] tracking-[0.16em] uppercase px-5 py-2.5
-          border border-[#D4AF77]/25 text-[#D4AF77] hover:bg-[#D4AF77]/08
+          border border-accent/25 text-accent-text hover:bg-accent/08
           transition-all font-['DM_Sans']"
       >
         Clear filters →
@@ -308,7 +308,7 @@ function EcosystemStrip() {
 
   return (
     <section
-      className="border-t border-[#D4AF77]/10 px-6 sm:px-10 py-10"
+      className="border-t border-accent/10 px-6 sm:px-10 py-10"
       aria-label="Ecosystem links"
     >
       <p className="text-[10px] tracking-[0.2em] uppercase text-[#5a4c3a]
@@ -320,11 +320,11 @@ function EcosystemStrip() {
           <a
             key={l.href}
             href={l.href}
-            className="group flex flex-col gap-1 border border-[#D4AF77]/08
-              p-4 hover:border-[#D4AF77]/30 transition-colors"
+            className="group flex flex-col gap-1 border border-accent/08
+              p-4 hover:border-accent/30 transition-colors"
           >
-            <span className="font-['Cormorant_Garamond'] text-sm text-[#F5EDD8]
-              group-hover:text-[#D4AF77] transition-colors leading-tight">
+            <span className="font-['Cormorant_Garamond'] text-sm text-ink
+              group-hover:text-accent-text transition-colors leading-tight">
               {l.label}
             </span>
             <span className="text-[9px] tracking-[0.1em] uppercase text-[#5a4c3a]

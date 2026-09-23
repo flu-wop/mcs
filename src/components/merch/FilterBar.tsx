@@ -104,7 +104,7 @@ export default function FilterBar({ resultCount, className = '' }: FilterBarProp
     filters.sort !== 'featured'
 
   return (
-    <div className={`border-b border-[#D4AF77]/10 bg-[#090909] ${className}`}>
+    <div className={`border-b border-accent/10 bg-surface ${className}`}>
 
       {/* ── Row 1: Search + Sort ─────────────────────────────────────────── */}
       <div className="flex items-center gap-3 px-6 sm:px-10 pt-5 pb-3">
@@ -113,7 +113,7 @@ export default function FilterBar({ resultCount, className = '' }: FilterBarProp
         <label className="relative flex-1 max-w-xs" htmlFor="merch-search">
           <span className="sr-only">Search products</span>
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A89880]"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted"
             width="13" height="13" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" strokeWidth="2"
           >
@@ -127,11 +127,11 @@ export default function FilterBar({ resultCount, className = '' }: FilterBarProp
             onChange={e => update('search', e.target.value)}
             placeholder="Search products…"
             className={[
-              'w-full bg-[#111] border border-[#D4AF77]/15 text-[#F5EDD8]',
+              'w-full bg-[#111] border border-accent/15 text-ink',
               'font-[\'DM_Sans\'] text-[13px] tracking-wide',
               'pl-9 pr-4 py-2.5 outline-none',
-              'placeholder:text-[#A89880]/60',
-              'focus:border-[#D4AF77]/50 transition-colors',
+              'placeholder:text-ink-muted/60',
+              'focus:border-accent/50 transition-colors',
             ].join(' ')}
           />
         </label>
@@ -149,10 +149,10 @@ export default function FilterBar({ resultCount, className = '' }: FilterBarProp
           onChange={e => update('sort', e.target.value)}
           aria-label="Sort products"
           className={[
-            'ml-auto bg-[#111] border border-[#D4AF77]/15 text-[#A89880]',
+            'ml-auto bg-[#111] border border-accent/15 text-ink-muted',
             'font-[\'DM_Sans\'] text-[11px] tracking-[0.08em] uppercase',
             'px-3 py-2.5 outline-none cursor-pointer',
-            'focus:border-[#D4AF77]/40 transition-colors',
+            'focus:border-accent/40 transition-colors',
           ].join(' ')}
         >
           {SORT_OPTIONS.map(o => (
@@ -199,8 +199,8 @@ export default function FilterBar({ resultCount, className = '' }: FilterBarProp
             className={[
               'shrink-0 snap-start px-3 py-1.5',
               'text-[10px] tracking-[0.14em] uppercase whitespace-nowrap',
-              'font-[\'DM_Sans\'] text-[#A89880]',
-              'border border-[#A89880]/20 hover:border-[#A89880]/50',
+              'font-[\'DM_Sans\'] text-ink-muted',
+              'border border-mist/20 hover:border-mist/50',
               'transition-colors',
             ].join(' ')}
           >
@@ -234,8 +234,8 @@ function Chip({
         'font-[\'DM_Sans\'] transition-all duration-150',
         'min-h-[36px]', // 44px tap target via line-height + padding
         active
-          ? 'border border-[#D4AF77] text-[#D4AF77] bg-[#D4AF77]/08'
-          : 'border border-[#D4AF77]/15 text-[#A89880] hover:border-[#A89880]/40 hover:text-[#F5EDD8]',
+          ? 'border border-accent text-accent-text bg-accent/08'
+          : 'border border-accent/15 text-ink-muted hover:border-mist/40 hover:text-ink',
       ].join(' ')}
     >
       {label}

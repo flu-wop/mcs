@@ -20,25 +20,25 @@ function SuccessContent() {
   }, [cleared, clear])
 
   return (
-    <main className="min-h-screen bg-[#090909] flex items-center justify-center px-6">
+    <main className="min-h-screen bg-surface flex items-center justify-center px-6">
       <TrackPurchase funnel="merch" stripeSessionId={sessionId} />
       <div className="max-w-md w-full text-center">
         <div className="mb-8 flex justify-center">
-          <div className="w-16 h-16 border border-[#D4AF77]/30 flex items-center justify-center">
+          <div className="w-16 h-16 border border-accent/30 flex items-center justify-center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="#D4AF77" strokeWidth="1.5">
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </div>
         </div>
-        <p className="text-[10px] tracking-[0.22em] uppercase text-[#D4AF77] font-['DM_Sans'] mb-4">
+        <p className="text-[10px] tracking-[0.22em] uppercase text-accent-text font-['DM_Sans'] mb-4">
           Mid City Sound Studios
         </p>
-        <h1 className="font-['Cormorant_Garamond'] font-light text-[#F5EDD8] mb-4"
+        <h1 className="font-['Cormorant_Garamond'] font-light text-ink mb-4"
           style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
           Order confirmed.
         </h1>
-        <p className="text-[13px] text-[#A89880] font-['DM_Sans'] leading-relaxed mb-2">
+        <p className="text-[13px] text-ink-muted font-['DM_Sans'] leading-relaxed mb-2">
           Your order is being prepared and will ship from New Orleans via Printify.
           You'll receive a confirmation email with tracking once it's on the way.
         </p>
@@ -50,14 +50,14 @@ function SuccessContent() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
           <Link href="/merch"
             className="text-[10px] tracking-[0.16em] uppercase px-6 py-3
-              border border-[#D4AF77] text-[#D4AF77] hover:bg-[#D4AF77]/08
+              border border-accent text-accent-text hover:bg-accent/08
               transition-all font-['DM_Sans']">
             Continue Shopping
           </Link>
           <Link href="/"
             className="text-[10px] tracking-[0.16em] uppercase px-6 py-3
-              border border-[#D4AF77]/20 text-[#A89880] hover:border-[#A89880]/40
-              hover:text-[#F5EDD8] transition-all font-['DM_Sans']">
+              border border-accent/20 text-ink-muted hover:border-mist/40
+              hover:text-ink transition-all font-['DM_Sans']">
             Back to Studio
           </Link>
         </div>
@@ -72,8 +72,8 @@ function SuccessContent() {
 export default function SuccessPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-[#090909] flex items-center justify-center">
-        <p className="text-[#A89880] font-['DM_Sans'] text-sm tracking-widest uppercase">
+      <main className="min-h-screen bg-surface flex items-center justify-center">
+        <p className="text-ink-muted font-['DM_Sans'] text-sm tracking-widest uppercase">
           Loading…
         </p>
       </main>
