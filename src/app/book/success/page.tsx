@@ -3,7 +3,7 @@ import { redirect }    from "next/navigation"
 import Link            from "next/link"
 import Stripe          from "stripe"
 import { CheckCircle2, Calendar, Clock, User, Music2 } from "lucide-react"
-import { Button }      from "@/components/ui/button"
+import { Button } from "@flu-wop/design-system"
 import { TrackPurchase } from "@/components/analytics/TrackPurchase"
 
 function getStripe() {

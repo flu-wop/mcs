@@ -9,8 +9,7 @@ import type { Metadata }  from "next"
 import Link               from "next/link"
 import Image              from "next/image"
 import { Award, Music, Star, MapPin, ArrowRight, Film, Mic2, Theater } from "lucide-react"
-import { Button }         from "@/components/ui/button"
-import { Badge }          from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Separator }      from "@/components/ui/separator"
 
 export const metadata: Metadata = {
@@ -245,7 +244,7 @@ export default function LegacyPage() {
                     <p className="text-mist text-sm leading-relaxed mb-4">{body}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {tags.map(tag => (
-                        <Badge key={tag} variant="secondary" className="text-[10px]">
+                        <Badge key={tag} variant="neutral" className="text-[10px]">
                           {tag}
                         </Badge>
                       ))}

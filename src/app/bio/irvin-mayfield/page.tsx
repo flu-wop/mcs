@@ -3,8 +3,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeft, ExternalLink } from "lucide-react"
-import { Button }    from "@/components/ui/button"
-import { Badge }     from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {

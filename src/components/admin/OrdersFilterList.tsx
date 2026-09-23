@@ -6,7 +6,7 @@
 // list below it.
 
 import { useMemo, useState } from "react"
-import { Badge } from "@/components/ui/badge"
+import { Badge, type BadgeVariant } from "@flu-wop/design-system"
 import { Package, AlertTriangle, Search } from "lucide-react"
 import { RetryPrintifyButton } from "@/components/admin/RetryPrintifyButton"
 import { MarkResolvedButton } from "@/components/admin/MarkResolvedButton"
@@ -33,8 +33,8 @@ interface OrderItem {
   name: string; variantName: string; quantity: number; price: number
 }
 
-function statusColor(status: string) {
-  return status === "submitted" ? "default" : "outline"
+function statusColor(status: string): BadgeVariant {
+  return status === "submitted" ? "gold" : "outline"
 }
 
 const PAGE_SIZE = 20

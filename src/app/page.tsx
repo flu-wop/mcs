@@ -18,8 +18,7 @@ import {
   Mic2, Headphones, Award, Calendar,
   ArrowRight, ChevronDown, ExternalLink,
 } from "lucide-react"
-import { Button }     from "@/components/ui/button"
-import { Badge }      from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Separator }  from "@/components/ui/separator"
 
 export const metadata: Metadata = {
@@ -315,7 +314,7 @@ export default function HomePage() {
                 </div>
                 <div className="p-5">
                   <Badge
-                    variant={tag === "Now Available" ? "default" : "secondary"}
+                    variant={tag === "Now Available" ? "gold" : "neutral"}
                     className="mb-3 text-[10px]"
                   >
                     {tag}

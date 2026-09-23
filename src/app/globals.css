@@ -40,6 +40,8 @@
   --input:         var(--color-dark);
   --ring:          var(--color-gold);
   --radius:        0.5rem;
+  /* Shared design-system components use the same corner as Tailwind's rounded-sm here */
+  --if-radius-sm:  calc(var(--radius) - 4px);
 
   /* Font stacks */
   --font-display: 'Cormorant Garamond', Georgia, serif;

@@ -16,8 +16,7 @@ import {
   Music, ExternalLink,
   ArrowRight, Mic2, ShoppingBag, Tv,
 } from "lucide-react"
-import { Button }    from "@/components/ui/button"
-import { Badge }     from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
@@ -31,7 +30,7 @@ const PROJECTS = [
   {
     id:      "streetbeat",
     tag:     "Now Available",
-    tagVariant: "default" as const,
+    tagVariant: "gold" as const,
     icon:    Mic2,
     title:   "Street Beat",
     subtitle:"Drumming Below Sea Level — Now Available",
@@ -56,7 +55,7 @@ const PROJECTS = [
   {
     id:      "lil-squiggle",
     tag:     "Coming Soon",
-    tagVariant: "secondary" as const,
+    tagVariant: "neutral" as const,
     icon:    Music,
     title:   "Lil Squiggle",
     subtitle:"#DontDrinkAndDialDecades",

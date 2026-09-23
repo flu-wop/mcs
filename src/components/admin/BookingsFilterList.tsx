@@ -5,7 +5,7 @@
 // component. Stats row on the page stays computed from the unfiltered set.
 
 import { useMemo, useState } from "react"
-import { Badge } from "@/components/ui/badge"
+import { Badge, type BadgeVariant } from "@flu-wop/design-system"
 import { Calendar, Search } from "lucide-react"
 import { DeleteBookingButton } from "@/components/admin/DeleteBookingButton"
 
@@ -36,9 +36,9 @@ function formatTime(h: number) {
   if (h === 12) return "12:00 PM"
   return `${h - 12}:00 PM`
 }
-function statusColor(status: string) {
-  if (status === "confirmed") return "default"
-  if (status === "pending")   return "secondary"
+function statusColor(status: string): BadgeVariant {
+  if (status === "confirmed") return "gold"
+  if (status === "pending")   return "neutral"
   return "outline"
 }
 

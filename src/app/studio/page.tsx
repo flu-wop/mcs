@@ -26,8 +26,7 @@ import {
   Shield, Tag, Calendar, ChevronLeft,
   ChevronRight, AlertCircle, Check, Guitar, Drum,
 } from "lucide-react"
-import { Button }    from "@/components/ui/button"
-import { Badge }     from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { Textarea }  from "@/components/ui/textarea"
@@ -172,8 +171,8 @@ function PricingCard({ item, selected, onSelect, showPerHour = false }: {
       "relative text-left w-full p-5 border rounded-sm transition-all",
       selected ? "border-gold bg-gold/5 shadow-[0_0_20px_rgba(212,175,119,0.1)]" : "border-studio-border bg-studio-card hover:border-gold/40"
     )}>
-      {"popular" in item && item.popular && <Badge className="absolute top-3 right-3 text-[9px]">Most Popular</Badge>}
-      {item.badge && !("popular" in item && item.popular) && <Badge variant="outline" className="absolute top-3 right-3 text-[9px]">{item.badge}</Badge>}
+      {"popular" in item && item.popular && <Badge className="absolute top-3 right-3 text-[9px] leading-[1.6]">Most Popular</Badge>}
+      {item.badge && !("popular" in item && item.popular) && <Badge variant="outline" className="absolute top-3 right-3 text-[9px] leading-[1.6]">{item.badge}</Badge>}
       <div className={cn("absolute top-3 left-3 w-4 h-4 rounded-full border-2 transition-all flex items-center justify-center", selected ? "border-gold bg-gold" : "border-studio-border")}>
         {selected && <Check className="w-2.5 h-2.5 text-studio-black" />}
       </div>
@@ -905,8 +904,8 @@ export default function StudioPage() {
                 <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6 transition-all",
                   "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
                 )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px] leading-[1.6]">Most Popular</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px] leading-[1.6]">{rate.badge}</Badge>}
                   <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">{rate.duration}</p>
                   <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
                   <div className="flex items-baseline gap-2 mb-1">
@@ -938,8 +937,8 @@ export default function StudioPage() {
                 <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
                   "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
                 )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Most Popular</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px] leading-[1.6]">Most Popular</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px] leading-[1.6]">{rate.badge}</Badge>}
                   <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">Mixing</p>
                   <p className="font-display text-xl text-cream mb-2">{rate.label}</p>
                   <p className="font-display text-3xl text-gold mb-4">{fmt(rate.price)}</p>
@@ -960,8 +959,8 @@ export default function StudioPage() {
                 <div key={rate.id} className={cn("relative border rounded-sm bg-studio-card p-6",
                   "popular" in rate && rate.popular ? "border-gold/30 shadow-[0_0_30px_rgba(212,175,119,0.06)]" : "border-studio-border"
                 )}>
-                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px]">Best Deal</Badge>}
-                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px]">{rate.badge}</Badge>}
+                  {"popular" in rate && rate.popular && <Badge className="absolute top-4 right-4 text-[9px] leading-[1.6]">Best Deal</Badge>}
+                  {rate.badge && !("popular" in rate && rate.popular) && <Badge variant="outline" className="absolute top-4 right-4 text-[9px] leading-[1.6]">{rate.badge}</Badge>}
                   <p className="text-[10px] tracking-widest uppercase text-mist/50 mb-1">
                     {"id" in rate && rate.id === "mix-atmos" ? "Spatial Audio" : "Bundle"}
                   </p>

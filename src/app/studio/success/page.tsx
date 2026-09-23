@@ -5,8 +5,7 @@ import { Suspense }       from "react"
 import { useSearchParams } from "next/navigation"
 import Link               from "next/link"
 import { CheckCircle2 }   from "lucide-react"
-import { Button }         from "@/components/ui/button"
-import { Badge }          from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { TrackPurchase }  from "@/components/analytics/TrackPurchase"
 
 function StudioSuccessContent() {

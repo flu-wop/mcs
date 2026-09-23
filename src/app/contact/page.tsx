@@ -13,8 +13,7 @@ import {
   Mail, MapPin, CheckCircle2,
   Instagram, Twitter, Youtube,
 } from "lucide-react"
-import { Button }    from "@/components/ui/button"
-import { Badge }     from "@/components/ui/badge"
+import { Button, Badge } from "@flu-wop/design-system"
 import { Input }     from "@/components/ui/input"
 import { Label }     from "@/components/ui/label"
 import { Textarea }  from "@/components/ui/textarea"

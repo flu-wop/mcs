@@ -3,7 +3,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { Button } from "@flu-wop/design-system"
 
 export default function AdminLoginPage() {
   const router = useRouter()

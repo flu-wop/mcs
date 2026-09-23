@@ -3,7 +3,7 @@
 
 import Link   from "next/link"
 import { Music } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@flu-wop/design-system"
 
 export default function NotFound() {
   return (
