@@ -26,10 +26,7 @@ import {
   Shield, Tag, Calendar, ChevronLeft,
   ChevronRight, AlertCircle, Check, Guitar, Drum,
 } from "lucide-react"
-import { Button, Badge } from "@flu-wop/design-system"
-import { Input }     from "@/components/ui/input"
-import { Label }     from "@/components/ui/label"
-import { Textarea }  from "@/components/ui/textarea"
+import { Button, Badge, Input, Label } from "@flu-wop/design-system"
 import { Separator } from "@/components/ui/separator"
 import { cn }        from "@/lib/utils"
 import { track, getSessionId } from "@/lib/analytics"
@@ -646,20 +643,17 @@ export default function StudioPage() {
                 <div className="space-y-6">
                   <h3 className="font-display text-2xl text-cream">Your information</h3>
                   <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2"><Label htmlFor="name">Full Name *</Label><Input id="name" value={form.name} onChange={e => setForm({...form,name:e.target.value})} placeholder="Your name" /></div>
-                    <div className="space-y-2"><Label htmlFor="email">Email *</Label><Input id="email" type="email" value={form.email} onChange={e => setForm({...form,email:e.target.value})} placeholder="you@example.com" /></div>
-                    <div className="space-y-2"><Label htmlFor="phone">Phone</Label><Input id="phone" type="tel" value={form.phone} onChange={e => setForm({...form,phone:e.target.value})} placeholder="+1 (555) 000-0000" /></div>
+                    <Input label="Full Name *" id="name" value={form.name} onChange={e => setForm({...form,name:e.target.value})} placeholder="Your name" />
+                    <Input label="Email *" id="email" type="email" value={form.email} onChange={e => setForm({...form,email:e.target.value})} placeholder="you@example.com" />
+                    <Input label="Phone" id="phone" type="tel" value={form.phone} onChange={e => setForm({...form,phone:e.target.value})} placeholder="+1 (555) 000-0000" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Project Notes</Label>
-                    <Textarea id="notes" value={projectNotes} onChange={e => setProjectNotes(e.target.value)}
-                      placeholder="Tell us about your project — genre, number of tracks, special requirements, anything the engineer should know before you arrive..." className="h-32" />
-                  </div>
+                  <Input multiline label="Project Notes" id="notes" value={projectNotes} onChange={e => setProjectNotes(e.target.value)}
+                    placeholder="Tell us about your project — genre, number of tracks, special requirements, anything the engineer should know before you arrive..." inputClassName="h-32" />
                   <div className="space-y-2">
                     <Label>Discount Code (for regulars)</Label>
                     <div className="flex gap-2 max-w-sm">
                       <Input value={discountCode} onChange={e => { setDiscountCode(e.target.value); setDiscountError(null); setDiscountApplied(null) }}
-                        placeholder="Enter your regular client code" className="font-mono uppercase" onKeyDown={e => e.key==="Enter" && applyCode()} />
+                        placeholder="Enter your regular client code" className="w-full" inputClassName="font-mono uppercase" onKeyDown={e => e.key==="Enter" && applyCode()} />
                       <Button variant="outline" onClick={applyCode} className="shrink-0">Apply</Button>
                     </div>
                     {discountApplied!==null && (

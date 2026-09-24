@@ -13,10 +13,7 @@ import {
   Mail, MapPin, CheckCircle2,
   Instagram, Twitter, Youtube,
 } from "lucide-react"
-import { Button, Badge } from "@flu-wop/design-system"
-import { Input }     from "@/components/ui/input"
-import { Label }     from "@/components/ui/label"
-import { Textarea }  from "@/components/ui/textarea"
+import { Button, Badge, Input, Label } from "@flu-wop/design-system"
 import { Separator } from "@/components/ui/separator"
 
 /* ─── Inquiry types ────────────────────────────────────────────────────────── */
@@ -181,25 +178,21 @@ export default function ContactPage() {
           ) : (
             <div className="space-y-6">
               <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name *</Label>
-                  <Input
-                    id="name"
-                    value={form.name}
-                    onChange={(e) => update("name", e.target.value)}
-                    placeholder="Your name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => update("email", e.target.value)}
-                    placeholder="you@example.com"
-                  />
-                </div>
+                <Input
+                  label="Name *"
+                  id="name"
+                  value={form.name}
+                  onChange={(e) => update("name", e.target.value)}
+                  placeholder="Your name"
+                />
+                <Input
+                  label="Email *"
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update("email", e.target.value)}
+                  placeholder="you@example.com"
+                />
               </div>
 
               {/* Inquiry type */}
@@ -223,16 +216,15 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Message *</Label>
-                <Textarea
-                  id="message"
-                  value={form.message}
-                  onChange={(e) => update("message", e.target.value)}
-                  placeholder="Tell us what you're working on, what you need, or just say hello..."
-                  className="h-40"
-                />
-              </div>
+              <Input
+                multiline
+                label="Message *"
+                id="message"
+                value={form.message}
+                onChange={(e) => update("message", e.target.value)}
+                placeholder="Tell us what you're working on, what you need, or just say hello..."
+                inputClassName="h-40"
+              />
 
               {error && (
                 <p className="text-red-400 text-xs">{error}</p>

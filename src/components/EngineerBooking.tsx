@@ -7,9 +7,7 @@ import {
   ArrowLeft, ChevronLeft, ChevronRight,
   CreditCard, AlertCircle, Check,
 } from "lucide-react"
-import { Button, Badge } from "@flu-wop/design-system"
-import { Input }     from "@/components/ui/input"
-import { Label }     from "@/components/ui/label"
+import { Button, Badge, Input } from "@flu-wop/design-system"
 import { cn }        from "@/lib/utils"
 import { track, getSessionId } from "@/lib/analytics"
 
@@ -320,18 +318,9 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
           <div className="space-y-6">
             <h2 className="font-display text-2xl text-cream">Your information</h2>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Name *</Label>
-                <Input value={clientInfo.name} onChange={e=>setClientInfo(p=>({...p,name:e.target.value}))} placeholder="Your name" />
-              </div>
-              <div className="space-y-2">
-                <Label>Email *</Label>
-                <Input type="email" value={clientInfo.email} onChange={e=>setClientInfo(p=>({...p,email:e.target.value}))} placeholder="you@example.com" />
-              </div>
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Input value={clientInfo.notes} onChange={e=>setClientInfo(p=>({...p,notes:e.target.value}))} placeholder="What are you working on? Any special requirements?" />
-              </div>
+              <Input label="Name *" value={clientInfo.name} onChange={e=>setClientInfo(p=>({...p,name:e.target.value}))} placeholder="Your name" />
+              <Input label="Email *" type="email" value={clientInfo.email} onChange={e=>setClientInfo(p=>({...p,email:e.target.value}))} placeholder="you@example.com" />
+              <Input label="Notes" value={clientInfo.notes} onChange={e=>setClientInfo(p=>({...p,notes:e.target.value}))} placeholder="What are you working on? Any special requirements?" />
             </div>
           </div>
         )}
