@@ -1,5 +1,5 @@
 import Link  from "next/link";
-import { Instagram, Twitter, Youtube, Mail, ExternalLink } from "lucide-react";
+import { Instagram, Mail, ExternalLink } from "lucide-react";
 import { BuiltBySignature } from "./BuiltBySignature";
 
 const SITE_LINKS = [
@@ -13,12 +13,11 @@ const SITE_LINKS = [
 
 const SOCIALS = [
   { icon: Instagram, href: "https://www.instagram.com/midcitysoundnola/", label: "Instagram" },
-  { icon: Twitter,   href: "https://twitter.com",                          label: "Twitter / X" },
-  { icon: Youtube,   href: "https://youtube.com",                           label: "YouTube" },
   { icon: Mail,      href: "mailto:midcitysound1@gmail.com",                label: "Email" },
 ];
 
 const ECOSYSTEM = [
+  { label: "Fire on the Bayou", sub: "Film & Commercial Production",  href: "https://fireonthebayou.com" },
   { label: "Donald Markowitz", sub: "Composer · Producer · Legend", href: "https://donaldmarkowitz.com" },
   { label: "Street Beat",      sub: "Documentary Film · 2025",       href: "https://streetbeat.video" },
   { label: "Lil Squiggle",     sub: "Reggae-Dub · Merch Campaign",   href: "https://lilsquiggle.vercel.app" },
@@ -47,8 +46,9 @@ export function Footer() {
 
           <div className="text-mist text-sm space-y-0.5">
             <p className="text-cream text-xs font-medium">Mid City Sound Studios</p>
-            <p>530 S Norman C Francis Pkwy</p>
-            <p>New Orleans, Louisiana</p>
+            <a href="https://maps.google.com/?q=530%20S%20Norman%20C%20Francis%20Pkwy%2C%20New%20Orleans%2C%20LA" target="_blank" rel="noopener noreferrer" className="block hover:text-cream transition-colors">
+              530 S Norman C Francis Pkwy<br />New Orleans, Louisiana
+            </a>
             <a href="mailto:midcitysound1@gmail.com" className="text-gold/70 hover:text-gold transition-colors text-xs">
               midcitysound1@gmail.com
             </a>
@@ -62,9 +62,9 @@ export function Footer() {
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-8 h-8 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold transition-colors"
+                className="w-10 h-10 border border-studio-border rounded-sm flex items-center justify-center text-mist hover:text-gold hover:border-gold transition-colors"
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-4 h-4" />
               </a>
             ))}
           </div>
@@ -110,7 +110,10 @@ export function Footer() {
       <div className="border-t border-studio-border/50">
         <div className="mx-auto max-w-7xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <p className="text-mist/50 text-xs">© {new Date().getFullYear()} Mid City Sound Studios · New Orleans, LA</p>
-          <p className="text-mist/30 text-xs">A Mid City Sound Production</p>
+          <nav aria-label="Legal" className="flex items-center gap-4 text-xs text-mist/50">
+            <Link href="/privacy" className="hover:text-cream transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-cream transition-colors">Terms</Link>
+          </nav>
         </div>
       </div>
 

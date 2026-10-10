@@ -2,8 +2,11 @@
 
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowLeft, ExternalLink } from "lucide-react"
+import { ExternalLink, ArrowLeft } from "lucide-react"
 import { Button, Badge } from "@flu-wop/design-system"
+import { Reveal } from "@flu-wop/design-system/motion"
+import { PageHeader } from "@/components/sections/PageHeader"
+import { NextStep } from "@/components/sections/NextStep"
 import { Separator } from "@/components/ui/separator"
 
 export const metadata: Metadata = {
@@ -13,32 +16,18 @@ export const metadata: Metadata = {
 
 export default function IrvinMayfieldBioPage() {
   return (
-    <div className="pt-16 min-h-screen bg-studio-black">
+    <div className="bg-studio-black min-h-screen">
+      <PageHeader compact eyebrow="Resident musician · Studio C" title="Irvin Mayfield"
+        lede="Grammy Award-winning trumpeter · composer · New Orleans cultural ambassador">
+        <Link href="/contact" className="inline-flex items-center gap-2 text-mist hover:text-gold text-xs transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to the team
+        </Link>
+      </PageHeader>
 
-      {/* ── Header ── */}
-      <section className="py-20 px-6 bg-studio-charcoal border-b border-studio-border">
-        <div className="mx-auto max-w-3xl">
-          <Link href="/contact" className="flex items-center gap-2 text-mist hover:text-gold text-xs mb-8 transition-colors">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Contact
-          </Link>
-          <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">
-            Resident Musician · Studio C
-          </Badge>
-          <h1 className="font-display text-5xl md:text-6xl text-cream mb-4 leading-tight">
-            Irvin Mayfield
-          </h1>
-          <p className="text-gold text-sm tracking-wide">
-            Grammy Award-Winning Trumpeter · Composer · New Orleans Cultural Ambassador
-          </p>
-        </div>
-      </section>
-
-      {/* ── Bio ── */}
-      <section className="py-20 px-6">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <section className="py-16 md:py-24 px-6">
+        <Reveal className="mx-auto max-w-3xl space-y-6">
           <Separator className="w-10 bg-gold/40" />
-
-          <div className="space-y-4 text-mist text-sm leading-relaxed">
+          <div className="space-y-5 text-mist text-base leading-relaxed">
             <p>
               Irvin Mayfield is one of New Orleans' most celebrated musicians — a Grammy
               Award-winning trumpeter, composer, bandleader, and the official Cultural
@@ -64,20 +53,18 @@ export default function IrvinMayfieldBioPage() {
               between Mid City Sound and the living tradition of New Orleans music.
             </p>
           </div>
-
           <div className="pt-4 flex flex-col sm:flex-row gap-3">
             <Button asChild>
               <a href="https://irvinmayfield.com" target="_blank" rel="noopener noreferrer">
-                Visit irvinmayfield.com
-                <ExternalLink className="w-3.5 h-3.5" />
+                Visit irvinmayfield.com<ExternalLink className="w-3.5 h-3.5" />
               </a>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/studio">Book Studio C</Link>
-            </Button>
           </div>
-        </div>
+        </Reveal>
       </section>
+
+      <NextStep line={<>Sessions in <span className="text-gold-gradient italic">Studio C</span> are by arrangement.</>}
+        href="/studio?room=C#booking-form" label="Request Studio C" />
     </div>
   )
 }

@@ -221,7 +221,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         </div>
 
         {/* Items */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+        <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain px-6 py-4 space-y-3">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center pt-12">
               <p className="font-['Cormorant_Garamond'] text-2xl font-light text-ink-muted italic mb-2">

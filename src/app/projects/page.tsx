@@ -17,9 +17,12 @@ import {
   ArrowRight, Mic2, ShoppingBag, Tv,
 } from "lucide-react"
 import { Button, Badge } from "@flu-wop/design-system"
+import { Reveal, Parallax } from "@flu-wop/design-system/motion"
 import { Separator } from "@/components/ui/separator"
+import { NextStep } from "@/components/sections/NextStep"
 
 export const metadata: Metadata = {
+  alternates:  { canonical: "/projects" },
   title:       "Projects",
   description: "Current and active projects from Mid City Sound Studios — Lil Squiggle, the Time of My Life anniversary campaign, and the Street Beat documentary.",
 }
@@ -69,7 +72,7 @@ const PROJECTS = [
     features: [
       "Original reggae-dub music",
       "Chibi Lego character universe",
-      "Merch via Printify",
+      "Official merch",
       "TikTok & YouTube campaign",
     ],
     cta:    { label: "Visit Site", href: "https://lilsquiggle.vercel.app", external: true },
@@ -108,162 +111,139 @@ export default function ProjectsPage() {
   return (
     <div className="pt-16 min-h-screen bg-studio-black">
 
-      {/* ── Page header ── */}
-      <section className="py-20 px-6 bg-studio-charcoal border-b border-studio-border overflow-hidden">
-        <div className="mx-auto max-w-5xl grid md:grid-cols-2 gap-0 items-center">
-
-          {/* Left: text */}
-          <div className="relative z-10 py-4">
-            <Badge variant="outline" className="mb-4 text-[10px] tracking-widest uppercase">
-              Active Projects
-            </Badge>
-            <h1 className="font-display text-5xl md:text-6xl text-cream mb-4">
-              What we're
-              <br />
-              <span className="text-gold-gradient italic">building</span>
-            </h1>
-            <p className="text-mist text-sm max-w-md leading-relaxed">
-              From street-level campaigns to Hollywood anniversary projects — Mid City Sound
-              is always creating. Here's what's in the works.
+      {/* ── Header ── */}
+      <section className="relative bg-studio-charcoal border-b border-studio-border overflow-hidden">
+        <div className="absolute inset-y-0 right-0 w-full md:w-1/2">
+          <Parallax speed={0.2} className="absolute inset-0 -top-[10%] h-[120%]">
+            <Image src="/images/donny-hero.jpg" alt="" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-center opacity-40 md:opacity-100" />
+          </Parallax>
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-studio-charcoal via-studio-charcoal/60 md:via-studio-charcoal/40 to-transparent" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-studio-charcoal via-transparent to-transparent md:hidden" />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32">
+          <Reveal className="max-w-xl">
+            <p className="mb-6 flex items-center gap-3 text-[11px] tracking-[0.25em] uppercase text-gold/80">
+              <span className="inline-block h-px w-10 bg-gold/60" />Active projects
             </p>
-          </div>
-
-          {/* Right: Donny photo fading left toward awards */}
-          <div className="relative h-[340px] hidden md:block">
-            <Image
-              src="/images/donny-hero.jpg"
-              alt="Donald Markowitz"
-              fill
-              className="object-cover object-center"
-              sizes="50vw"
-              priority
-            />
-            {/* Fade from left (awards side) to transparent on the right */}
-            <div className="absolute inset-0 bg-gradient-to-r from-studio-charcoal via-studio-charcoal/40 to-transparent" />
-          </div>
+            <h1 className="font-display text-5xl md:text-7xl text-cream mb-6 font-light leading-[0.95]">
+              What we&apos;re<br /><span className="text-gold-gradient italic">building</span>
+            </h1>
+            <p className="text-mist text-sm md:text-base max-w-md leading-relaxed">
+              From street-level campaigns to Hollywood anniversary projects — Mid City Sound
+              is always creating. Here&apos;s what&apos;s in the works.
+            </p>
+          </Reveal>
+          {/* Chapter list */}
+          <Reveal delay={0.15} as="div" className="mt-10">
+            <ol className="flex flex-wrap gap-x-6 gap-y-2">
+              {PROJECTS.map(({ id, title }, i) => (
+                <li key={id}>
+                  <a href={`#${id}`} className="group inline-flex items-baseline gap-2 text-sm text-mist hover:text-cream transition-colors">
+                    <span className="font-mono text-[10px] text-gold/60">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="border-b border-transparent group-hover:border-gold/60 transition-colors">{title}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
         </div>
       </section>
 
-      {/* ── Project cards ── */}
-      <section className="py-16 px-6">
-        <div className="mx-auto max-w-5xl space-y-10">
+      {/* ── Projects ── */}
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="mx-auto max-w-5xl space-y-8 md:space-y-12">
           {PROJECTS.map(({
             id, tag, tagVariant, icon: Icon, title, subtitle,
             color, accent, image, body, features, cta, ctaAlt,
             handles,
-          }) => (
-            <div
-              key={id}
-              id={id}
-              className={`rounded-sm border border-studio-border overflow-hidden bg-gradient-to-br ${color}`}
-            >
-              <div className="p-8 md:p-10 grid md:grid-cols-[220px_1fr] gap-8 items-start">
-
-                {/* ── Left: poster image ── */}
-                <div className="relative aspect-[2/3] rounded-sm overflow-hidden border self-start hidden md:block" style={{ borderColor: `${accent}25` }}>
-                  <Image
-                    src={image}
-                    alt={title}
-                    fill
-                    className={id === "lil-squiggle" ? "object-contain p-2" : "object-cover object-top"}
-                    sizes="220px"
-                  />
+          }, idx) => (
+            <Reveal as="article" key={id}>
+              <div id={id} className={`scroll-mt-24 rounded-sm border border-studio-border overflow-hidden bg-gradient-to-br ${color} transition-colors hover:border-studio-border/90`}>
+                {/* Phones: poster as a banner across the top */}
+                <div className="relative aspect-[16/9] md:hidden border-b" style={{ borderColor: `${accent}25` }}>
+                  <Image src={image} alt={title} fill sizes="100vw"
+                    className={id === "lil-squiggle" ? "object-contain p-4" : "object-cover object-top"} />
                 </div>
-
-                {/* ── Right: content ── */}
-                <div className="space-y-5">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <Badge variant={tagVariant} className="text-[10px] tracking-wider">
-                      {tag}
-                    </Badge>
+                <div className="p-6 sm:p-8 md:p-10 grid md:grid-cols-[220px_1fr] gap-8 items-start">
+                  <div className="relative aspect-[2/3] rounded-sm overflow-hidden border self-start hidden md:block group" style={{ borderColor: `${accent}25` }}>
+                    <Image src={image} alt={title} fill sizes="220px"
+                      className={`transition-transform duration-[1.2s] ease-out group-hover:scale-105 ${id === "lil-squiggle" ? "object-contain p-2" : "object-cover object-top"}`} />
                   </div>
 
-                  <div className="flex items-start gap-4">
-                    <div
-                      className="w-11 h-11 rounded-sm border flex items-center justify-center shrink-0"
-                      style={{ borderColor: `${accent}40` }}
-                    >
-                      <Icon className="w-5 h-5" style={{ color: accent }} />
+                  <div className="space-y-5 min-w-0">
+                    <div className="flex items-center justify-between gap-3">
+                      <Badge variant={tagVariant} className="text-[10px] tracking-wider">{tag}</Badge>
+                      <span className="font-mono text-[10px] text-mist/40">{String(idx + 1).padStart(2, "0")} / {String(PROJECTS.length).padStart(2, "0")}</span>
                     </div>
-                    <div>
-                      <h2 className="font-display text-3xl text-cream">{title}</h2>
-                      <p className="text-mist text-sm">{subtitle}</p>
+
+                    <div className="flex items-start gap-4">
+                      <div className="w-11 h-11 rounded-sm border grid place-items-center shrink-0" style={{ borderColor: `${accent}40` }}>
+                        <Icon className="w-5 h-5" style={{ color: accent }} />
+                      </div>
+                      <div className="min-w-0">
+                        <h2 className="font-display text-3xl md:text-4xl text-cream leading-tight">{title}</h2>
+                        <p className="text-mist text-sm">{subtitle}</p>
+                      </div>
                     </div>
-                  </div>
 
-                  <Separator className="bg-studio-border" />
+                    <Separator className="bg-studio-border" />
 
-                  {body.map((para, i) => (
-                    <p key={i} className="text-mist text-sm leading-relaxed">{para}</p>
-                  ))}
+                    {body.map((para, i) => (
+                      <p key={i} className="text-mist text-sm leading-relaxed">{para}</p>
+                    ))}
 
-                  {handles && (
-                    <div className="space-y-1">
-                      {handles.map((h) => (
-                        <p key={h} className="text-[11px] font-mono" style={{ color: accent }}>
-                          {h}
-                        </p>
-                      ))}
-                    </div>
-                  )}
+                    {features && features.length > 0 && (
+                      <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                        {features.map((f: string) => (
+                          <li key={f} className="flex items-start gap-2.5 text-xs text-cream/80">
+                            <span className="w-1.5 h-1.5 mt-1.5 rounded-full shrink-0" style={{ background: accent, opacity: 0.6 }} />{f}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
-                  <div className="flex gap-3 flex-wrap pt-2">
-                    <Button
-                      variant="outline"
-                      style={{ borderColor: `${accent}60`, color: accent }}
-                      className="hover:opacity-80"
-                      asChild
-                    >
-                      <Link
-                        href={cta.href}
-                        target={"external" in cta && cta.external ? "_blank" : undefined}
-                        rel="noopener noreferrer"
-                      >
-                        {cta.label}
-                        {"external" in cta && cta.external && <ExternalLink className="w-3.5 h-3.5" />}
-                        {!("external" in cta && cta.external) && <ArrowRight className="w-3.5 h-3.5" />}
-                      </Link>
-                    </Button>
+                    {handles && (
+                      <div className="space-y-1">
+                        {handles.map((h) => (
+                          <p key={h} className="text-[11px] font-mono" style={{ color: accent }}>{h}</p>
+                        ))}
+                      </div>
+                    )}
 
-                    {ctaAlt && (
-                      <Button variant="ghost" className="text-mist hover:text-cream" asChild>
-                        <Link
-                          href={ctaAlt.href}
-                          target={"external" in ctaAlt ? "_blank" : undefined}
-                          rel="noopener noreferrer"
-                        >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                          {ctaAlt.label}
-                          {"external" in ctaAlt && <ExternalLink className="w-3 h-3" />}
+                    <div className="flex gap-3 flex-wrap pt-2">
+                      <Button variant="outline" style={{ borderColor: `${accent}60`, color: accent }} className="hover:opacity-80" asChild>
+                        <Link href={cta.href}
+                          target={"external" in cta && cta.external ? "_blank" : undefined}
+                          rel={"external" in cta && cta.external ? "noopener noreferrer" : undefined}>
+                          {cta.label}
+                          {"external" in cta && cta.external ? <ExternalLink className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
                         </Link>
                       </Button>
-                    )}
+                      {ctaAlt && (
+                        <Button variant="ghost" className="text-mist hover:text-cream" asChild>
+                          <Link href={ctaAlt.href}
+                            target={"external" in ctaAlt ? "_blank" : undefined}
+                            rel={"external" in ctaAlt ? "noopener noreferrer" : undefined}>
+                            <ShoppingBag className="w-3.5 h-3.5" />
+                            {ctaAlt.label}
+                            {"external" in ctaAlt && <ExternalLink className="w-3 h-3" />}
+                          </Link>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* ── Pitch CTA ── */}
-      <section className="py-20 px-6 border-t border-studio-border">
-        <div className="mx-auto max-w-xl text-center">
-          <h2 className="font-display text-4xl md:text-5xl text-cream mb-4">
-            Have a project in mind?
-          </h2>
-          <p className="text-mist text-sm mb-8">
-            We're selective about what we take on — but we love a good pitch.
-            Reach out and let's see if we're the right fit.
-          </p>
-          <Button asChild>
-            <Link href="/contact">
-              Get in Touch
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-        </div>
-      </section>
+      <NextStep line="Have a project in mind?" href="/contact" label="Get in touch"
+        secondary={{ href: "/studio", label: "Or book studio time" }} />
+      <p className="mx-auto max-w-6xl px-6 -mt-14 md:-mt-20 pb-20 text-mist/60 text-xs">
+        We&apos;re selective about what we take on — but we love a good pitch.
+      </p>
     </div>
   )
 }

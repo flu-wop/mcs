@@ -8,11 +8,17 @@
 import type { Metadata }  from "next"
 import Link               from "next/link"
 import Image              from "next/image"
-import { Award, Music, Star, MapPin, ArrowRight, Film, Mic2, Theater } from "lucide-react"
-import { Button, Badge } from "@flu-wop/design-system"
+import { Award, Music, Star, Film, Mic2, Theater, MapPin } from "lucide-react"
+import { Badge } from "@flu-wop/design-system"
+import { Reveal, Parallax, CountUp } from "@flu-wop/design-system/motion"
 import { Separator }      from "@/components/ui/separator"
+import { SectionIntro }   from "@/components/sections/SectionIntro"
+import { NextStep }       from "@/components/sections/NextStep"
+import { PhotoArchive }   from "@/components/sections/PhotoArchive"
+import { Timeline }       from "@/components/legacy/Timeline"
 
 export const metadata: Metadata = {
+  alternates:  { canonical: "/legacy" },
   title:       "Legacy — Donald Markowitz",
   description: "The career of Donald Markowitz — Academy Award-winning co-writer of '(I've Had) The Time of My Life' from Dirty Dancing, Grammy nominated songwriter-producer, and founder of Mid City Sound Studios in New Orleans.",
 }
@@ -104,211 +110,117 @@ const GALLERY = [
 ]
 
 /* ─────────────────────────────────────────────────────────────────────────── */
+const CREDITS = [
+  "Academy Award — Best Original Song",
+  "Golden Globe — Best Original Song",
+  "Grammy Nominated — Best Blues Album (Bobby Rush · Decisions)",
+  "Van Morrison", "Taj Mahal", "Dr. John", "Bobby Rush", "Art Neville", "Ivan Neville",
+  "Bill Medley", "James Taylor", "Shawn Colvin", "Kobalt Music",
+]
+
 export default function LegacyPage() {
   return (
     <div className="pt-16 min-h-screen bg-studio-black">
 
-      {/* ── Page hero ── */}
-      <section className="relative py-24 px-6 bg-studio-charcoal border-b border-studio-border overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(ellipse_60%_60%_at_80%_40%,rgba(212,175,119,0.06),transparent)]" />
+      {/* ── Hero ── */}
+      <section className="relative py-20 md:py-28 px-6 bg-studio-charcoal border-b border-studio-border overflow-hidden">
+        <div aria-hidden className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(ellipse_60%_60%_at_80%_40%,rgba(212,175,119,0.07),transparent)]" />
+        <div className="relative mx-auto max-w-6xl grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+          <Reveal className="order-2 md:order-1">
+            <div className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden">
+              <Parallax speed={-0.15} className="absolute inset-0 -top-[10%] h-[120%]">
+                <Image src="/images/young-donny-guitar.JPG" alt="Donald Markowitz in his early years, with guitar" fill priority
+                  className="object-cover object-top" sizes="(max-width: 768px) 100vw, 50vw" />
+              </Parallax>
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-studio-black/50 to-transparent" />
+              <div aria-hidden className="absolute top-4 left-4 w-10 h-10 border-t-2 border-l-2 border-gold/40" />
+              <div aria-hidden className="absolute bottom-4 right-4 w-10 h-10 border-b-2 border-r-2 border-gold/40" />
+            </div>
+          </Reveal>
 
-        <div className="relative mx-auto max-w-5xl grid md:grid-cols-2 gap-14 items-center">
-
-          {/* young-donny-guitar photo */}
-          <div className="relative aspect-[3/4] bg-studio-dark border border-studio-border rounded-sm overflow-hidden order-2 md:order-1">
-            <Image
-              src="/images/young-donny-guitar.JPG"
-              alt="Donald Markowitz — early years"
-              fill
-              className="object-cover object-top"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-            <div className="absolute top-4 left-4 w-10 h-10 border-t-2 border-l-2 border-gold/40" />
-            <div className="absolute bottom-4 right-4 w-10 h-10 border-b-2 border-r-2 border-gold/40" />
-          </div>
-
-          {/* Bio intro */}
-          <div className="space-y-6 order-1 md:order-2">
-            <Badge variant="outline" className="text-[10px] tracking-widest uppercase">
-              The Legacy of Donald Markowitz
-            </Badge>
-            <h1 className="font-display text-5xl md:text-6xl text-cream leading-tight">
-              Four Decades
-              <br />
-              <span className="text-gold-gradient italic">of award-winning craft</span>
+          <Reveal delay={0.1} className="space-y-6 order-1 md:order-2">
+            <p className="flex items-center gap-3 text-[11px] tracking-[0.25em] uppercase text-gold/80">
+              <span className="inline-block h-px w-10 bg-gold/60" />The legacy of Donald Markowitz
+            </p>
+            <h1 className="font-display text-5xl md:text-7xl text-cream leading-[0.95] font-light">
+              Four decades<br /><span className="text-gold-gradient italic">of award-winning craft</span>
             </h1>
             <Separator className="w-12 bg-gold/40" />
-
-            <p className="text-mist text-sm leading-relaxed">
+            <p className="text-mist text-sm md:text-base leading-relaxed">
               Donald Markowitz is a New York-born, New Orleans-based composer, producer, and
               songwriter. He is best known as the co-writer of{" "}
               <em>&ldquo;(I&apos;ve Had) The Time of My Life&rdquo;</em> from{" "}
               <em>Dirty Dancing</em> — which won the Academy Award for Best Original Song
               and the Golden Globe Award for Best Original Song.
             </p>
-            <p className="text-mist text-sm leading-relaxed">
+            <p className="text-mist text-sm md:text-base leading-relaxed">
               A Grammy nominated songwriter-producer, Donald has produced and/or written with:
               Van Morrison, Taj Mahal, Dr. John, Bobby Rush, Cyril Neville, Bill Medley, and
               dozens more. He is the founder of Mid City Sound Studios and the creator of the documentary
               <em> Street Beat: Drumming Below Sea Level</em>.
             </p>
-
-            {/* Verified highlight stats */}
-            <div className="grid grid-cols-3 gap-4 pt-2">
+            <dl className="grid grid-cols-3 gap-3 pt-2">
               {[
                 { val: "Oscar",   label: "Academy Award\nWinner" },
                 { val: "Grammy",  label: "Nominated\nProducer" },
                 { val: "40+",     label: "Years in\nMusic" },
               ].map(({ val, label }) => (
-                <div key={label} className="border border-studio-border rounded-sm p-3 text-center">
-                  <p className="font-display text-xl text-gold">{val}</p>
-                  <p className="text-mist text-[10px] mt-1 leading-snug whitespace-pre-line">{label}</p>
+                <div key={label} className="border border-studio-border rounded-sm p-3 text-center bg-studio-black/30">
+                  <dt className="sr-only">{label.replace("\n", " ")}</dt>
+                  <dd className="font-display text-2xl text-gold"><CountUp value={val} /></dd>
+                  <dd aria-hidden className="text-mist text-[10px] mt-1 leading-snug whitespace-pre-line">{label}</dd>
                 </div>
               ))}
-            </div>
-          </div>
+            </dl>
+          </Reveal>
         </div>
       </section>
 
-      {/* ── Verified credits strip ── */}
-      <section className="border-b border-studio-border/40 bg-studio-black py-6 px-6">
-        <div className="mx-auto max-w-5xl">
-          <p className="text-[10px] tracking-[0.2em] uppercase text-gold/60 text-center mb-4">
-            Selected Credits & Collaborations
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {[
-              "Academy Award — Best Original Song",
-              "Golden Globe — Best Original Song",
-              "Grammy Nominated — Best Blues Album (Bobby Rush · Decisions)",
-              "Van Morrison",
-              "Taj Mahal",
-              "Dr. John",
-              "Bobby Rush",
-              "Art Neville",
-              "Ivan Neville",
-              "Bill Medley",
-              "James Taylor",
-              "Shawn Colvin",
-              "Kobalt Music",
-            ].map(credit => (
-              <span
-                key={credit}
-                className="text-[10px] tracking-wide px-3 py-1 border border-studio-border/60 text-mist/70 rounded-sm"
-              >
-                {credit}
-              </span>
-            ))}
-          </div>
+      {/* ── Credits ticker ── */}
+      <section aria-label="Selected credits and collaborations" className="border-b border-studio-border/40 bg-studio-black py-5 overflow-hidden">
+        <p className="text-[10px] tracking-[0.2em] uppercase text-gold/60 text-center mb-4">Selected credits & collaborations</p>
+        <div className="flex w-max animate-marquee motion-reduce:animate-none hover:[animation-play-state:paused]">
+          {[0, 1].map(k => (
+            <ul key={k} aria-hidden={k === 1} className="flex shrink-0 gap-2 pr-2">
+              {CREDITS.map(c => (
+                <li key={c} className="text-[11px] tracking-wide px-3 py-1.5 border border-studio-border/60 text-mist/80 rounded-sm whitespace-nowrap">{c}</li>
+              ))}
+            </ul>
+          ))}
         </div>
       </section>
 
       {/* ── Timeline ── */}
-      <section className="py-24 px-6">
+      <section className="py-24 md:py-32 px-6">
         <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-14">
-            <Badge variant="outline" className="mb-3 text-[10px] tracking-widest uppercase">
-              The Journey
-            </Badge>
-            <h2 className="font-display text-4xl text-cream">A life in music</h2>
-            <p className="text-mist/50 text-xs mt-2 max-w-xs mx-auto">
-              All credits verified via IMDB, donaldmarkowitz.com, and public sources.
-            </p>
-          </div>
-
-          <div className="relative">
-            {/* Vertical line */}
-            <div className="absolute left-7 top-0 bottom-0 w-px bg-studio-border" />
-
-            <div className="space-y-0">
-              {TIMELINE.map(({ year, city, icon: Icon, title, body, tags }) => (
-                <div key={year + title} className="relative flex gap-8 pb-14 last:pb-0">
-
-                  {/* Icon node */}
-                  <div className="relative z-10 flex-shrink-0">
-                    <div className="w-14 h-14 rounded-full border border-gold/40 bg-studio-dark flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-gold" />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 pt-3">
-                    <div className="flex items-center gap-3 mb-1 flex-wrap">
-                      <span className="font-display text-2xl text-gold">{year}</span>
-                      <span className="text-mist text-xs flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
-                        {city}
-                      </span>
-                    </div>
-                    <h3 className="font-display text-xl text-cream mb-3">{title}</h3>
-                    <p className="text-mist text-sm leading-relaxed mb-4">{body}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {tags.map(tag => (
-                        <Badge key={tag} variant="neutral" className="text-[10px]">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <SectionIntro center eyebrow="The journey" title="A life in music"
+            lede="All credits verified via IMDB, donaldmarkowitz.com, and public sources." />
+          <Timeline entries={TIMELINE.map(({ icon: Icon, ...t }) => ({ ...t, icon: <Icon className="w-5 h-5 text-gold" /> }))} />
         </div>
       </section>
 
       {/* ── Photo archive ── */}
-      <section className="py-24 px-6 bg-studio-charcoal border-t border-studio-border">
+      <section className="py-24 md:py-32 px-6 bg-studio-charcoal border-t border-studio-border">
         <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-3 text-[10px] tracking-widest uppercase">
-              Photo Archive
-            </Badge>
-            <h2 className="font-display text-4xl text-cream">Through the decades</h2>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {GALLERY.map(({ file, alt, caption }) => (
-              <div
-                key={file}
-                className="relative aspect-square bg-studio-dark border border-studio-border rounded-sm overflow-hidden group"
-              >
-                <Image
-                  src={`/images/${file}`}
-                  alt={alt}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 640px) 50vw, 33vw"
-                />
-                {caption && (
-                  <div className="absolute inset-0 bg-gradient-to-t from-studio-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                    <p className="text-cream text-[11px] tracking-wide">{caption}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <SectionIntro center eyebrow="Photo archive" title="Through the decades" lede="Tap any photo to see it full size." />
+          <PhotoArchive photos={GALLERY.map(g => ({ src: `/images/${g.file}`, alt: g.alt, caption: g.caption }))} />
         </div>
       </section>
 
       {/* ── Pull quote ── */}
-      <section className="py-24 px-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_50%,rgba(212,175,119,0.04),transparent)]" />
-        <div className="relative mx-auto max-w-2xl text-center">
-          <p className="font-display text-3xl md:text-4xl text-cream/90 leading-relaxed italic">
-            &ldquo;Every session is a conversation between where music has been
-            and where it needs to go.&rdquo;
-          </p>
-          <p className="text-gold mt-6 text-sm">— Donald Markowitz</p>
-          <Separator className="w-8 bg-gold/30 mx-auto mt-8 mb-8" />
-          <Button asChild>
-            <Link href="/studio">
-              Book a Session
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-        </div>
+      <section className="py-24 md:py-32 px-6 relative overflow-hidden">
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_50%,rgba(212,175,119,0.05),transparent)]" />
+        <Reveal as="article" className="relative mx-auto max-w-3xl text-center">
+          <span aria-hidden className="block font-display text-8xl leading-none text-gold/25 -mb-6">&ldquo;</span>
+          <blockquote className="font-display text-3xl md:text-5xl text-cream/90 leading-snug italic font-light">
+            Every session is a conversation between where music has been and where it needs to go.
+          </blockquote>
+          <p className="text-gold mt-8 text-sm tracking-wide">— Donald Markowitz</p>
+        </Reveal>
       </section>
+
+      <NextStep line={<>Work where the <span className="text-gold-gradient italic">legacy</span> lives.</>}
+        href="/studio#booking-form" label="Book a session" secondary={{ href: "/projects", label: "See current projects" }} />
     </div>
   )
 }
