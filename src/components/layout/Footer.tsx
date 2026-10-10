@@ -17,7 +17,7 @@ const SOCIALS = [
 ];
 
 const ECOSYSTEM = [
-  { label: "Fire on the Bayou", sub: "Film & Commercial Production",  href: "https://fireonthebayou.com" },
+  { label: "Fire on the Bayou", sub: "Film & Commercial Production",  href: "https://fireonthebayou.vercel.app" },
   { label: "Donald Markowitz", sub: "Composer · Producer · Legend", href: "https://donaldmarkowitz.com" },
   { label: "Street Beat",      sub: "Documentary Film · 2025",       href: "https://streetbeat.video" },
   { label: "Lil Squiggle",     sub: "Reggae-Dub · Merch Campaign",   href: "https://lilsquiggle.vercel.app" },
