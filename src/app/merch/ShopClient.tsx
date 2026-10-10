@@ -8,6 +8,7 @@ import { useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import FilterBar from '@/components/merch/FilterBar'
 import ProductCard from '@/components/merch/ProductCard'
+import DesignCredit from '@/components/merch/DesignCredit'
 import type { MerchProduct, Brand, ProductType } from '@/lib/printify'
 import type { SortOption } from '@/components/merch/FilterBar'
 
@@ -259,6 +260,8 @@ export default function ShopClient({
           <EmptyState onClear={() => { window.location.href = '/merch' }} />
         )}
       </section>
+
+      <DesignCredit className="px-6 py-10" />
 
       {/* ── Ecosystem footer strip ─────────────────────────────────────────── */}
       <EcosystemStrip />

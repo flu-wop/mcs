@@ -303,20 +303,7 @@ export default function ProductCard({
           {product.type}
         </p>
 
-        {/* Hidden Gem design credit — MCS-brand products only, same treatment as the product detail page */}
-        {product.brand === 'mcs' && (
-          <a
-            href="https://dahiddengem.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="group/credit inline-flex items-center gap-1 w-fit whitespace-nowrap text-[9px] tracking-[0.08em] uppercase
-              text-[#6f6048] hover:text-accent-text font-['DM_Sans'] transition-colors mb-3"
-          >
-            By <span className="text-ink-muted group-hover/credit:text-accent-text transition-colors">Hidden Gem</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        )}
+        <div className="mb-2" />
 
         {/* Material quick-select — only rendered for products with more than
             one blank (see lib/material-groups.ts). Sits above Size since

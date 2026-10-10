@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from 'react'
 import ProductCard from '@/components/merch/ProductCard'
+import DesignCredit from '@/components/merch/DesignCredit'
 import { TYPE_CHIPS, SORT_OPTIONS, type SortOption } from '@/components/merch/FilterBar'
 import type { MerchProduct, ProductType } from '@/lib/printify'
 
@@ -89,6 +90,7 @@ export default function BrandGrid({ products, accent }: { products: MerchProduct
           <p className="text-[11px] text-[#5a4c3a] font-['DM_Sans']">Try a different type filter.</p>
         </div>
       )}
+      <DesignCredit className="pt-12" />
     </div>
   )
 }
