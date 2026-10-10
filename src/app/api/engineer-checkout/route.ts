@@ -4,12 +4,9 @@ import Stripe from "stripe"
 import { initDB } from "@/lib/db"
 import { rateLimit, clientIp } from "@/lib/rate-limit"
 import { getBookedRanges, hasConflict } from "@/lib/availability"
-import { ENGINEER_PAGE_RATE_CENTS } from "@/lib/engineers"
-
-const DISCOUNT_CODES: Record<string, number> = {
-  REGULAR30: 0.30,
-  STUDIO10:  0.10,
-}
+import { ENGINEERS, ENGINEER_PAGE_RATE_CENTS } from "@/lib/engineers"
+import { quoteEngineer } from "@/lib/studio-rates"
+import { bookingDiscount } from "@/lib/booking-discounts"
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!)
@@ -22,17 +19,29 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json()
     const {
-      engineerName, engineerSlug,
-      room, rateId, rateLabel, rateHours, ratePrice,
+      engineerSlug,
+      room, rateId, rateHours: requestedHours,
       date, startHour,
       clientName, clientEmail, clientNotes,
       discountCode, funnelSessionId,
     } = body
 
     /* ── Validate required fields ── */
-    if (!engineerName || !room || !rateId || !date || !clientName || !clientEmail) {
+    if (!engineerSlug || !room || !rateId || !date || !clientName || !clientEmail) {
       return NextResponse.json({ error: "Missing required booking fields" }, { status: 400 })
     }
+    if (!ENGINEERS.some(e => e.slug === engineerSlug) || !["A", "B", "C"].includes(room) || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
+      return NextResponse.json({ error: "Invalid engineer, room or date" }, { status: 400 })
+    }
+
+    const engineerName = ENGINEERS.find(e => e.slug === engineerSlug)!.name
+
+    // Price comes from the server's rate table, never from the request body.
+    const quote = quoteEngineer(String(rateId), requestedHours)
+    if (!quote) return NextResponse.json({ error: "Unknown package" }, { status: 400 })
+    const rateLabel = quote.label
+    const rateHours = quote.hours
+    const ratePrice = quote.cents
 
     // Reject if this slot overlaps an existing pending/confirmed booking for the room —
     // the UI greys these out already, this is the defense-in-depth check that can't be bypassed.
@@ -46,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     /* ── Apply discount server-side ── */
-    const discountRate = DISCOUNT_CODES[String(discountCode).toUpperCase()] ?? 0
+    const discountRate = bookingDiscount(discountCode)
     const finalPrice   = Math.round(Number(ratePrice) * (1 - discountRate))
 
     if (finalPrice < 50) {

@@ -7,6 +7,8 @@ import Stripe           from "stripe"
 import { initDB }       from "@/lib/db"
 import { rateLimit, clientIp } from "@/lib/rate-limit"
 import { getBookedRanges, hasConflict } from "@/lib/availability"
+import { quoteStudio } from "@/lib/studio-rates"
+import { bookingDiscount } from "@/lib/booking-discounts"
 
 function getStripe() { return new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-04-22.dahlia" }) }
 const BASE_URL = process.env.NEXT_PUBLIC_URL ?? "https://midcitysound.com"
@@ -19,15 +21,25 @@ export async function POST(req: Request) {
     await initDB()
     const body = await req.json()
     const {
-      room, rateId, rateLabel, rateHours, ratePrice,
+      room, rateId, rateHours: requestedHours,
       date, startHour, clientName, clientEmail, clientNotes,
       discountCode, funnelSessionId,
     } = body
 
     // Basic validation
-    if (!room || !rateLabel || !ratePrice || !date || startHour == null || !clientName || !clientEmail) {
+    if (!room || !rateId || !date || startHour == null || !clientName || !clientEmail) {
       return NextResponse.json({ error: "Missing required booking fields" }, { status: 400 })
     }
+    if (!["A", "B", "C"].includes(room) || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
+      return NextResponse.json({ error: "Invalid room or date" }, { status: 400 })
+    }
+
+    // Price comes from the server's rate table, never from the request body.
+    const quote = quoteStudio(String(rateId), requestedHours)
+    if (!quote) return NextResponse.json({ error: "Unknown package" }, { status: 400 })
+    const rateLabel = quote.label
+    const rateHours = quote.hours
+    const ratePrice = quote.cents
 
     // Reject if this slot overlaps an existing pending/confirmed booking for the room —
     // the UI greys these out already, this is the defense-in-depth check that can't be bypassed.
@@ -40,11 +52,7 @@ export async function POST(req: Request) {
     }
 
     // Apply discount server-side
-    const DISCOUNT_CODES: Record<string, number> = {
-      REGULAR30: 0.30,
-      STUDIO10:  0.10,
-    }
-    const discountPct = discountCode ? (DISCOUNT_CODES[discountCode.toUpperCase()] ?? 0) : 0
+    const discountPct = bookingDiscount(discountCode)
     const finalPrice  = Math.round(ratePrice * (1 - discountPct))
 
     const session = await getStripe().checkout.sessions.create({
