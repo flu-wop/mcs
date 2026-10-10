@@ -57,7 +57,8 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
     }
   }
 
-  async function markPaid(bookingIds: string[]) {
+  async function markPaid(bookingIds: string[], who: string, total: number) {
+    if (!confirm(`Mark ${bookingIds.length} session${bookingIds.length === 1 ? "" : "s"} paid to ${who} (${fmt(total)})?`)) return
     setBusyId(bookingIds[0])
     try {
       const res = await fetch("/api/admin/mark-paid", {
@@ -80,7 +81,7 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
       {/* ── Needs Assignment ── */}
       {needsAssignment.length > 0 && (
         <div>
-          <h2 className="font-display text-xl text-cream mb-1">Needs Assignment</h2>
+          <h2 className="font-display text-xl text-cream mb-1">Needs an engineer</h2>
           <p className="text-mist/50 text-xs mb-4">
             Generic /studio bookings — assign the engineer who worked the session to include it in payouts ($30/hr).
           </p>
@@ -93,7 +94,8 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <select
-                    className="bg-studio-black border border-studio-border rounded-sm text-mist text-xs px-2 py-2"
+                    aria-label={`Engineer for ${b.client_name}'s session`}
+                    className="h-10 bg-studio-black border border-studio-border rounded-sm text-cream px-2 focus:outline-none focus:border-gold/50"
                     value={selected[b.id] ?? ""}
                     onChange={e => setSelected(s => ({ ...s, [b.id]: e.target.value }))}
                   >
@@ -120,9 +122,9 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
 
       {/* ── Owed by Engineer ── */}
       <div>
-        <h2 className="font-display text-xl text-cream mb-4">Payouts by Engineer</h2>
+        <h2 className="font-display text-xl text-cream mb-4">By engineer</h2>
         {byEngineer.size === 0 ? (
-          <p className="text-mist/40 text-sm">No engineer-attributed bookings yet.</p>
+          <p className="text-mist/60 text-sm border border-dashed border-studio-border rounded-sm p-6 text-center">No sessions credited to an engineer yet.</p>
         ) : (
           <div className="space-y-6">
             {[...byEngineer.entries()].map(([slug, list]) => {
@@ -143,10 +145,10 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
                       {unpaid.length > 0 && (
                         <Button
                           disabled={busyId === unpaid[0].id}
-                          onClick={() => markPaid(unpaid.map(b => b.id))}
+                          onClick={() => markPaid(unpaid.map(b => b.id), engineerName(slug), unpaidTotal)}
                           className="text-xs"
                         >
-                          {busyId === unpaid[0].id ? "Marking…" : `Mark ${unpaid.length} Paid`}
+                          {busyId === unpaid[0].id ? "Marking…" : `Mark ${unpaid.length} paid`}
                         </Button>
                       )}
                     </div>
@@ -155,7 +157,7 @@ export function PayoutsClient({ bookings }: { bookings: PayoutBooking[] }) {
                     <div className="space-y-1 mt-3">
                       {unpaid.map(b => (
                         <div key={b.id} className="flex justify-between text-xs text-mist border-t border-studio-border/30 pt-2">
-                          <span>{formatDate(b.date)} · Studio {b.room} · {b.rate_hours}hr</span>
+                          <span>{formatDate(b.date)} · Studio {b.room} · {b.rate_hours} hr · {b.client_name}</span>
                           <span className="text-gold">{fmt(b.payout_amount_cents ?? 0)}</span>
                         </div>
                       ))}

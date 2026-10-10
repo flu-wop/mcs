@@ -41,9 +41,9 @@ const PAGE_SIZE = 20
 
 type StatusFilter = "all" | "failed" | "submitted"
 
-export function OrdersFilterList({ orders }: { orders: MerchOrderRow[] }) {
+export function OrdersFilterList({ orders, initialStatus = "all" }: { orders: MerchOrderRow[]; initialStatus?: "all" | "failed" | "submitted" }) {
   const [query, setQuery]   = useState("")
-  const [status, setStatus] = useState<StatusFilter>("all")
+  const [status, setStatus] = useState<StatusFilter>(initialStatus)
   const [page, setPage]     = useState(1)
 
   const filtered = useMemo(() => {
@@ -74,13 +74,14 @@ export function OrdersFilterList({ orders }: { orders: MerchOrderRow[] }) {
       {/* Filter bar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="w-3.5 h-3.5 text-mist/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-mist/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             value={query}
             onChange={e => updateQuery(e.target.value)}
             placeholder="Search name, email, or item…"
-            className="w-full bg-studio-charcoal border border-studio-border rounded-sm pl-9 pr-3 py-2
-              text-xs text-cream placeholder:text-mist/30 focus:outline-none focus:border-gold/40"
+            aria-label="Search orders"
+            className="w-full h-10 bg-studio-charcoal border border-studio-border rounded-sm pl-9 pr-3
+              text-cream placeholder:text-mist/30 focus:outline-none focus:border-gold/50"
           />
         </div>
         <div className="flex gap-1 shrink-0">
@@ -92,10 +93,11 @@ export function OrdersFilterList({ orders }: { orders: MerchOrderRow[] }) {
             <button
               key={key}
               onClick={() => updateStatus(key)}
-              className={`px-3 py-2 rounded-sm text-[11px] uppercase tracking-wide whitespace-nowrap transition-colors border ${
+              aria-pressed={status === key}
+              className={`h-9 px-3 rounded-sm text-xs whitespace-nowrap transition-colors border ${
                 status === key
-                  ? "border-gold/40 bg-gold/10 text-gold"
-                  : "border-studio-border text-mist/50 hover:text-cream"
+                  ? "border-gold/50 bg-gold/10 text-gold"
+                  : "border-studio-border text-mist hover:text-cream"
               }`}
             >
               {label}
@@ -105,16 +107,17 @@ export function OrdersFilterList({ orders }: { orders: MerchOrderRow[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-24">
-          <Package className="w-10 h-10 text-mist/20 mx-auto mb-4" />
-          <p className="text-mist/40 text-sm">No orders match.</p>
+        <div className="text-center py-20 border border-dashed border-studio-border rounded-sm">
+          <Package className="w-9 h-9 text-mist/20 mx-auto mb-3" />
+          <p className="text-cream text-sm mb-1">{query || status !== "all" ? "No orders match" : "No merch orders yet"}</p>
+          <p className="text-mist/50 text-xs">{query || status !== "all" ? "Try clearing the search or filters." : "Paid orders show up here and go straight to Printify."}</p>
         </div>
       ) : (
         <>
           <div className="space-y-3">
             {pageItems.map(o => {
-              const address: ShippingAddress = JSON.parse(o.shipping_address)
-              const items: OrderItem[] = JSON.parse(o.items)
+              const address: ShippingAddress = (() => { try { return JSON.parse(o.shipping_address) } catch { return { line1: "", city: "", region: "", zip: "", country: "" } } })()
+              const items: OrderItem[] = (() => { try { return JSON.parse(o.items) } catch { return [] } })()
               const printifyFailed = o.status === "printify_failed"
               const emailFailed    = !!o.email_error
               const failedOrder    = printifyFailed || emailFailed

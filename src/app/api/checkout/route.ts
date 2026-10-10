@@ -78,6 +78,7 @@ export async function POST(req: Request) {
           price:       i.price,
           name:        i.name,
           variantName: i.variantName,
+          brand:       i.brand,   // carried into merch_orders.items for admin Insights
         }))),
       ],
     })

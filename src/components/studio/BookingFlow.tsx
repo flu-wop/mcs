@@ -13,6 +13,7 @@ import {
 import { Button, Badge, Input, Label } from "@flu-wop/design-system"
 import { cn } from "@/lib/utils"
 import { track, getSessionId } from "@/lib/analytics"
+import { beacon } from "@/lib/beacon"
 import { ROOMS, type RoomId } from "@/lib/rooms"
 import {
   RECORDING_RATES, MIXING_RATES, HOURLY_MIN, quoteStudio, fmtUSD, localDateKey, type StudioRate,
@@ -58,7 +59,7 @@ export const BookingFlow = forwardRef<BookingFlowHandle>(function BookingFlow(_,
   const { loading: checking, isTaken } = useAvailability(room, date)
 
   useImperativeHandle(ref, () => ({
-    focusRoom: (id) => { setRoom(id); go(1); scrollTo(sectionRef.current) },
+    focusRoom: (id) => { setRoom(id); beacon("room_select", { item: id }); go(1); scrollTo(sectionRef.current) },
     scrollIntoView: () => scrollTo(sectionRef.current),
   }))
 
@@ -213,7 +214,7 @@ export const BookingFlow = forwardRef<BookingFlowHandle>(function BookingFlow(_,
                     const Icon = ROOM_ICON[r.id]
                     const on = room === r.id
                     return (
-                      <button key={r.id} type="button" onClick={() => setRoom(r.id)} aria-pressed={on}
+                      <button key={r.id} type="button" onClick={() => { setRoom(r.id); beacon("room_select", { item: r.id }) }} aria-pressed={on}
                         className={cn("flex items-start gap-3 p-4 border rounded-sm text-left transition-all h-full",
                           on ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40")}>
                         <span className={cn("w-9 h-9 rounded-sm border grid place-items-center shrink-0", on ? "border-gold bg-gold/10" : "border-studio-border")}>
@@ -238,7 +239,7 @@ export const BookingFlow = forwardRef<BookingFlowHandle>(function BookingFlow(_,
                   <div className="grid sm:grid-cols-2 gap-3">
                     {rates.map(rate => (
                       <PackageCard key={rate.id} rate={rate} selected={rateId === rate.id}
-                        onSelect={() => { setRateId(rate.id); if (rate.id !== "hourly") setHours(HOURLY_MIN) }} />
+                        onSelect={() => { setRateId(rate.id); beacon("package_select", { item: rate.id }); if (rate.id !== "hourly") setHours(HOURLY_MIN) }} />
                     ))}
                   </div>
                 )}

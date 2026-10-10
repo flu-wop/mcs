@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowRight, CreditCard, AlertCircle, Loader2, Check, Externa
 import { Button, Input, Label } from "@flu-wop/design-system"
 import { cn } from "@/lib/utils"
 import { track, getSessionId } from "@/lib/analytics"
+import { beacon } from "@/lib/beacon"
 import { ROOMS, type RoomId } from "@/lib/rooms"
 import { ENGINEER_RATES, HOURLY_MIN, quoteEngineer, fmtUSD, localDateKey } from "@/lib/studio-rates"
 import { PageHeader } from "@/components/sections/PageHeader"
@@ -152,7 +153,7 @@ export function EngineerBooking({ config }: { config: EngineerConfig }) {
                   <legend className="font-display text-2xl text-cream mb-4">Room</legend>
                   <div className="grid grid-cols-3 gap-2">
                     {ROOMS.map(r => (
-                      <button key={r.id} type="button" onClick={() => setRoom(r.id)} aria-pressed={room === r.id}
+                      <button key={r.id} type="button" onClick={() => { setRoom(r.id); beacon("room_select", { item: r.id }) }} aria-pressed={room === r.id}
                         className={cn("p-3 border rounded-sm text-left transition-all min-w-0",
                           room === r.id ? "border-gold bg-gold/5" : "border-studio-border bg-studio-card hover:border-gold/40")}>
                         <span className="block text-sm text-cream">{r.name}</span>

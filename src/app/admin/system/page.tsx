@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { RefreshCw } from "lucide-react"
+import { AdminPage, AdminPageHeader, Stat, Notice, adminBtn } from "@/components/admin/ui"
 
 type CheckResult = { status: "ok" | "warn" | "error"; detail: string }
 type HealthData = {
@@ -24,7 +25,7 @@ type HealthData = {
   checkedAt: string
 }
 
-const STATUS_DOT = { ok: "bg-emerald-400", warn: "bg-gold", error: "bg-red-400" }
+const STATUS_DOT = { ok: "bg-emerald-400", warn: "bg-gold", error: "bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.7)]" }
 const STATUS_TEXT = { ok: "text-emerald-400", warn: "text-gold", error: "text-red-400" }
 
 const WEBHOOK_LABELS: Record<keyof HealthData["webhookHealth"], string> = {
@@ -37,25 +38,25 @@ const WEBHOOK_LABELS: Record<keyof HealthData["webhookHealth"], string> = {
 }
 
 function Pill({ status }: { status: "ok" | "warn" | "error" }) {
-  return <span className={`inline-block w-2 h-2 rounded-full mr-2 shrink-0 ${STATUS_DOT[status]}`} />
+  return <span aria-label={status} className={`inline-block w-2 h-2 rounded-full mr-3 mt-1.5 shrink-0 ${STATUS_DOT[status]}`} />
 }
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border border-studio-border rounded-sm p-5 bg-studio-charcoal">
-      <h3 className="font-display text-lg text-gold mb-3">{title}</h3>
-      <div className="space-y-2">{children}</div>
+    <div className="border border-studio-border rounded-sm p-4 sm:p-6 bg-studio-charcoal min-w-0">
+      <h3 className="font-display text-xl text-cream mb-4">{title}</h3>
+      <div className="space-y-3">{children}</div>
     </div>
   )
 }
 
 function Row({ label, r }: { label: string; r: CheckResult }) {
   return (
-    <div className="flex items-start text-sm">
+    <div className="flex items-start text-sm min-w-0">
       <Pill status={r.status} />
-      <div>
-        <span className="text-cream">{label}</span>
-        <span className={`ml-2 ${STATUS_TEXT[r.status]}`}>— {r.detail}</span>
+      <div className="min-w-0">
+        <p className="text-cream break-words">{label}</p>
+        <p className={`text-xs break-words ${r.status === "ok" ? "text-mist/60" : STATUS_TEXT[r.status]}`}>{r.detail}</p>
       </div>
     </div>
   )
@@ -92,75 +93,43 @@ export default function SystemDashboard() {
     : 0
 
   return (
-    <div className="pt-10 px-6 pb-20">
-      <div className="mx-auto max-w-6xl">
-
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <div>
-            <h1 className="font-display text-4xl text-cream">System Health</h1>
-            {data && (
-              <p className="text-mist text-[11px] mt-1">
-                Last checked {new Date(data.checkedAt).toLocaleTimeString()} · refreshes every 60s
-              </p>
-            )}
-          </div>
-          <button
-            onClick={fetchHealth}
-            disabled={loading}
-            className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-mist hover:text-gold transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            Refresh
+    <AdminPage>
+      <AdminPageHeader eyebrow="Admin" title="System"
+        description={data ? `Checked ${new Date(data.checkedAt).toLocaleTimeString()} · refreshes every minute` : "Env vars, webhooks and integrations"}
+        actions={
+          <button onClick={fetchHealth} disabled={loading} className={adminBtn.secondary}>
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />Check now
           </button>
-        </div>
+        } />
 
-        {/* Stats row — mirrors /admin/orders' summary-card pattern */}
-        {data && (
-          <div className="grid grid-cols-3 gap-4 mb-10">
-            <div className={`border rounded-sm p-5 bg-studio-charcoal ${errorCount > 0 ? "border-red-500/50" : "border-studio-border"}`}>
-              <p className="text-mist text-[10px] uppercase tracking-widest mb-1">Failing checks</p>
-              <p className={`font-display text-3xl ${errorCount > 0 ? "text-red-400" : "text-gold"}`}>{errorCount}</p>
-            </div>
-            <div className="border border-studio-border rounded-sm p-5 bg-studio-charcoal">
-              <p className="text-mist text-[10px] uppercase tracking-widest mb-1">Env vars set</p>
-              <p className="font-display text-3xl text-gold">
-                {Object.values(data.envVars).filter(r => r.status === "ok").length}/{Object.keys(data.envVars).length}
-              </p>
-            </div>
-            <div className="border border-studio-border rounded-sm p-5 bg-studio-charcoal">
-              <p className="text-mist text-[10px] uppercase tracking-widest mb-1">Usage (30d)</p>
-              <p className="font-display text-sm text-cream mt-2 leading-tight">{data.apiUsage.detail}</p>
-            </div>
+      {error && <Notice tone="alert">{error}</Notice>}
+
+      {data ? (
+        <>
+          <div className="grid grid-cols-3 gap-3 mb-8">
+            <Stat label="Failing checks" value={errorCount} tone={errorCount ? "alert" : undefined} sub={errorCount ? "See red rows below" : "All good"} />
+            <Stat label="Env vars set" value={`${Object.values(data.envVars).filter(r => r.status === "ok").length}/${Object.keys(data.envVars).length}`} />
+            <Stat label="Usage (30d)" value={<span className="block whitespace-normal text-sm sm:text-base font-sans leading-snug">{data.apiUsage.detail}</span>} />
           </div>
-        )}
-
-        {error && <p className="text-red-400 text-sm mb-6">{error}</p>}
-
-        {!data && !error && <p className="text-mist/50 text-sm">Loading…</p>}
-
-        {data && (
-          <div className="grid md:grid-cols-2 gap-5">
-            <Card title="Env Vars">
-              {Object.entries(data.envVars).map(([key, r]) => (
-                <Row key={key} label={key} r={r} />
-              ))}
-            </Card>
-
-            <Card title="Webhook Health">
+          <div className="grid md:grid-cols-2 gap-4 items-start">
+            <Card title="Webhooks & services">
               {(Object.keys(data.webhookHealth) as (keyof HealthData["webhookHealth"])[]).map(key => (
                 <Row key={key} label={WEBHOOK_LABELS[key]} r={data.webhookHealth[key]} />
               ))}
             </Card>
-
-            <Card title="Analytics Pixels">
-              {Object.entries(data.analyticsPixels).map(([key, r]) => (
-                <Row key={key} label={key} r={r} />
-              ))}
+            <Card title="Env vars">
+              {Object.entries(data.envVars).map(([key, r]) => <Row key={key} label={key} r={r} />)}
+            </Card>
+            <Card title="Analytics pixels">
+              {Object.entries(data.analyticsPixels).map(([key, r]) => <Row key={key} label={key} r={r} />)}
             </Card>
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      ) : !error && (
+        <div className="grid grid-cols-3 gap-3" aria-busy>
+          {[0, 1, 2].map(i => <div key={i} className="h-[104px] rounded-sm bg-studio-charcoal border border-studio-border animate-pulse" />)}
+        </div>
+      )}
+    </AdminPage>
   )
 }

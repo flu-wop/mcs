@@ -1,81 +1,47 @@
 // src/app/admin/bookings/page.tsx
-// Admin dashboard — all studio bookings from Turso.
-// Access at /admin/bookings — protected by src/middleware.ts (admin session cookie)
+// Studio bookings from Turso. Protected by src/middleware.ts.
+// ?status=unpaid|confirmed|paying|cancelled and ?when=past|all pre-set the filters
+// (the admin home links here with ?status=unpaid).
 
-import { getDB, initDB }   from "@/lib/db"
-import { Separator }    from "@/components/ui/separator"
 import { Download } from "lucide-react"
-import { BookingsFilterList } from "@/components/admin/BookingsFilterList"
+import { getDB, initDB } from "@/lib/db"
+import { todayLocal } from "@/lib/admin-time"
+import { BookingsFilterList, type AdminBooking, type StatusFilter, type WhenFilter } from "@/components/admin/BookingsFilterList"
+import { AdminPage, AdminPageHeader, Stat, adminBtn, money, num } from "@/components/admin/ui"
 
-interface Booking {
-  id:           string
-  room:         string
-  rate_label:   string
-  rate_hours:   number
-  rate_price:   number
-  date:         string
-  start_hour:   number
-  client_name:  string
-  client_email: string
-  client_notes: string
-  status:       string
-  stripe_session_id: string | null
-  created_at:   string
-}
+export const dynamic = "force-dynamic"
 
-// Force dynamic rendering — this page requires Turso at runtime
-export const dynamic = 'force-dynamic'
+const STATUSES: StatusFilter[] = ["all", "confirmed", "paying", "unpaid", "cancelled"]
+const WHENS: WhenFilter[] = ["upcoming", "past", "all"]
 
-export default async function AdminBookingsPage() {
+export default async function AdminBookingsPage({ searchParams }: { searchParams: Promise<{ status?: string; when?: string }> }) {
+  const sp = await searchParams
   await initDB()
-
   const result = await getDB().execute(
-    "SELECT * FROM bookings ORDER BY date DESC, start_hour DESC"
+    `SELECT id, room, rate_label, rate_hours, rate_price, date, start_hour, client_name, client_email,
+            client_notes, status, stripe_session_id, created_at, engineer_slug
+     FROM bookings ORDER BY date DESC, start_hour DESC`
   )
-  const bookings = result.rows as unknown as Booking[]
-
-  const confirmed = bookings.filter(b => b.status === "confirmed").length
-  const pending   = bookings.filter(b => b.status === "pending").length
-  const revenue   = bookings
-    .filter(b => b.status === "confirmed")
-    .reduce((sum, b) => sum + b.rate_price, 0)
+  const bookings = result.rows.map(r => ({ ...r })) as unknown as AdminBooking[]
+  const today = todayLocal()
+  const confirmed = bookings.filter(b => b.status === "confirmed")
+  const upcoming = confirmed.filter(b => b.date >= today)
+  const revenue = confirmed.reduce((s, b) => s + Number(b.rate_price), 0) / 100
+  const hoursAhead = upcoming.reduce((s, b) => s + Number(b.rate_hours), 0)
 
   return (
-    <div className="pt-10 px-6 pb-20">
-      <div className="mx-auto max-w-6xl">
-
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="font-display text-4xl text-cream">Studio Bookings</h1>
-          </div>
-          <a
-            href="/api/calendar.ics"
-            className="flex items-center gap-2 px-4 py-2 border border-studio-border text-mist text-xs hover:border-gold/40 hover:text-gold transition-all rounded-sm"
-          >
-            <Download className="w-3.5 h-3.5" />
-            Subscribe to iCal
-          </a>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
-          {[
-            { label: "Total Bookings",  val: bookings.length },
-            { label: "Confirmed",       val: confirmed },
-            { label: "Revenue (Confirmed)", val: `$${(revenue / 100).toLocaleString()}` },
-          ].map(({ label, val }) => (
-            <div key={label} className="border border-studio-border rounded-sm p-5 bg-studio-charcoal">
-              <p className="text-mist text-[10px] uppercase tracking-widest mb-1">{label}</p>
-              <p className="font-display text-3xl text-gold">{val}</p>
-            </div>
-          ))}
-        </div>
-
-        <Separator className="mb-8 bg-studio-border/40" />
-
-        <BookingsFilterList bookings={bookings} />
+    <AdminPage>
+      <AdminPageHeader eyebrow="Studio" title="Bookings" description="Every studio and engineer-page session"
+        actions={<a href="/api/calendar.ics" className={adminBtn.secondary}><Download className="w-3.5 h-3.5" />Calendar feed</a>} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <Stat label="Upcoming" value={num(upcoming.length)} sub={`${num(hoursAhead)} hrs booked`} />
+        <Stat label="Confirmed" value={num(confirmed.length)} sub="all time" />
+        <Stat label="Revenue" value={money(revenue)} sub="all time" />
+        <Stat label="Bookings" value={num(bookings.length)} sub="incl. unpaid & cancelled" />
       </div>
-    </div>
+      <BookingsFilterList bookings={bookings}
+        initialStatus={STATUSES.includes(sp.status as StatusFilter) ? sp.status as StatusFilter : "all"}
+        initialWhen={WHENS.includes(sp.when as WhenFilter) ? sp.when as WhenFilter : "upcoming"} />
+    </AdminPage>
   )
 }

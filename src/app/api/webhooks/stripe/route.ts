@@ -223,7 +223,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
   }
 
   type CartItemPayload = {
-    variantId: number; productId: string; quantity: number; price: number; name: string; variantName?: string
+    variantId: number; productId: string; quantity: number; price: number; name: string; variantName?: string; brand?: string
   }
 
   const cartId = session.metadata?.cartId
@@ -314,7 +314,7 @@ async function fulfillMerchOrder(session: Stripe.Checkout.Session) {
         line1: recipient.address1, line2: recipient.address2 ?? "",
         city: recipient.city, region: recipient.region, zip: recipient.zip, country: recipient.country,
       }),
-      JSON.stringify(cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price }))),
+      JSON.stringify(cartItems.map(i => ({ name: i.name, variantName: i.variantName ?? "", quantity: i.quantity, price: i.price, brand: i.brand ?? null }))),
       totalPaid,
       session.metadata?.discountCode ?? "",
       printifyOrderId ? "submitted" : "printify_failed",

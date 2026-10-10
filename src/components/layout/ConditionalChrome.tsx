@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation"
 import { SmoothScroll, GrainOverlay, ScrollToTop } from "@flu-wop/design-system/motion"
 import { Navbar } from "./Navbar"
 import { Footer } from "./Footer"
+import { SiteAnalytics } from "@/components/analytics/SiteAnalytics"
 
 export function ConditionalChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -22,6 +23,7 @@ export function ConditionalChrome({ children }: { children: React.ReactNode }) {
       <Footer />
       <ScrollToTop />
       <GrainOverlay opacity={0.04} glow={0.06} />
+      <SiteAnalytics />
     </SmoothScroll>
   )
 }
