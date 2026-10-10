@@ -27,7 +27,7 @@ export function HomeHero() {
   return (
     <section ref={ref} className="relative flex h-[100svh] min-h-[620px] items-center justify-center overflow-hidden">
       <motion.div style={less ? undefined : { y: photoY, scale: photoScale }} className="absolute inset-0 -z-10 h-[115%]">
-        <Image src="/images/studio-interior.jpg" alt="" fill priority sizes="100vw" className="object-cover object-center" />
+        <Image src="/images/b-room.jpg" alt="" fill priority sizes="100vw" className="object-cover object-[60%_55%]" />
       </motion.div>
       <div aria-hidden className="absolute inset-0 -z-[9] bg-studio-black/70" />
       <div aria-hidden className="absolute inset-0 -z-[9] bg-gradient-to-t from-studio-black via-transparent to-studio-black/40" />

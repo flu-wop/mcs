@@ -136,32 +136,9 @@ function ShopHero() {
           Print-on-demand merch from four brands born in the studio.
           Ships from New Orleans via Printify — no inventory, no minimums.
         </p>
-
-        {/* Ecosystem quick links */}
-        <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
-          {([
-            { label: 'MCS Studio',       brand: 'mcs'        },
-            { label: 'Donald Markowitz', brand: 'djm'        },
-            { label: 'Street Beat',      brand: 'streetbeat' },
-            { label: 'Lil Squiggle',     brand: 'squiggle'   },
-          ] as const).map(({ label, brand }) => (
-            <a
-              key={brand}
-              href={`/merch/brand/${brand}`}
-              className="text-[10px] tracking-[0.14em] uppercase text-ink-muted
-                border-b border-mist/20 pb-px hover:text-accent-text
-                hover:border-accent/40 transition-colors font-['DM_Sans']"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
       </div>
 
-      {/* Ecosystem marquee — same four brands as the quick links above,
-          purely decorative/ambient here (duplicate content is aria-hidden
-          so screen readers only hit the real links once). Slow, continuous,
-          not meant to be read — a texture, not a nav. */}
+      {/* Ecosystem marquee — the four brands, slow and continuous, a texture rather than a nav. */}
       <div
         aria-hidden="true"
         className="relative border-t border-accent/10 overflow-hidden py-3"
