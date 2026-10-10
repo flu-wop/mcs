@@ -263,8 +263,6 @@ export default function ShopClient({
 
       <DesignCredit className="px-6 py-10" />
 
-      {/* ── Ecosystem footer strip ─────────────────────────────────────────── */}
-      <EcosystemStrip />
     </div>
   )
 }
@@ -296,47 +294,5 @@ function EmptyState({ onClear }: { onClear: () => void }) {
         Clear filters →
       </button>
     </div>
-  )
-}
-
-// ─── Ecosystem Strip ──────────────────────────────────────────────────────────
-
-function EcosystemStrip() {
-  const links = [
-    { label: 'Mid City Sound Studios', href: '/',                              note: 'Studio · New Orleans'       },
-    { label: 'Donald Markowitz',       href: 'https://donaldmarkowitz.com',    note: 'Composer · Producer · Legend' },
-    { label: 'Street Beat',            href: 'https://streetbeat.video',       note: 'Documentary · 2025'          },
-    { label: 'Lil Squiggle',           href: 'https://lilsquiggle.vercel.app', note: '#DontDrinkAndDialDecades'    },
-  ]
-
-  return (
-    <section
-      className="border-t border-accent/10 px-6 sm:px-10 py-10"
-      aria-label="Ecosystem links"
-    >
-      <p className="text-[10px] tracking-[0.2em] uppercase text-[#5a4c3a]
-        font-['DM_Sans'] mb-6">
-        The Ecosystem
-      </p>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {links.map(l => (
-          <a
-            key={l.href}
-            href={l.href}
-            className="group flex flex-col gap-1 border border-accent/08
-              p-4 hover:border-accent/30 transition-colors"
-          >
-            <span className="font-['Cormorant_Garamond'] text-sm text-ink
-              group-hover:text-accent-text transition-colors leading-tight">
-              {l.label}
-            </span>
-            <span className="text-[9px] tracking-[0.1em] uppercase text-[#5a4c3a]
-              font-['DM_Sans']">
-              {l.note}
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
   )
 }
