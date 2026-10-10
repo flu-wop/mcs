@@ -4,7 +4,7 @@
 // Includes JSON-LD Product schema for SEO, variant quick-select,
 // and add-to-cart wired to CartProvider.
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { MerchProduct, PrintifyVariantDetail } from '@/lib/printify'
@@ -14,10 +14,10 @@ import { sortSizes, defaultSize, optionValue } from '@/lib/sizes'
 // ─── Brand accent colours ─────────────────────────────────────────────────────
 
 const BRAND_BORDER: Record<string, string> = {
-  mcs:        'hover:border-accent/50',
-  djm:        'hover:border-[#c8a45a]/50',
-  streetbeat: 'hover:border-[#4a7acc]/50',
-  squiggle:   'hover:border-success/50',
+  mcs:        '[@media(hover:hover)]:hover:border-accent/50',
+  djm:        '[@media(hover:hover)]:hover:border-[#c8a45a]/50',
+  streetbeat: '[@media(hover:hover)]:hover:border-[#4a7acc]/50',
+  squiggle:   '[@media(hover:hover)]:hover:border-success/50',
 }
 
 const BRAND_TAG_COLOR: Record<string, string> = {
@@ -127,6 +127,8 @@ export default function ProductCard({
     sizeVariants.length > 6 ? null : defaultVariant
   )
   const [added, setAdded] = useState(false)
+  const [needSize, setNeedSize] = useState(false)
+  const sizeRef = useRef<HTMLSelectElement>(null)
   const [imgError, setImgError] = useState(false)
 
   // Switching material changes the whole variant set (different Printify
@@ -166,7 +168,11 @@ export default function ProductCard({
   const handleAddToCart = useCallback(() => {
     // If the dropdown is showing (a real size choice exists) and nothing's
     // been picked yet, don't silently add some arbitrary size.
-    if (sizeVariants.length > 6 && !selectedVariant) return
+    if (sizeVariants.length > 6 && !selectedVariant) {
+      setNeedSize(true)
+      sizeRef.current?.focus()
+      return
+    }
     const variant = selectedVariant ?? activeVariants?.[0]
     if (!variant) return
 
@@ -183,6 +189,7 @@ export default function ProductCard({
       thumbnailUrl: variant.imageUrl || product.thumbnailUrl,
     })
 
+    setNeedSize(false)
     setAdded(true)
     openDrawer()
     setTimeout(() => setAdded(false), 2000)
@@ -195,7 +202,7 @@ export default function ProductCard({
         'bg-surface-alt border border-accent/12',
         'transition-all duration-250',
         borderClass,
-        'hover:-translate-y-0.5',
+        '[@media(hover:hover)]:hover:-translate-y-0.5',
         featured ? 'md:col-span-1' : '',
       ].join(' ')}
       aria-label={product.name}
@@ -205,7 +212,7 @@ export default function ProductCard({
       {/* ── Image ──────────────────────────────────────────────────────── */}
       <Link
         href={`/merch/${product.slug}`}
-        className="relative block aspect-square overflow-hidden bg-[#0d0d0d]"
+        className="relative block aspect-square overflow-hidden bg-[#e6dfd0]"
       >
         {!imgError ? (
           <>
@@ -214,8 +221,8 @@ export default function ProductCard({
               alt={product.name}
               fill
               className={[
-                'object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.04]',
-                activeBackImage ? 'group-hover:opacity-0' : '',
+                'object-cover mix-blend-multiply transition-[opacity,transform] duration-500 [@media(hover:hover)]:group-hover:scale-[1.04]',
+                activeBackImage ? '[@media(hover:hover)]:group-hover:opacity-0' : '',
               ].join(' ')}
               sizes={featured
                 ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
@@ -233,8 +240,8 @@ export default function ProductCard({
                 alt={`${product.name} — back`}
                 fill
                 aria-hidden="true"
-                className="object-cover opacity-0 scale-[1.04] transition-[opacity,transform]
-                  duration-500 group-hover:opacity-100 group-hover:scale-100"
+                className="object-cover mix-blend-multiply opacity-0 scale-[1.04] transition-[opacity,transform]
+                  duration-500 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-hover:scale-100"
                 sizes={featured
                   ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
                   : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'
@@ -245,7 +252,7 @@ export default function ProductCard({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
             <span className="text-3xl opacity-20">◈</span>
-            <span className="text-[9px] tracking-[0.16em] uppercase text-[#5a4c3a] font-['DM_Sans']">
+            <span className="text-[9px] tracking-[0.16em] uppercase text-[#7a6a50] font-['DM_Sans']">
               {product.type}
             </span>
           </div>
@@ -276,7 +283,7 @@ export default function ProductCard({
       </Link>
 
       {/* ── Body ───────────────────────────────────────────────────────── */}
-      <div className={`flex flex-col flex-1 p-4 border-t border-accent/08 ${!activeInStock ? 'opacity-60' : ''}`}>
+      <div className={`flex flex-col flex-1 p-3 sm:p-4 border-t border-accent/08 ${!activeInStock ? 'opacity-60' : ''}`}>
 
         {/* Name */}
         <Link href={`/merch/${product.slug}`} className="group/name">
@@ -291,7 +298,7 @@ export default function ProductCard({
         </Link>
 
         {/* Type */}
-        <p className="text-[10px] tracking-[0.1em] uppercase text-[#5a4c3a]
+        <p className="text-[10px] tracking-[0.1em] uppercase text-[#7a6a50]
           font-['DM_Sans'] mb-1">
           {product.type}
         </p>
@@ -303,10 +310,10 @@ export default function ProductCard({
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="group/credit inline-flex items-center gap-1 w-fit text-[9px] tracking-[0.08em] uppercase
-              text-[#5a4c3a] hover:text-accent-text font-['DM_Sans'] transition-colors mb-3"
+            className="group/credit inline-flex items-center gap-1 w-fit whitespace-nowrap text-[9px] tracking-[0.08em] uppercase
+              text-[#6f6048] hover:text-accent-text font-['DM_Sans'] transition-colors mb-3"
           >
-            Designed by <span className="text-ink-muted group-hover/credit:text-accent-text transition-colors">Hidden Gem</span>
+            By <span className="text-ink-muted group-hover/credit:text-accent-text transition-colors">Hidden Gem</span>
             <span aria-hidden="true">↗</span>
           </a>
         )}
@@ -322,11 +329,11 @@ export default function ProductCard({
                 onClick={() => handleMaterialChange(idx)}
                 aria-pressed={selectedMaterialIdx === idx}
                 className={[
-                  'text-[9px] tracking-[0.08em] uppercase px-2 py-1',
+                  'text-[9px] tracking-[0.06em] uppercase px-2 py-1.5 min-h-[32px] whitespace-nowrap',
                   "font-['DM_Sans'] border transition-colors",
                   selectedMaterialIdx === idx
-                    ? 'border-accent/60 text-accent-text'
-                    : 'border-accent/12 text-[#5a4c3a] hover:border-mist/30 hover:text-ink-muted',
+                    ? 'border-accent/70 text-accent-text bg-accent/10'
+                    : 'border-accent/15 text-[#8a7a60] hover:border-mist/30 hover:text-ink-muted',
                 ].join(' ')}
               >
                 {m.material}
@@ -340,29 +347,38 @@ export default function ProductCard({
             rendering that many buttons on a compact card breaks the layout) */}
         {sizeVariants.length > 1 && (
           sizeVariants.length > 6 ? (
-            <select
-              aria-label="Select size"
-              value={selectedVariant?.variantId ?? ''}
-              onChange={(e) => {
-                const v = sizeVariants.find(sv => sv.variantId === Number(e.target.value))
-                if (v) setSelectedVariant(v)
-              }}
-              className="mb-3 w-full bg-[#0d0d0d] border border-accent/20 text-ink-muted
-                text-[10px] tracking-[0.08em] uppercase px-2 py-2 font-['DM_Sans']
-                focus:outline-none focus:border-accent/50"
-            >
-              <option value="" disabled className="bg-surface-alt text-[#5a4c3a]">
-                Select a size
-              </option>
-              {sizeVariants.map(v => {
-                const size = optionValue(v, 'size') ?? v.name
-                return (
-                  <option key={v.variantId} value={v.variantId} className="bg-surface-alt text-ink">
-                    {size}
-                  </option>
-                )
-              })}
-            </select>
+            <div className="relative mb-3">
+              <select
+                ref={sizeRef}
+                aria-label="Select size"
+                value={selectedVariant?.variantId ?? ''}
+                onChange={(e) => {
+                  const v = sizeVariants.find(sv => sv.variantId === Number(e.target.value))
+                  if (v) { setSelectedVariant(v); setNeedSize(false) }
+                }}
+                className={[
+                  'w-full appearance-none bg-[#0d0d0d] border text-ink-muted rounded-none',
+                  "normal-case tracking-normal !text-[14px] pl-3 pr-8 py-2 min-h-[40px] font-['DM_Sans']",
+                  'focus:outline-none focus:border-accent/60 transition-colors',
+                  needSize ? 'border-accent text-accent-text' : 'border-accent/25',
+                ].join(' ')}
+              >
+                <option value="" disabled className="bg-surface-alt text-[#7a6a50]">
+                  Choose size
+                </option>
+                {sizeVariants.map(v => {
+                  const size = optionValue(v, 'size') ?? v.name
+                  return (
+                    <option key={v.variantId} value={v.variantId} className="bg-surface-alt text-ink">
+                      {size}
+                    </option>
+                  )
+                })}
+              </select>
+              <svg aria-hidden="true" viewBox="0 0 12 12" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 text-accent-text/70">
+                <path d="M2 4.5l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.4" />
+              </svg>
+            </div>
           ) : (
             <div className="flex flex-wrap gap-1 mb-3" role="group" aria-label="Select size">
               {sizeVariants.map(v => {
@@ -374,11 +390,11 @@ export default function ProductCard({
                     onClick={() => setSelectedVariant(v)}
                     aria-pressed={isSelected}
                     className={[
-                      'text-[9px] tracking-[0.1em] uppercase px-2 py-1',
-                      'font-[\'DM_Sans\'] border transition-colors min-w-[28px]',
+                      'text-[10px] tracking-[0.08em] uppercase px-2 py-1.5 min-h-[32px]',
+                      'font-[\'DM_Sans\'] border transition-colors min-w-[34px]',
                       isSelected
-                        ? 'border-accent/60 text-accent-text'
-                        : 'border-accent/12 text-[#5a4c3a] hover:border-mist/30 hover:text-ink-muted',
+                        ? 'border-accent/70 text-accent-text bg-accent/10'
+                        : 'border-accent/15 text-[#8a7a60] hover:border-mist/30 hover:text-ink-muted',
                     ].join(' ')}
                   >
                     {size}
@@ -402,16 +418,16 @@ export default function ProductCard({
 
           <button
             onClick={handleAddToCart}
-            disabled={(!activeVariants && !product.price) || !activeInStock || (sizeVariants.length > 6 && !selectedVariant)}
+            disabled={(!activeVariants && !product.price) || !activeInStock}
             aria-label={activeInStock ? `Add ${product.name} to cart` : `${product.name} is sold out`}
             className={[
-              'text-[9px] tracking-[0.14em] uppercase px-3 py-2',
-              'font-[\'DM_Sans\'] border transition-all duration-150',
-              'min-w-[72px] min-h-[36px]',
+              'text-[10px] tracking-[0.14em] uppercase px-3 py-2',
+              'font-[\'DM_Sans\'] border transition-all duration-150 active:scale-95',
+              'min-w-[76px] min-h-[40px]',
               added
-                ? 'border-accent text-accent-text bg-accent/08'
-                : 'border-accent/20 text-ink-muted hover:border-accent/60 hover:text-accent-text',
-              ((!activeVariants && !product.price) || !activeInStock || (sizeVariants.length > 6 && !selectedVariant)) ? 'opacity-30 cursor-not-allowed' : '',
+                ? 'border-accent bg-accent text-studio-black'
+                : 'border-accent/50 bg-accent/10 text-accent-text hover:bg-accent hover:text-studio-black',
+              (!activeVariants && !product.price) || !activeInStock ? 'opacity-30 cursor-not-allowed' : '',
             ].join(' ')}
           >
             {!activeInStock ? 'Sold Out' : added ? '✓ Added' : '+ Add'}

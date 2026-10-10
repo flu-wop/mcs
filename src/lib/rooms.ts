@@ -70,6 +70,8 @@ export const ROOMS: Room[] = [
       "Available by arrangement",
       "Ideal for small ensemble work",
     ],
+    image: "/images/studio-c.jpg",
+    imageAlt: "Studio C, Irvin Mayfield's office: a monitor desk with keyboards, guitars on stands, a green velvet sofa and a wall-mounted screen",
     byArrangement: true,
   },
 ]
