@@ -185,7 +185,7 @@ export default function HomePage() {
                   className="group h-full border border-studio-border bg-studio-card rounded-sm hover:border-gold/40 transition-colors card-lift overflow-hidden flex flex-col">
                   <div className={`relative aspect-[3/4] overflow-hidden ${contain ? "bg-studio-charcoal" : "bg-studio-dark"}`}>
                     <Image src={image} alt={title} fill sizes="(max-width: 640px) 100vw, 33vw"
-                      className={`transition-transform duration-[1.2s] ease-out group-hover:scale-105 ${contain ? "object-contain p-6" : "object-cover"}`} />
+                      className={`transition-transform duration-[1.2s] ease-out group-hover:scale-105 ${contain ? "object-cover object-center" : "object-cover"}`} />
                     {external && (
                       <span className="absolute top-3 right-3 w-8 h-8 rounded-full bg-studio-black/70 backdrop-blur grid place-items-center text-cream/80 opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden>
                         <ExternalLink className="w-3.5 h-3.5" />

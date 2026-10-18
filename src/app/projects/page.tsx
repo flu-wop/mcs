@@ -162,12 +162,12 @@ export default function ProjectsPage() {
                 {/* Phones: poster as a banner across the top */}
                 <div className="relative aspect-[16/9] md:hidden border-b" style={{ borderColor: `${accent}25` }}>
                   <Image src={image} alt={title} fill sizes="100vw"
-                    className={id === "lil-squiggle" ? "object-contain p-4" : "object-cover object-top"} />
+                    className={id === "lil-squiggle" ? "object-cover object-center" : "object-cover object-top"} />
                 </div>
                 <div className="p-6 sm:p-8 md:p-10 grid md:grid-cols-[220px_1fr] gap-8 items-start">
                   <div className="relative aspect-[2/3] rounded-sm overflow-hidden border self-start hidden md:block group" style={{ borderColor: `${accent}25` }}>
                     <Image src={image} alt={title} fill sizes="220px"
-                      className={`transition-transform duration-[1.2s] ease-out group-hover:scale-105 ${id === "lil-squiggle" ? "object-contain p-2" : "object-cover object-top"}`} />
+                      className={`transition-transform duration-[1.2s] ease-out group-hover:scale-105 ${id === "lil-squiggle" ? "object-cover object-center" : "object-cover object-top"}`} />
                   </div>
 
                   <div className="space-y-5 min-w-0">
